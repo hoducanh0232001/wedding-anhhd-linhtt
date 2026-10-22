@@ -3,26 +3,36 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const rootDir = process.cwd();
 
-// Serve all static assets (CSS, JS, Images, Fonts, etc.)
-app.use(express.static(__dirname, {
+// 1. Explicitly serve /assets from process.cwd()
+app.use('/assets', express.static(path.join(rootDir, 'assets'), {
   maxAge: '1h',
   etag: true
 }));
 
-// Explicit route for admin
+// 2. Serve any root files (admin.html, index.html)
+app.use(express.static(rootDir, {
+  maxAge: '1h',
+  etag: true
+}));
+
+// 3. Admin portal route
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  res.sendFile(path.join(rootDir, 'admin.html'));
 });
 
-// Explicit route for invitation
+// 4. Main invitation route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(rootDir, 'index.html'));
 });
 
-// Fallback for any other route
+// 5. Fallback: only return index.html for page routes, NOT for broken asset files
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  if (req.path.includes('.')) {
+    return res.status(404).send('Asset not found');
+  }
+  res.sendFile(path.join(rootDir, 'index.html'));
 });
 
 if (require.main === module) {

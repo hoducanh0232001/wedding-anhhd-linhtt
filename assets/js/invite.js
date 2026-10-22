@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGallery(settings.gallery);
   initRSVPForm();
   initWishesList();
+  initScrollReveal();
 });
 
 // Helper: Toast notification
@@ -382,6 +383,9 @@ function initEnvelopeOpener() {
     playBackgroundMusic();
     fireWeddingStickerConfetti();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      document.querySelectorAll('.hero-quote-tender, .envelope-hero-box, .couple-names-block').forEach(el => el.classList.add('revealed'));
+    }, 150);
   }
 
   if (btnOpen) btnOpen.addEventListener('click', openEnvelope);
@@ -1580,3 +1584,87 @@ window.addEventListener('wedding_settings_updated', (e) => {
   initDynamicContent(updated);
   if (updated.gallery) initGallery(updated.gallery);
 });
+
+// 15. Scroll-triggered Text & Section Reveal (IntersectionObserver)
+function initScrollReveal() {
+  if (!('IntersectionObserver' in window)) return;
+
+  const revealSelectors = [
+    // Header elements
+    '.hero-quote-tender',
+    '.envelope-hero-box',
+    '.couple-names-block',
+
+    // Main Ceremony Card elements
+    '#section-ceremony .card-title-gold',
+    '#section-ceremony .family-grid',
+    '#section-ceremony .announcement-text',
+    '#section-ceremony .couple-ceremony-names',
+    '#section-ceremony .ceremony-date-block',
+    '#section-ceremony .ceremony-lunar-date',
+
+    // Gallery section
+    '#section-gallery .section-title-tender',
+    '#section-gallery .carousel-3d-stage',
+
+    // Reception card
+    '.reception-card-section .card-title-gold',
+    '.reception-card-section .reception-time-str',
+    '.reception-card-section #reception-guest-time-display',
+    '.reception-card-section .mini-calendar-wrapper',
+    '.reception-card-section .countdown-container',
+    '.reception-card-section .btn-rsvp-pill',
+
+    // Map section
+    '.map-section-tender .section-title-tender',
+    '.map-section-tender .venue-box',
+    '.map-section-tender .map-card-tender',
+    '.map-section-tender .btn-map-gold',
+
+    // Timeline section
+    '.timeline-section-tender .card-title-gold',
+    '.timeline-section-tender .timeline-icon-row',
+
+    // RSVP & Guestbook
+    '.papernote-card-title',
+    '.papernote-card-subtitle',
+    '#wedding-rsvp-form',
+    '.wishes-feed-wrapper',
+
+    // Gift section
+    '.gift-section-tender .section-title-tender',
+    '.gift-section-tender .section-subtitle-tender',
+    '#btn-toggle-qr',
+    '#collapsible-qr-container',
+
+    // Footer
+    '.thank-you-note',
+    '#footer-couple-names',
+    '#footer-wedding-date'
+  ];
+
+  const elements = document.querySelectorAll(revealSelectors.join(', '));
+  if (!elements.length) return;
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  // Stagger delays for cascading elements within containers
+  document.querySelectorAll('.timeline-icon-row').forEach((row, idx) => {
+    row.style.transitionDelay = `${(idx * 0.12).toFixed(2)}s`;
+  });
+
+  elements.forEach(el => {
+    el.classList.add('scroll-reveal');
+    observer.observe(el);
+  });
+}

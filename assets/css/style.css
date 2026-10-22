@@ -2221,3 +2221,26 @@ body[data-theme="midnight"] .link-admin-subtle {
   border-color: rgba(245, 158, 11, 0.25);
   background: rgba(26, 38, 64, 0.5);
 }
+
+/* ==========================================================================
+   SCROLL REVEAL ANIMATIONS (Smooth Editorial Glide & Fade-in)
+   ========================================================================== */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

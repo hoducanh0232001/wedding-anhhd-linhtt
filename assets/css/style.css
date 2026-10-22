@@ -725,14 +725,14 @@ html, body {
 
 .card-flower-float.mr {
   top: 50%;
-  right: -10px;
-  width: 76px;
-  animation: drFloatMid 5.5s ease-in-out infinite;
+  right: -45px;
+  width: 220px;
+  animation: drFloatMid 6s ease-in-out infinite;
 }
 
 @keyframes drFloatMid {
-  0%, 100% { transform: translateY(-50%) rotate(10deg); }
-  50% { transform: translateY(calc(-50% - 6px)) rotate(10deg); }
+  0%, 100% { transform: translateY(-50%) rotate(8deg); }
+  50% { transform: translateY(calc(-50% - 8px)) rotate(8deg); }
 }
 
 .card-flower-float img {
@@ -2243,4 +2243,70 @@ body[data-theme="midnight"] .link-admin-subtle {
     transform: none !important;
     transition: none !important;
   }
+}
+
+/* ==========================================================================
+   OUTSIDE ENVELOPE BURST & AUTO-SCROLL FLOATING BUTTON
+   ========================================================================== */
+.envelope-burst-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.envelope-burst-item {
+  position: absolute;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: burstItemAnim 0.75s cubic-bezier(0.12, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes burstItemAnim {
+  0% {
+    transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.2) rotate(0deg);
+    opacity: 1;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate3d(var(--dx), var(--dy), 0) scale(var(--scale, 1.25)) rotate(var(--rot, 40deg));
+    opacity: 0;
+  }
+}
+
+.autoscroll-floating-btn {
+  position: fixed;
+  top: 70px;
+  right: 18px;
+  z-index: 998;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(81, 20, 25, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 19px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.autoscroll-floating-btn:hover {
+  transform: scale(1.08);
+}
+
+.autoscroll-floating-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--gold);
+  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.35);
 }

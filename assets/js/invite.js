@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRSVPForm();
   initWishesList();
   initScrollReveal();
+  initAutoScrollControls();
 });
 
 // Helper: Toast notification
@@ -374,22 +375,44 @@ function initEnvelopeOpener() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('open') === '1') {
     if (envelopeScreen) envelopeScreen.classList.add('opened');
+    setTimeout(() => {
+      document.querySelectorAll('.hero-quote-tender, .envelope-hero-box, .couple-names-block').forEach(el => el.classList.add('revealed'));
+      startAutoScroll();
+    }, 1800);
     return;
   }
 
-  function openEnvelope() {
-    if (!envelopeScreen) return;
-    envelopeScreen.classList.add('opened');
+  let isOpening = false;
+
+  function handleOpenEnvelope(e) {
+    if (isOpening) return;
+    isOpening = true;
+
+    // 1. Play music immediately within user click gesture
     playBackgroundMusic();
-    fireWeddingStickerConfetti();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 2. Burst flowers and hearts ONLY on the outside envelope screen (Zero lag GPU animation)
+    triggerEnvelopeFlowerBurst(e);
+
+    // 3. Smoothly open envelope after brief bloom (420ms), transitioning to clean wedding card
     setTimeout(() => {
-      document.querySelectorAll('.hero-quote-tender, .envelope-hero-box, .couple-names-block').forEach(el => el.classList.add('revealed'));
-    }, 150);
+      if (envelopeScreen) envelopeScreen.classList.add('opened');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Reveal top viewport elements
+      setTimeout(() => {
+        document.querySelectorAll('.hero-quote-tender, .envelope-hero-box, .couple-names-block').forEach(el => el.classList.add('revealed'));
+      }, 150);
+
+      // 4. Auto-scroll starts smoothly after guest admires the hero header (2s)
+      setTimeout(() => {
+        startAutoScroll();
+      }, 2000);
+    }, 420);
   }
 
-  if (btnOpen) btnOpen.addEventListener('click', openEnvelope);
-  if (waxSeal) waxSeal.addEventListener('click', openEnvelope);
+  if (btnOpen) btnOpen.addEventListener('click', handleOpenEnvelope);
+  if (waxSeal) waxSeal.addEventListener('click', handleOpenEnvelope);
 }
 
 // 5. Audio Player (Supports both Direct MP3/Audio and YouTube Video)
@@ -1162,175 +1185,60 @@ function initRSVPForm() {
   });
 }
 
-// 13. Lightweight & Ultra-Fast Confetti Burst on Envelope Open (Zero Lag, 1.2s max)
-function fireWeddingStickerConfetti() {
-  const oldCanvas = document.getElementById('wedding-confetti-canvas');
-  if (oldCanvas) oldCanvas.remove();
+// 13. Floral & Heart Burst ON OUTSIDE SCREEN ONLY (Zero-lag GPU CSS Particles)
+function triggerEnvelopeFlowerBurst(e) {
+  const container = document.getElementById('envelope-burst-container');
+  if (!container) return;
 
-  const canvas = document.createElement('canvas');
-  canvas.id = 'wedding-confetti-canvas';
-  canvas.style.position = 'fixed';
-  canvas.style.inset = '0';
-  canvas.style.width = '100vw';
-  canvas.style.height = '100vh';
-  canvas.style.pointerEvents = 'none';
-  canvas.style.zIndex = '100000';
-  document.body.appendChild(canvas);
+  container.innerHTML = '';
 
-  const ctx = canvas.getContext('2d');
-  let width = (canvas.width = window.innerWidth);
-  let height = (canvas.height = window.innerHeight);
+  let originX = window.innerWidth / 2;
+  let originY = window.innerHeight * 0.58;
 
-  const onResize = () => {
-    if (canvas && canvas.parentNode) {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-  };
-  window.addEventListener('resize', onResize);
-
-  const flowerStickers = ['🌸', '🌹', '🌺', '🌷', '💐'];
-  const heartStickers = ['❤️', '💖', '💕', '💗', '💝'];
-  const colors = ['#c9a24a', '#e5c97d', '#8a252d', '#511419', '#ff6b81', '#ffd700'];
-
-  const particles = [];
-
-  function createParticle(x, y, angle, speed, isCenter) {
-    const randType = Math.random();
-    let type = 'ribbon';
-    let sticker = '';
-
-    if (randType < 0.45) {
-      type = 'sticker_flower';
-      sticker = flowerStickers[Math.floor(Math.random() * flowerStickers.length)];
-    } else if (randType < 0.85) {
-      type = 'sticker_heart';
-      sticker = heartStickers[Math.floor(Math.random() * heartStickers.length)];
-    } else {
-      type = 'ribbon';
-    }
-
-    const vx = Math.cos(angle) * speed;
-    let vy = Math.sin(angle) * speed;
-    if (isCenter) vy -= 3;
-
-    particles.push({
-      x: x,
-      y: y,
-      vx: vx,
-      vy: vy,
-      type: type,
-      sticker: sticker,
-      size: type.startsWith('sticker') ? Math.random() * 8 + 22 : Math.random() * 6 + 10,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      angle: Math.random() * 360,
-      angleSpeed: (Math.random() - 0.5) * 6,
-      wobble: Math.random() * 10,
-      wobbleSpeed: Math.random() * 0.08 + 0.04,
-      wobbleRadius: Math.random() * 1.5 + 0.5,
-      gravity: Math.random() * 0.12 + 0.25,
-      drag: 0.98,
-      alpha: 1.0,
-      life: 0,
-      maxLife: Math.floor(Math.random() * 25 + 55) // ~1.0s - 1.3s max
-    });
-  }
-
-  // 15 from left, 15 from right, 12 from center seal = 42 total particles (Ultra lightweight!)
-  const leftX = width * 0.15;
-  const leftY = height * 0.85;
-  for (let i = 0; i < 15; i++) {
-    const angle = (-40 - Math.random() * 40) * (Math.PI / 180);
-    const speed = Math.random() * 10 + 13;
-    createParticle(leftX, leftY, angle, speed, false);
-  }
-
-  const rightX = width * 0.85;
-  const rightY = height * 0.85;
-  for (let i = 0; i < 15; i++) {
-    const angle = (-140 + Math.random() * 40) * (Math.PI / 180);
-    const speed = Math.random() * 10 + 13;
-    createParticle(rightX, rightY, angle, speed, false);
-  }
-
-  const centerX = width * 0.5;
-  const centerY = height * 0.5;
-  for (let i = 0; i < 12; i++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const speed = Math.random() * 10 + 5;
-    createParticle(centerX, centerY, angle, speed, true);
-  }
-
-  let animId = null;
-
-  // Pre-configure font ONCE outside the loop to eliminate frame-drop lag!
-  ctx.font = '24px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-
-  function render() {
-    ctx.clearRect(0, 0, width, height);
-    let activeCount = 0;
-
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.life++;
-
-      p.vx *= p.drag;
-      p.vy *= p.drag;
-      p.vy += p.gravity;
-
-      p.wobble += p.wobbleSpeed;
-      p.x += p.vx + Math.sin(p.wobble) * p.wobbleRadius;
-      p.y += p.vy;
-
-      p.angle += p.angleSpeed;
-      const scaleX = Math.cos(p.wobble);
-
-      // Fade out rapidly after 35 frames (~0.6s)
-      if (p.life > p.maxLife - 30) {
-        p.alpha = Math.max(0, (p.maxLife - p.life) / 30);
-      }
-
-      if (p.alpha <= 0 || p.y > height + 40) {
-        continue;
-      }
-
-      activeCount++;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate((p.angle * Math.PI) / 180);
-      ctx.scale(scaleX * (p.size / 24), p.size / 24);
-      ctx.globalAlpha = p.alpha;
-
-      if (p.type.startsWith('sticker')) {
-        ctx.fillText(p.sticker, 0, 0);
-      } else {
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-10, -6, 20, 12);
-      }
-
-      ctx.restore();
-    }
-
-    if (activeCount > 0) {
-      animId = requestAnimationFrame(render);
-    } else {
-      cancelAnimationFrame(animId);
-      window.removeEventListener('resize', onResize);
-      if (canvas && canvas.parentNode) canvas.remove();
+  if (e && e.clientX && e.clientY) {
+    originX = e.clientX;
+    originY = e.clientY;
+  } else {
+    const btn = document.getElementById('btn-open-envelope');
+    if (btn) {
+      const rect = btn.getBoundingClientRect();
+      originX = rect.left + rect.width / 2;
+      originY = rect.top + rect.height / 2;
     }
   }
 
-  animId = requestAnimationFrame(render);
+  const stickers = ['🌸', '🌹', '🌺', '🌷', '💐', '❤️', '💖', '💕', '💗', '💝', '✨'];
+  const particleCount = 26;
+
+  for (let i = 0; i < particleCount; i++) {
+    const item = document.createElement('div');
+    item.className = 'envelope-burst-item';
+    item.textContent = stickers[Math.floor(Math.random() * stickers.length)];
+
+    item.style.left = `${originX}px`;
+    item.style.top = `${originY}px`;
+
+    const angle = (i / particleCount) * 2 * Math.PI + (Math.random() * 0.35 - 0.17);
+    const distance = Math.random() * 180 + 120;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance - 35;
+    const rot = Math.round(Math.random() * 120 - 60) + 'deg';
+    const scale = (Math.random() * 0.5 + 1.15).toFixed(2);
+    const size = Math.round(Math.random() * 8 + 24) + 'px';
+
+    item.style.fontSize = size;
+    item.style.setProperty('--dx', `${Math.round(dx)}px`);
+    item.style.setProperty('--dy', `${Math.round(dy)}px`);
+    item.style.setProperty('--rot', rot);
+    item.style.setProperty('--scale', scale);
+
+    container.appendChild(item);
+  }
 }
 
 function fireConfetti() {
   // Silent fallback
 }
-
-window.fireWeddingStickerConfetti = fireWeddingStickerConfetti;
 
 // 14. Grand Wedding Fireworks Celebration (Pháo Hoa Mừng Ngày Chung Đôi)
 function launchWeddingFireworks() {
@@ -1666,5 +1574,88 @@ function initScrollReveal() {
   elements.forEach(el => {
     el.classList.add('scroll-reveal');
     observer.observe(el);
+  });
+}
+
+// 16. Cinematic Auto-Scroll Experience
+let isAutoScrolling = false;
+let autoScrollAnimId = null;
+let userIsInteracting = false;
+let userPauseTimeout = null;
+
+function startAutoScroll() {
+  if (isAutoScrolling) return;
+  isAutoScrolling = true;
+
+  const toggleBtn = document.getElementById('autoscroll-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.classList.add('active');
+    toggleBtn.title = 'Tạm dừng tự cuộn trang';
+  }
+
+  function scrollStep() {
+    if (!isAutoScrolling) return;
+
+    if (!userIsInteracting) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (window.scrollY >= maxScroll - 6) {
+        stopAutoScroll();
+        return;
+      }
+      // Gentle reading cruise speed (~55px/s)
+      window.scrollBy(0, 0.95);
+    }
+
+    autoScrollAnimId = requestAnimationFrame(scrollStep);
+  }
+
+  autoScrollAnimId = requestAnimationFrame(scrollStep);
+}
+
+function stopAutoScroll() {
+  isAutoScrolling = false;
+  if (autoScrollAnimId) {
+    cancelAnimationFrame(autoScrollAnimId);
+    autoScrollAnimId = null;
+  }
+  const toggleBtn = document.getElementById('autoscroll-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.classList.remove('active');
+    toggleBtn.title = 'Bật tự động cuộn thiệp';
+  }
+}
+
+function toggleAutoScroll() {
+  if (isAutoScrolling) {
+    stopAutoScroll();
+    showToast('Đã dừng tự cuộn');
+  } else {
+    startAutoScroll();
+    showToast('Bắt đầu tự cuộn thiệp cưới...');
+  }
+}
+
+function initAutoScrollControls() {
+  const toggleBtn = document.getElementById('autoscroll-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleAutoScroll();
+    });
+  }
+
+  // Gracefully pause while guest is touching or scrolling manually
+  function pauseOnUserTouch() {
+    if (!isAutoScrolling) return;
+    userIsInteracting = true;
+    clearTimeout(userPauseTimeout);
+    // Automatically resumes 3.5s after guest stops touching
+    userPauseTimeout = setTimeout(() => {
+      userIsInteracting = false;
+    }, 3500);
+  }
+
+  ['touchstart', 'touchmove', 'wheel', 'mousedown'].forEach(evt => {
+    window.addEventListener(evt, pauseOnUserTouch, { passive: true });
   });
 }

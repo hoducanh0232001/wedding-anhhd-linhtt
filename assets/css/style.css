@@ -3,22 +3,153 @@
    1:1 Authentic Recreation of https://chungdoi.com/i/ducanh-thuylinh-tender
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=The+Nautigal:wght@400;700&family=Viaoda+Libre&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=The+Nautigal:wght@400;700&family=Viaoda+Libre&display=swap');
 
-:root {
+:root, body, body[data-theme="tender"] {
   --primary: #511419;
   --deep: #590310;
   --cream: #ece4d8;
-  --cream-muted: rgba(236, 228, 216, 0.7);
+  --cream-muted: rgba(236, 228, 216, 0.75);
   --page-bg: #fff7eb;
   --gold: #c9a24a;
+  --card-gradient: linear-gradient(135deg, #511419, #380a0e);
   
   --font-serif: "Times New Roman", serif;
   --font-baskerville: "Baskerville", "Times New Roman", serif;
   --font-viaoda: "Viaoda Libre", "EB Garamond", serif;
   --font-script: "The Nautigal", cursive;
   --font-cormorant: "Cormorant Garamond", "Times New Roman", serif;
+  --font-modern: "Montserrat", sans-serif;
 }
+
+/* Theme 2: Modern Editorial (Tạp chí Hàn Quốc / Vogue Minimalist) */
+body[data-theme="editorial"] {
+  --primary: #242220;
+  --deep: #141312;
+  --cream: #FAF6F0;
+  --cream-muted: rgba(250, 246, 240, 0.85);
+  --page-bg: #FAF8F5;
+  --gold: #C5A059;
+  --card-gradient: linear-gradient(135deg, #242220, #141312);
+  --font-viaoda: "Playfair Display", serif;
+}
+
+body[data-theme="editorial"] #envelope-screen {
+  background: linear-gradient(to bottom right, #383431, #242220, #161514);
+}
+
+body[data-theme="editorial"] .wax-seal-center {
+  background: radial-gradient(circle at 30% 30%, #C5A059, #8C7355);
+  color: #141312;
+}
+
+body[data-theme="editorial"] .castle-bg {
+  display: none;
+}
+
+body[data-theme="editorial"] .envelope-inner-card,
+body[data-theme="editorial"] .parchment-red-box {
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="editorial"] .flower-corner-tl,
+body[data-theme="editorial"] .flower-corner-br,
+body[data-theme="editorial"] .card-flower-float,
+body[data-theme="editorial"] .pinned-flower {
+  filter: grayscale(1) opacity(0.35);
+}
+
+/* Theme 3: Secret Garden (Vườn Cổ Tích Lãng Mạn / Sage & Rose) */
+body[data-theme="botanical"] {
+  --primary: #2D4739;
+  --deep: #1B3024;
+  --cream: #F4EAD4;
+  --cream-muted: rgba(244, 234, 212, 0.8);
+  --page-bg: #F7F9F5;
+  --gold: #BC6C25;
+  --card-gradient: linear-gradient(135deg, #2D4739, #1B3024);
+  --font-viaoda: "EB Garamond", serif;
+}
+
+body[data-theme="botanical"] #envelope-screen {
+  background: linear-gradient(to bottom right, #3A5A40, #2D4739, #1B3024);
+}
+
+body[data-theme="botanical"] .wax-seal-center {
+  background: radial-gradient(circle at 30% 30%, #3A5A40, #1B3024);
+}
+
+body[data-theme="botanical"] .parchment-red-box {
+  border: 1px solid rgba(188, 108, 37, 0.4);
+}
+
+/* Theme 4: Midnight Glamour (Dạ Tiệc Ánh Sao / Celestial Navy & Gold) */
+body[data-theme="midnight"] {
+  --primary: #F1F5F9;
+  --deep: #0F172A;
+  --cream: #1E293B;
+  --cream-muted: rgba(241, 245, 249, 0.7);
+  --page-bg: #090D16;
+  --gold: #F59E0B;
+  --card-gradient: linear-gradient(135deg, #0F172A, #020617);
+  --font-viaoda: "Cinzel", serif;
+}
+
+body[data-theme="midnight"] html,
+body[data-theme="midnight"] body,
+body[data-theme="midnight"] .page-container {
+  background-color: #090D16;
+  color: #F1F5F9;
+}
+
+body[data-theme="midnight"] #envelope-screen {
+  background: linear-gradient(to bottom right, #1E293B, #0F172A, #020617);
+}
+
+body[data-theme="midnight"] .castle-bg {
+  filter: invert(1) opacity(0.12);
+}
+
+body[data-theme="midnight"] .envelope-inner-card {
+  background: rgba(15, 23, 42, 0.95);
+  color: #F1F5F9;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+body[data-theme="midnight"] .env-guest-box {
+  background: rgba(245, 158, 11, 0.12);
+}
+
+body[data-theme="midnight"] .env-guest-name,
+body[data-theme="midnight"] .env-names-heading,
+body[data-theme="midnight"] .couple-single-name {
+  color: #F8FAFC;
+}
+
+body[data-theme="midnight"] .parchment-red-box {
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.12);
+}
+
+body[data-theme="midnight"] .carousel-3d-card {
+  border-color: #1E293B;
+}
+
+body[data-theme="midnight"] .story-card-item {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: #F1F5F9;
+}
+
+body[data-theme="midnight"] .story-item-title {
+  color: #F59E0B;
+}
+
+body[data-theme="midnight"] .story-item-desc {
+  color: rgba(241, 245, 249, 0.8);
+}
+
 
 *, *::before, *::after {
   box-sizing: border-box;

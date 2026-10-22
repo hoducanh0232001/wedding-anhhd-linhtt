@@ -5,6 +5,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 0. Apply Selected Theme
+  const activeThemeId = WeddingDB.getThemeId();
+  document.body.setAttribute('data-theme', activeThemeId);
+
   // 1. Load Wedding Data from DB
   const settings = WeddingDB.getSettings();
   initDynamicContent(settings);

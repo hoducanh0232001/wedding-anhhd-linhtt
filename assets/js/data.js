@@ -11,7 +11,51 @@ const STORAGE_KEYS = {
   AUTH: 'wedding_admin_auth'
 };
 
+const WEDDING_THEMES = [
+  {
+    id: 'tender',
+    name: 'Chung Đôi Tender',
+    badge: 'Hoàng Gia Đỏ Nhung',
+    desc: 'Đỏ rượu vang nhung, con dấu sáp 3D nhịp đập, lâu đài cổ tích, ảnh Polaroid lơ lửng và album xoay 3D băng đạn.',
+    primary: '#511419',
+    gold: '#c9a24a',
+    bg: '#fff7eb',
+    gradient: 'linear-gradient(135deg, #511419, #380a0e)'
+  },
+  {
+    id: 'editorial',
+    name: 'Modern Editorial',
+    badge: 'Tạp Chí Hàn Quốc',
+    desc: 'Tone trắng ngà thanh khiết, kiểu chữ serif Vogue cao cấp, viền vàng kim đôi, tối giản tinh tế chuẩn Hàn Quốc.',
+    primary: '#242220',
+    gold: '#C5A059',
+    bg: '#FBF9F5',
+    gradient: 'linear-gradient(135deg, #242220, #4A4643)'
+  },
+  {
+    id: 'botanical',
+    name: 'Secret Garden',
+    badge: 'Vườn Cổ Tích Lãng Mạn',
+    desc: 'Tone xanh rêu sage/olive và hoa pastel, họa tiết cành lá vẽ tay, mộc mạc nhẹ nhàng và ấm áp ngọt ngào.',
+    primary: '#344E41',
+    gold: '#BC6C25',
+    bg: '#F7F8F4',
+    gradient: 'linear-gradient(135deg, #344E41, #588157)'
+  },
+  {
+    id: 'midnight',
+    name: 'Midnight Glamour',
+    badge: 'Dạ Tiệc Ánh Sao',
+    desc: 'Tone xanh navy đêm huyền bí kết hợp ánh sao vàng lấp lánh, phong cách dạ tiệc hoàng gia sang trọng bậc nhất.',
+    primary: '#F8FAFC',
+    gold: '#F59E0B',
+    bg: '#0B0F19',
+    gradient: 'linear-gradient(135deg, #0B0F19, #1E293B)'
+  }
+];
+
 const DEFAULT_SETTINGS = {
+  themeId: 'tender',
   theme: {
     name: 'Tender Burgundy & Gold',
     primaryColor: '#511419',
@@ -21,6 +65,7 @@ const DEFAULT_SETTINGS = {
     bgColor: '#fffaf3',
     textColor: '#2e181b'
   },
+
   couple: {
     groom: {
       fullName: 'Nguyễn Đức Anh',
@@ -397,6 +442,26 @@ const WeddingDB = {
     }
 
     return newRSVP;
+  },
+
+  getThemeId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('theme')) {
+      return urlParams.get('theme');
+    }
+    const s = this.getSettings();
+    return s.themeId || 'tender';
+  },
+
+  setThemeId(themeId) {
+    const s = this.getSettings();
+    s.themeId = themeId;
+    this.saveSettings(s);
+    return themeId;
+  },
+
+  getThemes() {
+    return WEDDING_THEMES;
   },
 
   resetToDefault() {

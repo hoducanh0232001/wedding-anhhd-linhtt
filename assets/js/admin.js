@@ -99,6 +99,7 @@ function initSidebarTabs() {
       if (target === 'guests') renderGuestsTable();
       if (target === 'rsvps') renderRSVPsTable();
       if (target === 'dashboard') updateDashboardStats();
+      if (target === 'themes') renderThemesGrid();
     });
   });
 
@@ -116,6 +117,7 @@ function initSidebarTabs() {
 function loadAllAdminData() {
   const settings = WeddingDB.getSettings();
   updateDashboardStats();
+  renderThemesGrid();
   populateSettingsForm(settings);
   populateEventsForm(settings);
   populateBankingForm(settings);
@@ -668,3 +670,79 @@ window.exportRSVPToCSV = function() {
   a.download = `danh_sach_rsvp_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 };
+
+// 10. Multi-Theme Selector Logic
+function renderThemesGrid() {
+  const container = document.getElementById('themes-grid-container');
+  const dashboardPreview = document.getElementById('dashboard-theme-preview');
+  const themes = WeddingDB.getThemes();
+  const currentThemeId = WeddingDB.getThemeId();
+
+  if (container) {
+    container.innerHTML = '';
+    themes.forEach(t => {
+      const isSelected = t.id === currentThemeId;
+      const card = document.createElement('div');
+      card.className = `theme-card ${isSelected ? 'active' : ''}`;
+      card.innerHTML = `
+        <div class="theme-card-preview" style="background:${t.gradient}">
+          <span class="theme-card-badge">${t.badge}</span>
+          <div style="font-family:Georgia,serif;font-size:18px;font-weight:700;margin-bottom:4px;">${t.name}</div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="width:18px;height:18px;border-radius:50%;background:${t.primary};border:2px solid #fff;display:inline-block;"></span>
+            <span style="width:18px;height:18px;border-radius:50%;background:${t.gold};border:2px solid #fff;display:inline-block;"></span>
+            <span style="width:18px;height:18px;border-radius:50%;background:${t.bg};border:2px solid #fff;display:inline-block;"></span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <div>
+            <div class="theme-card-title">${t.name} ${isSelected ? '<span style="color:#10b981;font-size:12px;margin-left:6px;">● Đang áp dụng</span>' : ''}</div>
+            <div class="theme-card-desc">${t.desc}</div>
+          </div>
+          <div class="theme-card-actions">
+            <button type="button" class="admin-btn ${isSelected ? 'admin-btn-secondary' : 'admin-btn-primary'}" onclick="selectTheme('${t.id}')" style="flex:1;">
+              ${isSelected ? '✓ Đang kích hoạt' : 'Áp dụng mẫu này'}
+            </button>
+            <a href="index.html?theme=${t.id}" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;">
+              Xem trước
+            </a>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  if (dashboardPreview) {
+    const cur = themes.find(t => t.id === currentThemeId) || themes[0];
+    dashboardPreview.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:48px;height:48px;border-radius:10px;background:${cur.gradient};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:20px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">
+            ❦
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:16px;color:var(--admin-primary);">${cur.name} <span class="badge-status attending" style="margin-left:6px;">${cur.badge}</span></div>
+            <div style="font-size:12px;color:var(--admin-muted);margin-top:2px;">${cur.desc}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="index.html" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;">Mở Thiệp Xem</a>
+          <button type="button" class="admin-btn admin-btn-primary" onclick="switchAdminTab('themes')">Đổi Mẫu Khác</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.selectTheme = function(themeId) {
+  WeddingDB.setThemeId(themeId);
+  showAdminToast(`Đã áp dụng mẫu ${themeId.toUpperCase()} thành công!`);
+  renderThemesGrid();
+};
+
+window.switchAdminTab = function(tabName) {
+  const btn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
+  if (btn) btn.click();
+};
+

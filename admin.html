@@ -1845,6 +1845,36 @@ body.admin-body {
              TAB 7: SAO LƯU & DỮ LIỆU
              ========================================== -->
         <div id="panel-backup" class="tab-panel">
+          <!-- Firebase Cloud Database Card -->
+          <div class="admin-card" style="margin-bottom:24px;border:1.5px solid #0284c7;">
+            <div class="admin-card-header" style="background:#f0f9ff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <h3 style="color:#0369a1;margin:0;">🔥 Kết Nối Firebase Realtime Database (Đám Mây)</h3>
+              <span id="firebase-status-badge" style="font-size:12.5px;padding:4px 12px;border-radius:20px;font-weight:600;background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;">⚪ Đang kiểm tra...</span>
+            </div>
+            <div class="admin-card-body">
+              <p style="font-size:0.9rem;color:var(--admin-muted);line-height:1.7;margin-bottom:14px;">
+                Kết nối Firebase giúp nhận <strong>toàn bộ lời chúc</strong> và <strong>phản hồi tham dự (RSVP)</strong> từ khách mời trên toàn thế giới theo thời gian thực (Realtime), hoàn toàn miễn phí.
+              </p>
+
+              <div class="admin-form-group" style="margin-bottom:14px;">
+                <label class="admin-form-label" style="font-weight:600;">Dán đoạn mã cấu hình Firebase Config (JSON):</label>
+                <textarea id="firebase-config-input" class="admin-form-input" rows="5" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "wedding-xxx.firebaseapp.com",\n  "databaseURL": "https://wedding-xxx-default-rtdb.asia-southeast1.firebasedatabase.app",\n  "projectId": "wedding-xxx",\n  "storageBucket": "wedding-xxx.appspot.com",\n  "messagingSenderId": "...",\n  "appId": "..."\n}' style="font-family:monospace;font-size:12.5px;"></textarea>
+              </div>
+
+              <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                <button type="button" class="admin-btn admin-btn-primary" onclick="saveFirebaseConfigFromAdmin()" style="background:#0284c7;border-color:#0284c7;">
+                  💾 Lưu &amp; Kết Nối Firebase
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary" onclick="testFirebaseConnection()">
+                  ⚡ Kiểm Tra Kết Nối
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary" onclick="clearFirebaseConfig()" style="color:#ef4444;">
+                  Xoá Cấu Hình
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="admin-card" style="margin-bottom:24px;border:1.5px solid rgba(201,162,74,0.4);">
             <div class="admin-card-header" style="background:rgba(201,162,74,0.08);">
               <h3>⚡ Cơ Chế Lưu &amp; Đồng Bộ Toàn Bộ Dữ Liệu</h3>
@@ -1901,6 +1931,10 @@ body.admin-body {
     </main>
   </div>
 
+  <!-- Firebase Realtime Database SDK (Compat CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="assets/js/firebase-config.js?v=1.0"></script>
   <!-- Scripts -->
   <script src="assets/js/data.js?v=5.1"></script>
   <script src="assets/js/admin.js?v=5.1"></script>

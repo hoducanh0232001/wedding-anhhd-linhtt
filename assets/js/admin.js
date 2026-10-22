@@ -1442,3 +1442,80 @@ window.copySettingsCode = function() {
     prompt('Vui lòng sao chép đoạn mã cấu hình dưới đây:', code);
   });
 };
+
+// ==========================================
+// FIREBASE CLOUD DATABASE CONTROLLER
+// ==========================================
+window.checkFirebaseStatus = function() {
+  const badge = document.getElementById('firebase-status-badge');
+  const input = document.getElementById('firebase-config-input');
+  const saved = localStorage.getItem('wedding_firebase_config');
+  if (saved && input && !input.value) {
+    input.value = saved;
+  }
+  if (badge) {
+    if (window.weddingFirebaseDb) {
+      badge.innerHTML = '🟢 Đã Kết Nối Firebase Realtime DB';
+      badge.style.background = '#ecfdf5';
+      badge.style.color = '#065f46';
+      badge.style.borderColor = '#a7f3d0';
+    } else {
+      badge.innerHTML = '⚪ Chưa cấu hình (Chế độ Local)';
+      badge.style.background = '#f1f5f9';
+      badge.style.color = '#64748b';
+      badge.style.borderColor = '#cbd5e1';
+    }
+  }
+};
+
+window.saveFirebaseConfigFromAdmin = function() {
+  const input = document.getElementById('firebase-config-input');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    alert('Vui lòng dán đoạn mã cấu hình Firebase Config JSON!');
+    return;
+  }
+  try {
+    const config = JSON.parse(val);
+    if (!config.projectId && !config.databaseURL) {
+      alert('Cấu hình Firebase không hợp lệ! Vui lòng kiểm tra lại projectId hoặc databaseURL.');
+      return;
+    }
+    localStorage.setItem('wedding_firebase_config', JSON.stringify(config, null, 2));
+    showAdminToast('✅ Đã lưu cấu hình Firebase! Đang kết nối lại...');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  } catch(e) {
+    alert('Mã cấu hình không đúng định dạng JSON: ' + e.message);
+  }
+};
+
+window.testFirebaseConnection = function() {
+  if (window.weddingFirebaseDb) {
+    alert('✅ Firebase Realtime Database đang hoạt động rất tốt!');
+  } else {
+    alert('⚪ Chưa kết nối Firebase. Vui lòng dán cấu hình Firebase và bấm "Lưu & Kết Nối".');
+  }
+};
+
+window.clearFirebaseConfig = function() {
+  if (confirm('Bạn có chắc muốn xoá cấu hình Firebase đã lưu trên trình duyệt này?')) {
+    localStorage.removeItem('wedding_firebase_config');
+    showAdminToast('Đã xoá cấu hình Firebase.');
+    setTimeout(() => {
+      window.location.reload();
+    }, 800);
+  }
+};
+
+// Realtime listeners in Admin
+window.addEventListener('wedding_wishes_synced', () => {
+  if (typeof renderAdminWishesList === 'function') renderAdminWishesList();
+  if (typeof updateDashboardStats === 'function') updateDashboardStats();
+});
+window.addEventListener('wedding_rsvps_synced', () => {
+  if (typeof renderRSVPsAdmin === 'function') renderRSVPsAdmin();
+  if (typeof updateDashboardStats === 'function') updateDashboardStats();
+});

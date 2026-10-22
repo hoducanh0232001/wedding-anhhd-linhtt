@@ -1758,3 +1758,10 @@ function initAutoScrollControls() {
     window.addEventListener(evt, pauseOnUserTouch, { passive: true });
   });
 }
+
+// Listen for Realtime wishes update from Firebase
+window.addEventListener('wedding_wishes_synced', () => {
+  if (typeof initWishesList === 'function') {
+    initWishesList();
+  }
+});

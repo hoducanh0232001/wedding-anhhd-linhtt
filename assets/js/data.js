@@ -448,6 +448,24 @@ const WeddingDB = {
     };
     wishes.unshift(newWish);
     this.saveWishes(wishes);
+
+    if (typeof window !== 'undefined' && window.weddingFirebaseDb) {
+      try {
+        const ref = window.weddingFirebaseDb.ref('wishes').push();
+        newWish.id = ref.key;
+        ref.set({
+          name: newWish.name,
+          relation: newWish.relation || '',
+          message: newWish.message || '',
+          timestamp: newWish.timestamp,
+          likes: newWish.likes || 1,
+          createdAt: typeof firebase !== 'undefined' && firebase.database ? firebase.database.ServerValue.TIMESTAMP : Date.now()
+        });
+      } catch (e) {
+        console.warn('Firebase push wish error:', e);
+      }
+    }
+
     return newWish;
   },
 
@@ -472,6 +490,25 @@ const WeddingDB = {
     };
     rsvps.unshift(newRSVP);
     localStorage.setItem(STORAGE_KEYS.RSVPS, JSON.stringify(rsvps));
+
+    if (typeof window !== 'undefined' && window.weddingFirebaseDb) {
+      try {
+        const ref = window.weddingFirebaseDb.ref('rsvps').push();
+        newRSVP.id = ref.key;
+        ref.set({
+          name: newRSVP.name || '',
+          phone: newRSVP.phone || '',
+          attendance: newRSVP.attendance || 'yes',
+          guestCount: newRSVP.guestCount || 1,
+          party: newRSVP.party || 'Nhà Trai & Nhà Gái',
+          wish: newRSVP.wish || '',
+          submittedAt: newRSVP.submittedAt,
+          createdAt: typeof firebase !== 'undefined' && firebase.database ? firebase.database.ServerValue.TIMESTAMP : Date.now()
+        });
+      } catch (e) {
+        console.warn('Firebase push RSVP error:', e);
+      }
+    }
 
     // Also update guest status if matched by name or phone
     const guests = this.getGuests();

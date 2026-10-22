@@ -174,6 +174,26 @@
           Tức Ngày 21 Tháng 10 Năm Bính Ngọ
         </div>
 
+        <!-- Live Countdown Clock to Wedding Day -->
+        <div class="countdown-box-container">
+          <div class="countdown-box-item">
+            <div class="countdown-number" id="count-days">00</div>
+            <div class="countdown-unit">Ngày</div>
+          </div>
+          <div class="countdown-box-item">
+            <div class="countdown-number" id="count-hours">00</div>
+            <div class="countdown-unit">Giờ</div>
+          </div>
+          <div class="countdown-box-item">
+            <div class="countdown-number" id="count-mins">00</div>
+            <div class="countdown-unit">Phút</div>
+          </div>
+          <div class="countdown-box-item">
+            <div class="countdown-number" id="count-secs">00</div>
+            <div class="countdown-unit">Giây</div>
+          </div>
+        </div>
+
         <!-- Mini Calendar Widget -->
         <div class="mini-calendar-widget">
           <div class="mini-cal-header">Tháng 11 - 2026</div>
@@ -252,28 +272,101 @@
       </div>
     </section>
 
-    <!-- 6. PHOTO GALLERY -->
-    <section class="gallery-section">
+    <!-- 5.5. LOVE STORY (Chuyện Tình Yêu) -->
+    <section class="story-timeline-section">
       <h3 style="font-family:var(--font-serif);font-size:20px;letter-spacing:0.04em;text-transform:uppercase;color:var(--primary);margin-bottom:6px;">
-        ALBUM ẢNH CƯỚI
+        CHUYỆN TÌNH YÊU
       </h3>
-      <p style="font-size:12px;color:rgba(81,20,25,0.7);margin-bottom:14px;">Chạm vào từng bức ảnh để phóng to</p>
+      <p style="font-size:12px;color:rgba(81,20,25,0.7);margin-bottom:18px;">Hành trình từ cái nhìn đầu tiên đến ngày chung đôi</p>
 
-      <div class="gallery-grid-2col" id="gallery-grid">
-        <div class="gallery-card-item" onclick="openLightboxImage('assets/images/hero_couple.jpg')">
-          <img src="assets/images/hero_couple.jpg" alt="Ảnh cưới" loading="lazy" />
+      <div class="story-card-item">
+        <img src="assets/images/story_dating.jpg" alt="Lần đầu gặp gỡ" loading="lazy" />
+        <div>
+          <span class="story-year-badge">Năm 2021</span>
+          <div class="story-item-title">Chạm Ánh Mắt Đầu Tiên</div>
+          <div class="story-item-desc">Một buổi chiều thu Hà Nội dịu dàng, chúng mình vô tình quen nhau qua những người bạn chung. Một nụ cười làm say cả một đời.</div>
         </div>
-        <div class="gallery-card-item" onclick="openLightboxImage('assets/images/gallery_walk.jpg')">
-          <img src="assets/images/gallery_walk.jpg" alt="Ảnh cưới" loading="lazy" />
+      </div>
+
+      <div class="story-card-item">
+        <img src="assets/images/story_proposal.jpg" alt="Lời cầu hôn" loading="lazy" />
+        <div>
+          <span class="story-year-badge">Năm 2024</span>
+          <div class="story-item-title">Lời Cầu Hôn Ngọt Ngào</div>
+          <div class="story-item-desc">Dưới ánh nến lung linh và tiếng sóng biển vỗ rì rào, anh trao chiếc nhẫn nhỏ cùng lời hẹn ước: “Hãy cùng anh đi trọn cuộc đời này nhé!”</div>
         </div>
-        <div class="gallery-card-item" onclick="openLightboxImage('assets/images/story_proposal.jpg')">
-          <img src="assets/images/story_proposal.jpg" alt="Ảnh cưới" loading="lazy" />
-        </div>
-        <div class="gallery-card-item" onclick="openLightboxImage('assets/images/story_dating.jpg')">
-          <img src="assets/images/story_dating.jpg" alt="Ảnh cưới" loading="lazy" />
+      </div>
+
+      <div class="story-card-item">
+        <img src="assets/images/gallery_walk.jpg" alt="Chung đôi" loading="lazy" />
+        <div>
+          <span class="story-year-badge">Năm 2026</span>
+          <div class="story-item-title">Ngày Chung Đôi Trọn Vẹn</div>
+          <div class="story-item-desc">Sau ngần ấy năm gắn bó và sẻ chia, chúng mình hạnh phúc nắm chặt tay nhau bước vào ngưỡng cửa hôn nhân, bắt đầu tổ ấm nhỏ tràn ngập yêu thương.</div>
         </div>
       </div>
     </section>
+
+    <!-- 6. 3D CYLINDER REVOLVER CAROUSEL (Băng Đạn Xoay Tròn 3D) -->
+    <section class="carousel-3d-section">
+      <h3 style="font-family:var(--font-serif);font-size:20px;letter-spacing:0.04em;text-transform:uppercase;color:var(--primary);margin-bottom:4px;">
+        ALBUM ẢNH CƯỚI
+      </h3>
+      <p style="font-size:12px;color:rgba(81,20,25,0.7);margin-bottom:8px;">
+        Chạm vuốt để xoay vòng 3D • Bấm ảnh giữa để phóng to
+      </p>
+
+      <!-- 3D Carousel Stage -->
+      <div class="carousel-3d-stage" id="carousel-3d-stage">
+        <!-- Navigation Buttons -->
+        <button type="button" class="carousel-nav-btn prev" id="carousel-prev-btn" aria-label="Ảnh trước">
+          <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button type="button" class="carousel-nav-btn next" id="carousel-next-btn" aria-label="Ảnh tiếp">
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <!-- Carousel Cards Generated dynamically -->
+        <div id="carousel-cards-track" style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+      </div>
+
+      <!-- Pagination Dots -->
+      <div class="carousel-dots-bar" id="carousel-dots"></div>
+    </section>
+
+    <!-- 6.5. DRESS CODE (Trang Phục Gợi Ý) -->
+    <section class="dresscode-section">
+      <h3 style="font-family:var(--font-serif);font-size:18px;letter-spacing:0.04em;text-transform:uppercase;color:var(--primary);margin-bottom:4px;">
+        TRANG PHỤC GỢI Ý (DRESS CODE)
+      </h3>
+      <p style="font-size:12px;color:rgba(81,20,25,0.7);line-height:1.5;">
+        Để có những bức ảnh kỷ niệm tuyệt đẹp và hòa cùng không gian ấm cúng, quý khách có thể ưu tiên các tone màu sau:
+      </p>
+
+      <div class="dresscode-palette">
+        <div class="dresscode-swatch">
+          <div class="dresscode-color-circle" style="background:#511419;" title="Đỏ Burgundy"></div>
+          <span class="dresscode-label">Đỏ Rượu</span>
+        </div>
+        <div class="dresscode-swatch">
+          <div class="dresscode-color-circle" style="background:#ece4d8;" title="Beige / Kem"></div>
+          <span class="dresscode-label">Beige / Kem</span>
+        </div>
+        <div class="dresscode-swatch">
+          <div class="dresscode-color-circle" style="background:#6f4e37;" title="Nâu Mocha"></div>
+          <span class="dresscode-label">Nâu Mocha</span>
+        </div>
+        <div class="dresscode-swatch">
+          <div class="dresscode-color-circle" style="background:#ffffff;border-color:#ddd;" title="Trắng Sáng"></div>
+          <span class="dresscode-label">Trắng Sáng</span>
+        </div>
+        <div class="dresscode-swatch">
+          <div class="dresscode-color-circle" style="background:#222222;" title="Đen Lịch Lãm"></div>
+          <span class="dresscode-label">Đen Lịch Lãm</span>
+        </div>
+      </div>
+    </section>
+
 
     <!-- 7. GUESTBOOK & RSVP (Vintage Papernote Background) -->
     <section class="papernote-section" id="section-rsvp">

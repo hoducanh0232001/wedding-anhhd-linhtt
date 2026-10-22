@@ -1,6 +1,7 @@
 /**
  * Wedding Invitation Interactions & Dynamic Renderer
  * Chung Đôi "Tender" Theme - Đức Anh & Thuỳ Linh
+ * Includes 3D Cylindrical Revolver Carousel ("Băng đạn xoay xoay"), Countdown, Audio, etc.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initAmbientPetals();
   initMusicPlayer(settings);
   initEnvelopeOpener();
+  initCountdown(settings.wedding.date + 'T' + settings.wedding.time);
+  init3DRevolverCarousel(settings.gallery);
   initRSVPForm();
   initWishesList();
 });
@@ -171,7 +174,6 @@ function initEnvelopeOpener() {
   const btnOpen = document.getElementById('btn-open-envelope');
   const waxSeal = document.getElementById('wax-seal-btn');
 
-  // Check URL if already open
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('open') === '1') {
     if (envelopeScreen) envelopeScreen.classList.add('opened');
@@ -238,7 +240,6 @@ function pauseBackgroundMusic() {
   stopWebAudioHarpFallback();
 }
 
-// Gentle Web Audio API ambient chime fallback
 let audioCtx = null;
 let harpInterval = null;
 
@@ -284,7 +285,215 @@ function stopWebAudioHarpFallback() {
   }
 }
 
-// 6. Lightbox View
+// 6. Live Countdown Clock
+function initCountdown(targetDateStr) {
+  const daysEl = document.getElementById('count-days');
+  const hoursEl = document.getElementById('count-hours');
+  const minsEl = document.getElementById('count-mins');
+  const secsEl = document.getElementById('count-secs');
+
+  if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+
+  function update() {
+    const target = new Date(targetDateStr).getTime();
+    const now = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minsEl.textContent = '00';
+      secsEl.textContent = '00';
+      return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    daysEl.textContent = String(d).padStart(2, '0');
+    hoursEl.textContent = String(h).padStart(2, '0');
+    minsEl.textContent = String(m).padStart(2, '0');
+    secsEl.textContent = String(s).padStart(2, '0');
+  }
+
+  update();
+  setInterval(update, 1000);
+}
+
+// 7. 3D CYLINDER REVOLVER CAROUSEL ("BĂNG ĐẠN XOAY TRÒN 3D")
+function init3DRevolverCarousel(gallery) {
+  const track = document.getElementById('carousel-cards-track');
+  const dotsContainer = document.getElementById('carousel-dots');
+  const prevBtn = document.getElementById('carousel-prev-btn');
+  const nextBtn = document.getElementById('carousel-next-btn');
+  const stage = document.getElementById('carousel-3d-stage');
+
+  if (!track || !gallery || gallery.length === 0) return;
+
+  // Build card elements
+  track.innerHTML = '';
+  if (dotsContainer) dotsContainer.innerHTML = '';
+
+  const cards = [];
+  const count = gallery.length;
+  let activeIndex = 0;
+  let autoTimer = null;
+  let isHovered = false;
+
+  gallery.forEach((item, idx) => {
+    // Card element
+    const card = document.createElement('div');
+    card.className = 'carousel-3d-card';
+    card.innerHTML = `<img src="${item.src}" alt="${item.caption || 'Ảnh cưới'}" loading="lazy" />`;
+    
+    card.addEventListener('click', () => {
+      if (idx === activeIndex) {
+        // Open lightbox
+        openLightboxImage(item.src);
+      } else {
+        // Rotate this card to center
+        activeIndex = idx;
+        renderCarousel();
+        resetAutoTimer();
+      }
+    });
+
+    track.appendChild(card);
+    cards.push(card);
+
+    // Dot button
+    if (dotsContainer) {
+      const dot = document.createElement('button');
+      dot.className = `carousel-dot ${idx === 0 ? 'active' : ''}`;
+      dot.setAttribute('aria-label', `Xem ảnh ${idx + 1}`);
+      dot.addEventListener('click', () => {
+        activeIndex = idx;
+        renderCarousel();
+        resetAutoTimer();
+      });
+      dotsContainer.appendChild(dot);
+    }
+  });
+
+  // Calculate and apply 3D cylinder revolver positions
+  function renderCarousel() {
+    cards.forEach((card, idx) => {
+      let l = idx - activeIndex;
+      if (l > count / 2) l -= count;
+      else if (l < -count / 2) l += count;
+
+      const o = Math.abs(l);
+      const isCenter = (l === 0);
+
+      // 3D Cylinder geometry matching Chung Doi
+      const scale = Math.max(0.68, 1 - 0.14 * o);
+      const opacity = Math.max(0.2, 1 - 0.28 * o);
+      const translateX = 65 * l;
+      const translateZ = -(160 * o);
+      const rotateY = 45 * l;
+      const zIndex = 100 - o;
+
+      card.style.transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+      card.style.opacity = opacity;
+      card.style.zIndex = zIndex;
+
+      if (isCenter) {
+        card.classList.add('active-center');
+      } else {
+        card.classList.remove('active-center');
+      }
+    });
+
+    // Update dots
+    if (dotsContainer) {
+      const dots = dotsContainer.querySelectorAll('.carousel-dot');
+      dots.forEach((dot, idx) => {
+        if (idx === activeIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+  }
+
+  function nextSlide() {
+    activeIndex = (activeIndex + 1) % count;
+    renderCarousel();
+  }
+
+  function prevSlide() {
+    activeIndex = (activeIndex - 1 + count) % count;
+    renderCarousel();
+  }
+
+  function resetAutoTimer() {
+    if (autoTimer) clearInterval(autoTimer);
+    if (!isHovered) {
+      autoTimer = setInterval(nextSlide, 2400);
+    }
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetAutoTimer();
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetAutoTimer();
+    });
+  }
+
+  // Hover pause
+  if (stage) {
+    stage.addEventListener('mouseenter', () => {
+      isHovered = true;
+      if (autoTimer) clearInterval(autoTimer);
+    });
+    stage.addEventListener('mouseleave', () => {
+      isHovered = false;
+      resetAutoTimer();
+    });
+
+    // Touch Swipe Support
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    stage.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      if (autoTimer) clearInterval(autoTimer);
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      resetAutoTimer();
+    }, { passive: true });
+  }
+
+  // Initial render & start auto-timer
+  renderCarousel();
+  resetAutoTimer();
+}
+
+// 8. Lightbox View
 window.openLightboxImage = function(src) {
   const modal = document.getElementById('lightbox-modal');
   const imgEl = document.getElementById('lightbox-img');
@@ -301,7 +510,7 @@ window.closeLightbox = function() {
   }
 };
 
-// 7. VietQR Tab Switcher & Copy STK
+// 9. VietQR Tab Switcher & Copy STK
 window.toggleGiftTab = function(tab) {
   const groomBox = document.getElementById('gift-groom-box');
   const brideBox = document.getElementById('gift-bride-box');
@@ -345,7 +554,7 @@ window.copyStk = function(stk) {
   }
 };
 
-// 8. Add to Google Calendar
+// 10. Add to Google Calendar
 window.addToGoogleCalendar = function(title, date, time, location) {
   const startDateTime = `${date.replace(/-/g, '')}T${time.replace(/:/g, '')}00`;
   const endDateTime = `${date.replace(/-/g, '')}T140000`;
@@ -353,7 +562,7 @@ window.addToGoogleCalendar = function(title, date, time, location) {
   window.open(url, '_blank');
 };
 
-// 9. Wishes Book Renderer
+// 11. Wishes Book Renderer
 function initWishesList() {
   const container = document.getElementById('wishes-display-box') || document.getElementById('wishes-list-container');
   if (!container) return;
@@ -376,7 +585,7 @@ function initWishesList() {
   });
 }
 
-// 10. RSVP Form Submission
+// 12. RSVP Form Submission
 function initRSVPForm() {
   const form = document.getElementById('wedding-rsvp-form');
   if (!form) return;
@@ -424,12 +633,11 @@ function initRSVPForm() {
     fireConfetti();
     showToast('Xác nhận tham dự thành công! Cảm ơn bạn rất nhiều ❤');
 
-    // Reset wish input
     if (wishInput) wishInput.value = '';
   });
 }
 
-// 11. Confetti Animation
+// 13. Confetti Animation
 function fireConfetti() {
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';

@@ -41,6 +41,7 @@ function showToast(message) {
 // 1. Dynamic Content Binding from settings
 function initDynamicContent(settings) {
   if (!settings) settings = WeddingDB.getSettings();
+  document.body.setAttribute('data-theme', WeddingDB.getThemeId());
 
   // Short names (for envelope)
   const groomShortEls = document.querySelectorAll('.bind-groom-short');
@@ -1016,10 +1017,12 @@ function fireConfetti() {
 window.addEventListener('storage', (e) => {
   if (e.key === STORAGE_KEYS.SETTINGS) {
     const updated = WeddingDB.getSettings();
+    document.body.setAttribute('data-theme', WeddingDB.getThemeId());
     initDynamicContent(updated);
   }
 });
 
 window.addEventListener('wedding_settings_updated', (e) => {
+  document.body.setAttribute('data-theme', WeddingDB.getThemeId());
   initDynamicContent(e.detail || WeddingDB.getSettings());
 });

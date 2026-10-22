@@ -9,15 +9,25 @@
 /* ==========================================================================
    1. VARIABLES & DESIGN TOKENS
    ========================================================================== */
-:root {
+:root,
+body[data-theme="tender"] {
   --primary: #511419;
-  --deep: #590310;
+  --primary-rgb: 81, 20, 25;
+  --deep: #380a0e;
   --cream: #ece4d8;
   --cream-muted: rgba(236, 228, 216, 0.72);
   --page-bg: #fff7eb;
   --gold: #c9a24a;
   --gold-light: #e6ca85;
   --gold-border: rgba(201, 162, 74, 0.45);
+  --env-grad: linear-gradient(to bottom right, #6e1a20, #511419, #380a0e);
+  --seal-grad: radial-gradient(circle at 30% 30%, #511419, #330000);
+  --seal-shadow: rgba(81, 20, 25, 0.5);
+  --btn-shadow: rgba(81, 20, 25, 0.35);
+  --card-bg-red: #511419;
+  --paper-card-bg: #faf6ef;
+  --border-subtle: rgba(81, 20, 25, 0.15);
+  --text-muted: rgba(81, 20, 25, 0.72);
 
   --font-title: "Viaoda Libre", "Cormorant Garamond", Georgia, serif;
   --font-serif: "Times New Roman", Times, serif;
@@ -26,6 +36,66 @@
   --font-script: "The Nautigal", "Alex Brush", cursive;
   --font-amp: "Ms Madi", "The Nautigal", cursive;
   --font-sans: "Be Vietnam Pro", -apple-system, sans-serif;
+}
+
+body[data-theme="editorial"] {
+  --primary: #242220;
+  --primary-rgb: 36, 34, 32;
+  --deep: #141312;
+  --cream: #f4ede4;
+  --cream-muted: rgba(244, 237, 228, 0.75);
+  --page-bg: #faf8f5;
+  --gold: #c5a059;
+  --gold-light: #dfc285;
+  --gold-border: rgba(197, 160, 89, 0.5);
+  --env-grad: linear-gradient(135deg, #2b2826, #1c1a18, #11100f);
+  --seal-grad: radial-gradient(circle at 30% 30%, #3e3b38, #1c1a18);
+  --seal-shadow: rgba(36, 34, 32, 0.5);
+  --btn-shadow: rgba(36, 34, 32, 0.35);
+  --card-bg-red: #242220;
+  --paper-card-bg: #f7f5f1;
+  --border-subtle: rgba(36, 34, 32, 0.15);
+  --text-muted: rgba(36, 34, 32, 0.72);
+}
+
+body[data-theme="botanical"] {
+  --primary: #284234;
+  --primary-rgb: 40, 66, 52;
+  --deep: #1a2d23;
+  --cream: #e8eee6;
+  --cream-muted: rgba(232, 238, 230, 0.75);
+  --page-bg: #f3f6f1;
+  --gold: #bc6c25;
+  --gold-light: #dda15e;
+  --gold-border: rgba(188, 108, 37, 0.5);
+  --env-grad: linear-gradient(135deg, #2e4d3d, #20382b, #15251d);
+  --seal-grad: radial-gradient(circle at 30% 30%, #344e41, #1a2a22);
+  --seal-shadow: rgba(40, 66, 52, 0.5);
+  --btn-shadow: rgba(40, 66, 52, 0.35);
+  --card-bg-red: #284234;
+  --paper-card-bg: #f4f7f2;
+  --border-subtle: rgba(40, 66, 52, 0.15);
+  --text-muted: rgba(40, 66, 52, 0.72);
+}
+
+body[data-theme="midnight"] {
+  --primary: #f8fafc;
+  --primary-rgb: 248, 250, 252;
+  --deep: #050811;
+  --cream: #1e293b;
+  --cream-muted: rgba(226, 232, 240, 0.75);
+  --page-bg: #0a101d;
+  --gold: #f59e0b;
+  --gold-light: #fbbf24;
+  --gold-border: rgba(245, 158, 11, 0.5);
+  --env-grad: linear-gradient(135deg, #1e293b, #0f172a, #020617);
+  --seal-grad: radial-gradient(circle at 30% 30%, #334155, #0f172a);
+  --seal-shadow: rgba(15, 23, 42, 0.7);
+  --btn-shadow: rgba(245, 158, 11, 0.3);
+  --card-bg-red: #111a2e;
+  --paper-card-bg: #111a2e;
+  --border-subtle: rgba(245, 158, 11, 0.25);
+  --text-muted: rgba(226, 232, 240, 0.75);
 }
 
 /* ==========================================================================
@@ -118,7 +188,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom right, #6e1a20, #511419, #380a0e);
+  background: var(--env-grad, linear-gradient(to bottom right, #6e1a20, #511419, #380a0e));
   overflow: hidden;
   transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s ease, visibility 0.75s;
 }
@@ -197,8 +267,8 @@ html, body {
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #511419, #330000);
-  box-shadow: 0 4px 20px rgba(81, 20, 25, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  background: var(--seal-grad, radial-gradient(circle at 30% 30%, #511419, #330000));
+  box-shadow: 0 4px 20px var(--seal-shadow, rgba(81, 20, 25, 0.5)), inset 0 2px 4px rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,7 +285,7 @@ html, body {
 }
 
 .env-names-heading {
-  color: #511419;
+  color: var(--primary);
   font-family: var(--font-title);
   font-size: 2.25rem;
   line-height: 1.15;
@@ -228,7 +298,7 @@ html, body {
   font-size: 1.4rem;
   display: block;
   margin: -2px 0;
-  color: #511419;
+  color: var(--primary);
   font-weight: 400;
 }
 
@@ -243,17 +313,17 @@ html, body {
 .env-divider-leaf .line {
   width: 42px;
   height: 1px;
-  background: linear-gradient(to right, transparent, #511419);
+  background: linear-gradient(to right, transparent, var(--primary));
 }
 
 .env-divider-leaf .line.right {
-  background: linear-gradient(to left, transparent, #511419);
+  background: linear-gradient(to left, transparent, var(--primary));
 }
 
 .env-date-text {
   font-family: var(--font-body);
   font-size: 17px;
-  color: rgba(81, 20, 25, 0.72);
+  color: var(--text-muted, rgba(81, 20, 25, 0.72));
   margin-bottom: 14px;
 }
 
@@ -265,7 +335,7 @@ html, body {
   font-family: var(--font-body);
   font-size: 16px;
   font-weight: 300;
-  color: rgba(81, 20, 25, 0.72);
+  color: var(--text-muted, rgba(81, 20, 25, 0.72));
   margin-bottom: 2px;
 }
 
@@ -273,14 +343,14 @@ html, body {
   font-family: var(--font-title);
   font-size: 20px;
   font-weight: 600;
-  color: #511419;
+  color: var(--primary);
 }
 
 .btn-open-wax {
   position: relative;
-  background-color: #511419;
+  background-color: var(--primary);
   color: #f3e8de;
-  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.35);
+  box-shadow: 0 4px 14px var(--btn-shadow, rgba(81, 20, 25, 0.35));
   font-family: var(--font-body);
   font-size: 17px;
   font-weight: 600;
@@ -1135,7 +1205,7 @@ html, body {
   font-family: var(--font-serif);
   font-size: 17px;
   font-weight: 700;
-  color: #511419 !important;
+  color: var(--primary) !important;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
@@ -1145,7 +1215,7 @@ html, body {
 .venue-address-desc {
   font-family: var(--font-body);
   font-size: 13px;
-  color: rgba(81, 20, 25, 0.85) !important;
+  color: var(--text-muted, rgba(81, 20, 25, 0.85)) !important;
   line-height: 1.5;
   max-width: 320px;
   margin: 0 auto 16px;
@@ -1204,16 +1274,19 @@ html, body {
   text-align: center;
 }
 
-/* Parchment paper card */
+/* Parchment paper card - Crisp paper texture without blurry white border */
 .papernote-card {
   position: relative;
   max-width: 390px;
   margin: 0 auto;
-  padding: 30px 24px 28px;
-  background-image: url('../images/theme/papernote_card.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  filter: drop-shadow(0 6px 18px rgba(81, 20, 25, 0.09));
+  padding: 28px 22px 24px;
+  background-color: var(--paper-card-bg, #faf6ef);
+  background-image: url('../images/theme/paper.webp');
+  background-size: cover;
+  background-position: center;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle, rgba(81, 20, 25, 0.12));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
 }
 
@@ -1702,4 +1775,299 @@ html, body {
 .toast-tender.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+}
+
+/* ==========================================================================
+   THEME STYLES & OVERRIDES (Multi-Theme System)
+   ========================================================================== */
+
+/* 1. EDITORIAL THEME (Vogue Korean Luxury) */
+body[data-theme="editorial"] {
+  color: #242220;
+}
+body[data-theme="editorial"] .parchment-red-box,
+body[data-theme="editorial"] .parchment-bg-red,
+body[data-theme="editorial"] .reception-red-box {
+  background-color: #242220;
+}
+body[data-theme="editorial"] .card-title-gold {
+  color: #c5a059;
+}
+body[data-theme="editorial"] .ceremony-role {
+  color: rgba(244, 237, 228, 0.8);
+}
+body[data-theme="editorial"] .wax-seal-center svg {
+  fill: #c5a059;
+}
+body[data-theme="editorial"] .btn-submit-note:hover,
+body[data-theme="editorial"] .btn-toggle-qr:hover {
+  background: #141312;
+}
+
+/* 2. BOTANICAL THEME (Secret Garden Forest Sage) */
+body[data-theme="botanical"] {
+  color: #284234;
+}
+body[data-theme="botanical"] .parchment-red-box,
+body[data-theme="botanical"] .parchment-bg-red,
+body[data-theme="botanical"] .reception-red-box {
+  background-color: #284234;
+}
+body[data-theme="botanical"] .card-title-gold {
+  color: #bc6c25;
+}
+body[data-theme="botanical"] .ceremony-role {
+  color: rgba(232, 238, 230, 0.8);
+}
+body[data-theme="botanical"] .wax-seal-center svg {
+  fill: #dda15e;
+}
+body[data-theme="botanical"] .btn-submit-note:hover,
+body[data-theme="botanical"] .btn-toggle-qr:hover {
+  background: #1a2d23;
+}
+
+/* 3. MIDNIGHT GLAMOUR THEME (Royal Celestial Galaxy Starry Night) */
+body[data-theme="midnight"] {
+  background-color: #040812;
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .page-container {
+  background-color: #0a101d;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+  border-left-color: rgba(245, 158, 11, 0.2);
+  border-right-color: rgba(245, 158, 11, 0.2);
+}
+body[data-theme="midnight"] .paper-overlay {
+  opacity: 0.12;
+  filter: invert(1);
+}
+body[data-theme="midnight"] .castle-bg {
+  opacity: 0.22;
+  filter: invert(1) brightness(1.2);
+}
+body[data-theme="midnight"] .envelope-inner-card {
+  background: rgba(14, 22, 38, 0.96);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.15);
+}
+body[data-theme="midnight"] .env-date-text,
+body[data-theme="midnight"] .env-guest-label {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .env-guest-name {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .btn-open-wax {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0a101d;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4);
+}
+body[data-theme="midnight"] .wax-seal-center {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+}
+body[data-theme="midnight"] .wax-seal-center svg {
+  fill: #f59e0b;
+}
+body[data-theme="midnight"] .hero-quote-tender {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .couple-single-name {
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .couple-names-amp {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .section-title-tender {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .section-subtitle-tender {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .parchment-red-box,
+body[data-theme="midnight"] .reception-red-box {
+  background-color: #111a2e;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+body[data-theme="midnight"] .parchment-bg-red {
+  background-color: #111a2e;
+}
+body[data-theme="midnight"] .parchment-texture-img {
+  opacity: 0.15;
+  filter: invert(1);
+}
+body[data-theme="midnight"] .card-title-gold {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .family-title {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .family-parent-name {
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .family-address {
+  color: #94a3b8;
+}
+body[data-theme="midnight"] .family-divider-vertical {
+  background: rgba(245, 158, 11, 0.3);
+}
+body[data-theme="midnight"] .announcement-text,
+body[data-theme="midnight"] .ceremony-role {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .ceremony-name {
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .ceremony-amp {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .ceremony-big-day {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .ceremony-date-part {
+  color: #e2e8f0;
+}
+body[data-theme="midnight"] .ceremony-date-divider {
+  background: rgba(245, 158, 11, 0.4);
+}
+body[data-theme="midnight"] .ceremony-lunar-date {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .reception-time-str {
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .mini-calendar-wrapper {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+body[data-theme="midnight"] .mini-cal-title {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .mini-cal-table th {
+  color: #94a3b8;
+}
+body[data-theme="midnight"] .mini-cal-table td {
+  color: #f1f5f9;
+}
+body[data-theme="midnight"] .countdown-box {
+  background: rgba(26, 38, 64, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+body[data-theme="midnight"] .countdown-number {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .countdown-label {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .carousel-nav-btn {
+  background: rgba(26, 38, 64, 0.85);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .carousel-page-counter {
+  color: #cbd5e1;
+}
+body[data-theme="midnight"] .venue-name-title {
+  color: #f59e0b !important;
+}
+body[data-theme="midnight"] .venue-address-desc {
+  color: #cbd5e1 !important;
+}
+body[data-theme="midnight"] .map-card-tender {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+body[data-theme="midnight"] .btn-map-gold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0a101d;
+  font-weight: 700;
+}
+body[data-theme="midnight"] .papernote-card {
+  background-color: #111a2e;
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+body[data-theme="midnight"] .papernote-card-title {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .note-input,
+body[data-theme="midnight"] .note-textarea {
+  background: rgba(26, 38, 64, 0.7);
+  color: #f8fafc;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+body[data-theme="midnight"] .note-input::placeholder,
+body[data-theme="midnight"] .note-textarea::placeholder {
+  color: #94a3b8;
+}
+body[data-theme="midnight"] .note-input:focus,
+body[data-theme="midnight"] .note-textarea:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+  background: rgba(26, 38, 64, 0.95);
+}
+body[data-theme="midnight"] .btn-wish-wand {
+  background: rgba(26, 38, 64, 0.85);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+body[data-theme="midnight"] .btn-submit-note {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0a101d;
+  font-weight: 800;
+}
+body[data-theme="midnight"] .quick-wishes-popover {
+  background: rgba(14, 22, 38, 0.95);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+body[data-theme="midnight"] .quick-wishes-popover-title {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .btn-quick-wish {
+  background: rgba(26, 38, 64, 0.9);
+  color: #f1f5f9;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+body[data-theme="midnight"] .wish-item-card {
+  background: rgba(17, 26, 46, 0.9);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+body[data-theme="midnight"] .wish-author-name {
+  color: #f59e0b;
+}
+body[data-theme="midnight"] .wish-content-text {
+  color: #e2e8f0;
+}
+body[data-theme="midnight"] .wish-time-ago {
+  color: #94a3b8;
+}
+body[data-theme="midnight"] .btn-toggle-qr {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0a101d;
+  border: none;
+  font-weight: 700;
+}
+body[data-theme="midnight"] .gift-card-envelope {
+  background: #111a2e;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+body[data-theme="midnight"] .bank-detail-text {
+  color: #f8fafc;
+}
+body[data-theme="midnight"] .btn-copy-acc {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+body[data-theme="midnight"] .thank-you-note,
+body[data-theme="midnight"] .closing-tender-quote {
+  color: #e2e8f0;
+}
+body[data-theme="midnight"] .closing-tender-copyright {
+  color: #64748b;
+}
+body[data-theme="midnight"] .link-admin-subtle {
+  color: #94a3b8;
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(26, 38, 64, 0.5);
 }

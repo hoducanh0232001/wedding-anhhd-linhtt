@@ -52,6 +52,19 @@ const DEFAULT_FIREBASE_CONFIG = {
         console.warn('Realtime Database listen wishes warning:', err.message);
       });
 
+      // 3. Listen to Settings (Music, Venue, Photos...) in Realtime
+      db.ref('settings').on('value', snapshot => {
+        try {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            localStorage.setItem('wedding_invite_settings', JSON.stringify(val));
+            window.dispatchEvent(new CustomEvent('wedding_settings_updated', { detail: val }));
+          }
+        } catch(e) {
+          console.warn('Sync settings error:', e);
+        }
+      });
+
       // 2. Listen to RSVPs in Realtime
       db.ref('rsvps').on('value', snapshot => {
         try {

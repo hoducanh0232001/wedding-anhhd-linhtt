@@ -333,6 +333,9 @@ const WeddingDB = {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('wedding_settings_updated', { detail: settings }));
+        if (typeof window !== 'undefined' && window.weddingFirebaseDb) {
+          try { window.weddingFirebaseDb.ref('settings').set(settings).catch(() => {}); } catch(e) {}
+        }
         if (typeof fetch !== 'undefined') {
           fetch('/api/save-settings', {
             method: 'POST',

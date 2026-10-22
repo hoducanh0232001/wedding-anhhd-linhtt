@@ -62,42 +62,52 @@ const DEFAULT_SETTINGS = {
     primaryDark: '#380a0e',
     secondaryColor: '#c9a24a',
     accentColor: '#8a252d',
-    bgColor: '#fffaf3',
+    bgColor: '#fff7eb',
     textColor: '#2e181b'
   },
 
   couple: {
     groom: {
-      fullName: 'Nguyễn Đức Anh',
+      fullName: 'Hồ Đức Anh',
       shortName: 'Đức Anh',
-      role: 'Chú Rể',
+      role: 'Trưởng Nam',
       bio: 'Chàng trai điềm tĩnh, ấm áp và luôn dành trọn tình yêu thương, chở che cho người phụ nữ của cuộc đời mình.',
       photo: 'assets/images/groom.jpg',
-      father: 'Nguyễn Văn Hùng',
-      mother: 'Trần Thị Mai',
+      father: 'Hồ Xuân Tươi',
+      mother: 'Vũ Thị Tươi',
+      address: '18LK 15 Khu đô thị Phú Lương - Văn Phú - Hà Đông',
       familySide: 'Nhà Trai'
     },
     bride: {
-      fullName: 'Trần Thuỳ Linh',
+      fullName: 'Thái Thuỳ Linh',
       shortName: 'Thuỳ Linh',
-      role: 'Cô Dâu',
+      role: 'Út Nữ',
       bio: 'Cô gái dịu dàng với nụ cười tỏa nắng, luôn mang lại niềm vui, sự bình yên và ấm áp cho tổ ấm tương lai.',
       photo: 'assets/images/bride.jpg',
-      father: 'Trần Quốc Tuấn',
-      mother: 'Lê Thu Hà',
+      father: 'Thái Đức Tuyển',
+      mother: 'Nguyễn Thị Tố Hoài',
+      address: 'Số 2 ngõ 4 Đường Thống Nhất - Phú Nhiêu - Phú Xuyên - Hà Nội',
       familySide: 'Nhà Gái'
     }
   },
   wedding: {
     date: '2026-11-29',
     time: '11:00',
+    receptionTime: '10:30',
     dateText: 'Chủ Nhật, 29 Tháng 11, 2026',
-    lunarDateText: 'Ngày 21 Tháng 10 Năm Bính Ngọ',
+    lunarDateText: 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ',
     venueName: 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)',
     venueAddress: 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội',
-    mapUrl: 'https://maps.google.com/?q=Trung+tâm+tiệc+cưới+Hoàng+Gia+Palace+Hà+Đông+Hà+Nội',
-    heroQuote: 'Tình yêu không phải là tìm kiếm một người hoàn hảo, mà là học cách nhìn nhận một người không hoàn hảo theo cách hoàn hảo nhất.',
-    thankYouQuote: 'Sự hiện diện và lời chúc phúc của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình trong ngày trọng đại này!',
+    mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
+    heroQuote: 'TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN',
+    thankYouQuote: 'Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!',
+    announcementText: 'TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CHÚNG TÔI',
+    groomStk: '0988889999',
+    groomBank: 'MB Bank',
+    groomAccountHolder: 'HO DUC ANH',
+    brideStk: '9988776655',
+    brideBank: 'Vietcombank',
+    brideAccountHolder: 'THAI THUY LINH',
     musicUrl: 'https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3',
     musicTitle: 'Wedding Waltz - Romantic Piano',
     adminPasscode: '123456'
@@ -113,7 +123,7 @@ const DEFAULT_SETTINGS = {
       dateText: 'Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)',
       venue: 'Trung tâm tiệc cưới Hoàng Gia Palace',
       address: 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội',
-      mapUrl: 'https://maps.google.com/?q=Trung+tâm+tiệc+cưới+Hoàng+Gia+Palace+Hà+Đông+Hà+Nội',
+      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
       isPrimary: true
     },
     {
@@ -125,8 +135,8 @@ const DEFAULT_SETTINGS = {
       date: '2026-11-28',
       dateText: 'Thứ Bảy, 28/11/2026 (20/10 Âm Lịch)',
       venue: 'Tư Gia Nhà Gái',
-      address: 'Số 68 Đường Quang Trung, Phường Quang Trung, Quận Hà Đông, Hà Nội',
-      mapUrl: 'https://maps.google.com/?q=Quang+Trung+Hà+Đông+Hà+Nội',
+      address: 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội',
+      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
       isPrimary: false
     },
     {
@@ -138,55 +148,58 @@ const DEFAULT_SETTINGS = {
       date: '2026-11-29',
       dateText: 'Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)',
       venue: 'Tư Gia Nhà Trai',
-      address: 'Số 12 Ngõ 102 Đường Nguyễn Trãi, Quận Thanh Xuân, Hà Nội',
-      mapUrl: 'https://maps.google.com/?q=102+Nguyễn+Trãi+Thanh+Xuân+Hà+Nội',
+      address: '18LK 15 Khu đô thị Phú Lương, Văn Phú, Quận Hà Đông, Hà Nội',
+      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
       isPrimary: false
     }
   ],
   stories: [
     {
       id: 'story-1',
-      year: 'Tháng 10 / 2021',
-      title: 'Lần đầu gặp gỡ',
-      description: 'Một buổi chiều thu Hà Nội trong một góc quán cà phê nhỏ, ánh mắt vô tình chạm nhau đã mở ra một hành trình tràn ngập ngọt ngào và tiếng cười.',
-      photo: 'assets/images/story_dating.jpg'
+      year: 'Năm 2021',
+      title: 'Chạm Ánh Mắt Đầu Tiên',
+      description: 'Một buổi chiều thu Hà Nội dịu dàng, chúng mình vô tình quen nhau qua những người bạn chung. Một nụ cười làm say cả một đời.',
+      photo: 'assets/images/gallery/photo_01.jpg'
     },
     {
       id: 'story-2',
-      year: 'Tháng 02 / 2022',
-      title: 'Lời tỏ tình ngọt ngào',
-      description: 'Dưới ánh đèn lung linh của đêm Valentine, anh lấy hết can đảm trao em đóa hồng cùng lời hẹn ước chân thành. Nụ cười gật đầu của em là món quà tuyệt vời nhất.',
-      photo: 'assets/images/hero_couple.jpg'
+      year: 'Năm 2024',
+      title: 'Lời Cầu Hôn Ngọt Ngào',
+      description: 'Dưới ánh nến lung linh và tiếng sóng biển vỗ rì rào, anh trao chiếc nhẫn nhỏ cùng lời hẹn ước: “Hãy cùng anh đi trọn cuộc đời này nhé!”.',
+      photo: 'assets/images/gallery/photo_02.jpg'
     },
     {
       id: 'story-3',
-      year: 'Tháng 06 / 2025',
-      title: 'Lời cầu hôn bên bờ biển',
-      description: 'Giữa tiếng sóng vỗ và ráng chiều hoàng hôn rực rỡ, chiếc nhẫn lấp lánh được trao cùng câu hỏi: "Em đồng ý cùng anh đi hết cuộc đời này chứ?". Em nói: "Em đồng ý!".',
-      photo: 'assets/images/story_proposal.jpg'
-    },
-    {
-      id: 'story-4',
-      year: 'Tháng 11 / 2026',
-      title: 'Ngày ta chung đôi',
-      description: 'Sau 5 năm cùng nhau đi qua bao thăng trầm, giờ đây chúng mình hạnh phúc nắm tay nhau bước vào lễ đường, chính thức về chung một mái nhà.',
-      photo: 'assets/images/gallery_walk.jpg'
+      year: 'Năm 2026',
+      title: 'Ngày Chung Đôi Trọn Vẹn',
+      description: 'Sau ngần ấy năm gắn bó và sẻ chia, chúng mình hạnh phúc nắm chặt tay nhau bước vào ngưỡng cửa hôn nhân, bắt đầu tổ ấm nhỏ tràn ngập yêu thương.',
+      photo: 'assets/images/gallery/photo_03.jpg'
     }
   ],
   gallery: [
-    { id: 'g1', src: 'assets/images/hero_couple.jpg', caption: 'Hạnh phúc rạng ngời ngày chung đôi' },
-    { id: 'g2', src: 'assets/images/story_dating.jpg', caption: 'Bình yên bên góc cà phê quen' },
-    { id: 'g3', src: 'assets/images/story_proposal.jpg', caption: 'Khoảnh khắc thiêng liêng bên hoàng hôn' },
-    { id: 'g4', src: 'assets/images/gallery_walk.jpg', caption: 'Cùng nhau dạo bước trong vườn hồng' },
-    { id: 'g5', src: 'assets/images/groom.jpg', caption: 'Chú rể Đức Anh lịch lãm' },
-    { id: 'g6', src: 'assets/images/bride.jpg', caption: 'Cô dâu Thuỳ Linh rạng rỡ' }
+    { id: 'g1', src: 'assets/images/hero_couple.jpg', caption: 'Đức Anh & Thuỳ Linh - Tình yêu thăng hoa' },
+    { id: 'g2', src: 'assets/images/gallery/photo_01.jpg', caption: 'Nụ cười rạng rỡ của đôi uyên ương' },
+    { id: 'g3', src: 'assets/images/gallery/photo_02.jpg', caption: 'Khoảnh khắc ngọt ngào trao nhau' },
+    { id: 'g4', src: 'assets/images/gallery/photo_03.jpg', caption: 'Ánh mắt đong đầy yêu thương' },
+    { id: 'g5', src: 'assets/images/gallery/photo_04.jpg', caption: 'Chú rể Đức Anh thanh lịch' },
+    { id: 'g6', src: 'assets/images/gallery/photo_05.jpg', caption: 'Cô dâu Thuỳ Linh duyên dáng' },
+    { id: 'g7', src: 'assets/images/gallery/photo_06.jpg', caption: 'Tay trong tay bước vào tương lai' },
+    { id: 'g8', src: 'assets/images/gallery/photo_07.jpg', caption: 'Chuyện tình yêu đơm hoa kết trái' },
+    { id: 'g9', src: 'assets/images/gallery/photo_08.jpg', caption: 'Nét đẹp kiêu sa trong ngày hạnh phúc' },
+    { id: 'g10', src: 'assets/images/gallery/photo_09.jpg', caption: 'Hẹn ước trọn đời' },
+    { id: 'g11', src: 'assets/images/gallery/photo_10.jpg', caption: 'Từng phút giây bên em đều quý giá' },
+    { id: 'g12', src: 'assets/images/gallery/photo_11.jpg', caption: 'Hạnh phúc giản đơn là có nhau' },
+    { id: 'g13', src: 'assets/images/gallery/photo_12.jpg', caption: 'Bức tranh tình yêu hoàn hảo' },
+    { id: 'g14', src: 'assets/images/gallery/photo_13.jpg', caption: 'Ngày đẹp nhất trần đời' },
+    { id: 'g15', src: 'assets/images/gallery/photo_14.jpg', caption: 'Bình yên là khi ở bên anh' },
+    { id: 'g16', src: 'assets/images/gallery/photo_15.jpg', caption: 'Mãi mãi một tình yêu' }
   ],
   banking: {
     groom: {
       bankName: 'MB Bank (Quân Đội)',
       bankBin: '970422',
       accountNumber: '0988889999',
-      accountName: 'NGUYEN DUC ANH',
+      accountName: 'HO DUC ANH',
       branch: 'Hà Nội',
       qrUrl: 'https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh'
     },
@@ -194,7 +207,7 @@ const DEFAULT_SETTINGS = {
       bankName: 'Vietcombank',
       bankBin: '970436',
       accountNumber: '9988776655',
-      accountName: 'TRAN THUY LINH',
+      accountName: 'THAI THUY LINH',
       branch: 'Hà Nội',
       qrUrl: 'https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh'
     }
@@ -302,7 +315,14 @@ const WeddingDB = {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       if (saved) {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        if (parsed.couple && (parsed.couple.groom.fullName === 'Nguyễn Đức Anh' || parsed.couple.bride.fullName === 'Trần Thuỳ Linh')) {
+          parsed.couple = DEFAULT_SETTINGS.couple;
+          parsed.wedding = { ...parsed.wedding, ...DEFAULT_SETTINGS.wedding };
+          parsed.gallery = DEFAULT_SETTINGS.gallery;
+          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(parsed));
+        }
+        return { ...DEFAULT_SETTINGS, ...parsed };
       }
     } catch (e) {
       console.warn('Error reading settings from localStorage:', e);

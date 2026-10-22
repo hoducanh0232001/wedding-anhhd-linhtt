@@ -188,6 +188,8 @@ function populateSettingsForm(settings) {
   document.getElementById('groom-photo-input').value = settings.couple.groom.photo;
   document.getElementById('groom-father-input').value = settings.couple.groom.father;
   document.getElementById('groom-mother-input').value = settings.couple.groom.mother;
+  const groomAddrInput = document.getElementById('groom-address-input');
+  if (groomAddrInput) groomAddrInput.value = settings.couple.groom.address || '';
 
   document.getElementById('bride-fullName').value = settings.couple.bride.fullName;
   document.getElementById('bride-shortName').value = settings.couple.bride.shortName;
@@ -195,6 +197,8 @@ function populateSettingsForm(settings) {
   document.getElementById('bride-photo-input').value = settings.couple.bride.photo;
   document.getElementById('bride-father-input').value = settings.couple.bride.father;
   document.getElementById('bride-mother-input').value = settings.couple.bride.mother;
+  const brideAddrInput = document.getElementById('bride-address-input');
+  if (brideAddrInput) brideAddrInput.value = settings.couple.bride.address || '';
 
   // Wedding Date & Venue
   document.getElementById('wedding-date-input').value = settings.wedding.date;
@@ -226,6 +230,8 @@ function setupEventListeners() {
       current.couple.groom.photo = document.getElementById('groom-photo-input').value.trim();
       current.couple.groom.father = document.getElementById('groom-father-input').value.trim();
       current.couple.groom.mother = document.getElementById('groom-mother-input').value.trim();
+      const gAddr = document.getElementById('groom-address-input');
+      if (gAddr) current.couple.groom.address = gAddr.value.trim();
 
       current.couple.bride.fullName = document.getElementById('bride-fullName').value.trim();
       current.couple.bride.shortName = document.getElementById('bride-shortName').value.trim();
@@ -233,6 +239,8 @@ function setupEventListeners() {
       current.couple.bride.photo = document.getElementById('bride-photo-input').value.trim();
       current.couple.bride.father = document.getElementById('bride-father-input').value.trim();
       current.couple.bride.mother = document.getElementById('bride-mother-input').value.trim();
+      const bAddr = document.getElementById('bride-address-input');
+      if (bAddr) current.couple.bride.address = bAddr.value.trim();
 
       current.wedding.date = document.getElementById('wedding-date-input').value;
       current.wedding.time = document.getElementById('wedding-time-input').value;

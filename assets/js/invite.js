@@ -49,34 +49,40 @@ function initDynamicContent(settings) {
 
   // Full names
   const groomNameEls = document.querySelectorAll('.bind-groom-name');
-  groomNameEls.forEach(el => el.textContent = settings.couple.groom.fullName || 'Nguyễn Đức Anh');
+  groomNameEls.forEach(el => el.textContent = settings.couple.groom.fullName || 'Hồ Đức Anh');
 
   const brideNameEls = document.querySelectorAll('.bind-bride-name');
-  brideNameEls.forEach(el => el.textContent = settings.couple.bride.fullName || 'Trần Thuỳ Linh');
+  brideNameEls.forEach(el => el.textContent = settings.couple.bride.fullName || 'Thái Thuỳ Linh');
 
   // Parents
   const groomFather = document.getElementById('groom-father-display');
-  if (groomFather) groomFather.textContent = settings.couple.groom.father || 'Nguyễn Văn Hùng';
+  if (groomFather) groomFather.textContent = settings.couple.groom.father || 'Hồ Xuân Tươi';
   const groomMother = document.getElementById('groom-mother-display');
-  if (groomMother) groomMother.textContent = settings.couple.groom.mother || 'Trần Thị Mai';
+  if (groomMother) groomMother.textContent = settings.couple.groom.mother || 'Vũ Thị Tươi';
 
   const brideFather = document.getElementById('bride-father-display');
-  if (brideFather) brideFather.textContent = settings.couple.bride.father || 'Trần Quốc Tuấn';
+  if (brideFather) brideFather.textContent = settings.couple.bride.father || 'Thái Đức Tuyển';
   const brideMother = document.getElementById('bride-mother-display');
-  if (brideMother) brideMother.textContent = settings.couple.bride.mother || 'Lê Thu Hà';
+  if (brideMother) brideMother.textContent = settings.couple.bride.mother || 'Nguyễn Thị Tố Hoài';
+
+  // Addresses
+  const groomAddress = document.getElementById('groom-address-display');
+  if (groomAddress) groomAddress.textContent = settings.couple.groom.address || '18LK 15 Khu đô thị Phú Lương, Văn Phú, Hà Đông';
+  const brideAddress = document.getElementById('bride-address-display');
+  if (brideAddress) brideAddress.textContent = settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
 
   // Dates & Venue
   const dateTexts = document.querySelectorAll('.bind-date-text');
-  dateTexts.forEach(el => el.textContent = settings.wedding.dateText);
+  dateTexts.forEach(el => el.textContent = settings.wedding.dateText || 'Chủ Nhật, 29 Tháng 11, 2026');
 
   const lunarTexts = document.querySelectorAll('.bind-lunar-date');
-  lunarTexts.forEach(el => el.textContent = settings.wedding.lunarDateText);
+  lunarTexts.forEach(el => el.textContent = settings.wedding.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ');
 
   const venueTitle = document.getElementById('wedding-venue-title');
-  if (venueTitle) venueTitle.textContent = settings.wedding.venueName;
+  if (venueTitle) venueTitle.textContent = settings.wedding.venueName || 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)';
 
   const venueDesc = document.getElementById('wedding-venue-desc');
-  if (venueDesc) venueDesc.textContent = settings.wedding.venueAddress;
+  if (venueDesc) venueDesc.textContent = settings.wedding.venueAddress || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
 
   const heroQuote = document.getElementById('hero-quote-text');
   if (heroQuote && settings.wedding.heroQuote) {
@@ -102,14 +108,14 @@ function initDynamicContent(settings) {
     const groomQr = document.getElementById('groom-qr-img');
     if (groomQr && groomBank.qrUrl) groomQr.src = groomBank.qrUrl;
     const groomStk = document.getElementById('groom-stk');
-    if (groomStk) groomStk.textContent = groomBank.accountNumber;
+    if (groomStk) groomStk.textContent = groomBank.accountNumber || '0988889999';
   }
 
   if (brideBank) {
     const brideQr = document.getElementById('bride-qr-img');
     if (brideQr && brideBank.qrUrl) brideQr.src = brideBank.qrUrl;
     const brideStk = document.getElementById('bride-stk');
-    if (brideStk) brideStk.textContent = brideBank.accountNumber;
+    if (brideStk) brideStk.textContent = brideBank.accountNumber || '9988776655';
   }
 }
 
@@ -381,6 +387,19 @@ function init3DRevolverCarousel(gallery) {
     }
   });
 
+  // Also populate grid album if present
+  const gridContainer = document.getElementById('gallery-grid-box');
+  if (gridContainer) {
+    gridContainer.innerHTML = '';
+    gallery.forEach((item) => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'gallery-grid-item';
+      itemEl.innerHTML = `<img src="${item.src}" alt="${item.caption || 'Ảnh cưới'}" loading="lazy" />`;
+      itemEl.addEventListener('click', () => openLightboxImage(item.src));
+      gridContainer.appendChild(itemEl);
+    });
+  }
+
   // Calculate and apply 3D cylinder revolver positions
   function renderCarousel() {
     cards.forEach((card, idx) => {
@@ -391,17 +410,26 @@ function init3DRevolverCarousel(gallery) {
       const o = Math.abs(l);
       const isCenter = (l === 0);
 
-      // 3D Cylinder geometry matching Chung Doi
-      const scale = Math.max(0.68, 1 - 0.14 * o);
-      const opacity = Math.max(0.2, 1 - 0.28 * o);
-      const translateX = 65 * l;
-      const translateZ = -(160 * o);
-      const rotateY = 45 * l;
-      const zIndex = 100 - o;
+      // Distant cards hide behind cylinder to maintain sleek 3D perspective
+      if (o > 2) {
+        card.style.opacity = '0';
+        card.style.visibility = 'hidden';
+        card.style.pointerEvents = 'none';
+        card.style.zIndex = '0';
+      } else {
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'auto';
+        const scale = Math.max(0.68, 1 - 0.15 * o);
+        const opacity = Math.max(0.3, 1 - 0.32 * o);
+        const translateX = 66 * l;
+        const translateZ = -(160 * o);
+        const rotateY = 42 * l;
+        const zIndex = 100 - o;
 
-      card.style.transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
-      card.style.opacity = opacity;
-      card.style.zIndex = zIndex;
+        card.style.transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+        card.style.opacity = opacity;
+        card.style.zIndex = zIndex;
+      }
 
       if (isCenter) {
         card.classList.add('active-center');
@@ -511,6 +539,28 @@ window.closeLightbox = function() {
   const modal = document.getElementById('lightbox-modal');
   if (modal) {
     modal.classList.remove('active');
+  }
+};
+
+window.toggleGalleryGrid = function() {
+  const grid = document.getElementById('gallery-grid-box');
+  const btn = document.getElementById('btn-toggle-grid');
+  if (!grid) return;
+  if (grid.classList.contains('show')) {
+    grid.classList.remove('show');
+    if (btn) btn.innerHTML = '📸 Xem tất cả 16 ảnh cưới (Dạng lưới)';
+  } else {
+    grid.classList.add('show');
+    if (btn) btn.innerHTML = '▲ Thu gọn lưới ảnh';
+  }
+};
+
+window.fillQuickWish = function(text) {
+  const wishTextarea = document.getElementById('rsvp-wish');
+  if (wishTextarea) {
+    wishTextarea.value = text;
+    wishTextarea.focus();
+    showToast(`Đã chọn lời chúc: "${text}"`);
   }
 };
 

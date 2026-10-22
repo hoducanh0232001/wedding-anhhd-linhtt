@@ -1,9 +1,13 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const rootDir = process.cwd();
+
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 // 1. Explicitly serve /assets from process.cwd()
 app.use('/assets', express.static(path.join(rootDir, 'assets'), {
@@ -25,6 +29,36 @@ app.get('/admin', (req, res) => {
 // 4. Main invitation route
 app.get('/', (req, res) => {
   res.sendFile(path.join(rootDir, 'index.html'));
+});
+
+// Endpoint to save settings directly into assets/js/data.js
+app.post('/api/save-settings', (req, res) => {
+  try {
+    const newSettings = req.body;
+    if (!newSettings || typeof newSettings !== 'object') {
+      return res.status(400).json({ error: 'Invalid settings' });
+    }
+
+    const dataJsPath = path.join(rootDir, 'assets', 'js', 'data.js');
+    if (fs.existsSync(dataJsPath)) {
+      let content = fs.readFileSync(dataJsPath, 'utf8');
+      const sMarker = 'const DEFAULT_SETTINGS = {';
+      const eMarker = 'const DEFAULT_GUESTS = [';
+      const sIdx = content.indexOf(sMarker);
+      const eIdx = content.indexOf(eMarker, sIdx);
+
+      if (sIdx !== -1 && eIdx !== -1) {
+        const newCode = `const DEFAULT_SETTINGS = ${JSON.stringify(newSettings, null, 2)};\r\n\r\n`;
+        content = content.substring(0, sIdx) + newCode + content.substring(eIdx);
+        fs.writeFileSync(dataJsPath, content, 'utf8');
+      }
+    }
+
+    res.json({ success: true, message: 'Đã lưu và đồng bộ trực tiếp vào file data.js!' });
+  } catch (err) {
+    console.error('Error saving settings to file:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Route to resolve Google Maps short links

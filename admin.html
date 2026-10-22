@@ -968,7 +968,9 @@ body.admin-body {
           </div>
         </div>
 
-        <div class="admin-header-actions">
+        <div class="admin-header-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="admin-save-indicator" style="font-size:12.5px;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-weight:500;transition:all 0.3s ease;">🟢 Tự động lưu: Bật</span>
+          <button type="button" class="admin-btn admin-btn-primary" onclick="quickSaveAllAndSync()" style="padding:8px 14px;font-size:13px;display:flex;align-items:center;gap:6px;">💾 Lưu &amp; Đồng Bộ</button>
           <a href="index.html" target="_blank" class="btn-view-invite">
             <svg style="width:16px;height:16px;fill:currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
             Xem Thiệp Thực Tế
@@ -1796,6 +1798,27 @@ body.admin-body {
              TAB 7: SAO LƯU & DỮ LIỆU
              ========================================== -->
         <div id="panel-backup" class="tab-panel">
+          <div class="admin-card" style="margin-bottom:24px;border:1.5px solid rgba(201,162,74,0.4);">
+            <div class="admin-card-header" style="background:rgba(201,162,74,0.08);">
+              <h3>⚡ Cơ Chế Lưu &amp; Đồng Bộ Toàn Bộ Dữ Liệu</h3>
+            </div>
+            <div class="admin-card-body">
+              <p style="font-size:0.9rem;color:var(--admin-muted);line-height:1.7;margin-bottom:16px;">
+                Hệ thống đã tích hợp <strong>Tự Động Lưu (Auto-Save)</strong>: Mỗi khi bạn nhập bất kỳ thông tin nào, dữ liệu sẽ tự động lưu ngay lập tức vào trình duyệt.<br/>
+                Để nội dung hiển thị cho <strong>toàn bộ khách mời trên mọi điện thoại</strong>, bạn có thể đồng bộ trực tiếp vào mã nguồn dự án:
+              </p>
+
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button class="admin-btn admin-btn-primary" onclick="quickSaveAllAndSync()">
+                  💾 Ghi Trực Tiếp Vào data.js
+                </button>
+                <button class="admin-btn admin-btn-secondary" onclick="copySettingsCode()">
+                  📋 Sao Chép Mã Cấu Hình (Copy Code)
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="admin-card">
             <div class="admin-card-header">
               <h3>Sao Lưu & Phục Hồi Dữ Liệu Thiệp Cưới</h3>

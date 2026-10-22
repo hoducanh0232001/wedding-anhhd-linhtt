@@ -220,6 +220,12 @@ function populateSettingsForm(settings) {
 
 // 6. Save Settings Form
 function setupEventListeners() {
+  // Hook auto-save to all admin form inputs
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', triggerAutoSave);
+    el.addEventListener('change', triggerAutoSave);
+  });
+
   setupGalleryEventListeners();
 
   const dateInput = document.getElementById('wedding-date-input');
@@ -1219,3 +1225,192 @@ window.resetGalleryDefault = function() {
 };
 
 
+
+// ==========================================
+// AUTO-SAVE & SERVER SYNC MECHANISM
+// ==========================================
+let autoSaveTimeout = null;
+
+function triggerAutoSave() {
+  const indicator = document.getElementById('admin-save-indicator');
+  if (indicator) {
+    indicator.innerHTML = '<span style="color:#d97706;">⏳ Đang lưu...</span>';
+    indicator.style.background = '#fef3c7';
+    indicator.style.borderColor = '#fde68a';
+    indicator.style.color = '#92400e';
+  }
+
+  clearTimeout(autoSaveTimeout);
+  autoSaveTimeout = setTimeout(() => {
+    collectAndSaveSettings();
+  }, 600);
+}
+
+function collectAndSaveSettings() {
+  const current = WeddingDB.getSettings();
+
+  // 1. Couple Information
+  const gFull = document.getElementById('groom-fullName');
+  if (gFull && gFull.value.trim()) current.couple.groom.fullName = gFull.value.trim();
+  const gShort = document.getElementById('groom-shortName');
+  if (gShort && gShort.value.trim()) current.couple.groom.shortName = gShort.value.trim();
+  const gBio = document.getElementById('groom-bio-input');
+  if (gBio) current.couple.groom.bio = gBio.value.trim();
+  const gPhoto = document.getElementById('groom-photo-input');
+  if (gPhoto && gPhoto.value.trim()) current.couple.groom.photo = gPhoto.value.trim();
+  const gFather = document.getElementById('groom-father-input');
+  if (gFather) current.couple.groom.father = gFather.value.trim();
+  const gMother = document.getElementById('groom-mother-input');
+  if (gMother) current.couple.groom.mother = gMother.value.trim();
+  const gAddr = document.getElementById('groom-address-input');
+  if (gAddr) current.couple.groom.address = gAddr.value.trim();
+
+  const bFull = document.getElementById('bride-fullName');
+  if (bFull && bFull.value.trim()) current.couple.bride.fullName = bFull.value.trim();
+  const bShort = document.getElementById('bride-shortName');
+  if (bShort && bShort.value.trim()) current.couple.bride.shortName = bShort.value.trim();
+  const bBio = document.getElementById('bride-bio-input');
+  if (bBio) current.couple.bride.bio = bBio.value.trim();
+  const bPhoto = document.getElementById('bride-photo-input');
+  if (bPhoto && bPhoto.value.trim()) current.couple.bride.photo = bPhoto.value.trim();
+  const bFather = document.getElementById('bride-father-input');
+  if (bFather) current.couple.bride.father = bFather.value.trim();
+  const bMother = document.getElementById('bride-mother-input');
+  if (bMother) current.couple.bride.mother = bMother.value.trim();
+  const bAddr = document.getElementById('bride-address-input');
+  if (bAddr) current.couple.bride.address = bAddr.value.trim();
+
+  // 2. Wedding Date & Venue
+  const wDate = document.getElementById('wedding-date-input');
+  if (wDate && wDate.value) current.wedding.date = wDate.value;
+  const wTime = document.getElementById('wedding-time-input');
+  if (wTime && wTime.value) current.wedding.time = wTime.value;
+  const wDateText = document.getElementById('wedding-dateText-input');
+  if (wDateText) current.wedding.dateText = wDateText.value.trim();
+  const wLunar = document.getElementById('wedding-lunar-input');
+  if (wLunar) current.wedding.lunarDateText = wLunar.value.trim();
+  const wVenue = document.getElementById('wedding-venue-input');
+  if (wVenue) current.wedding.venueName = wVenue.value.trim();
+  const wAddress = document.getElementById('wedding-address-input');
+  if (wAddress) current.wedding.venueAddress = wAddress.value.trim();
+  const wMap = document.getElementById('wedding-mapUrl-input');
+  if (wMap) current.wedding.mapUrl = wMap.value.trim();
+
+  // 3. Quotes & Music
+  const hQuote = document.getElementById('hero-quote-input');
+  if (hQuote) current.wedding.heroQuote = hQuote.value.trim();
+  const tQuote = document.getElementById('thankyou-quote-input');
+  if (tQuote) current.wedding.thankYouQuote = tQuote.value.trim();
+  const mUrl = document.getElementById('music-url-input');
+  if (mUrl) current.wedding.musicUrl = mUrl.value.trim();
+  const pCode = document.getElementById('admin-passcode-input');
+  if (pCode && pCode.value.trim()) current.wedding.adminPasscode = pCode.value.trim();
+
+  // 4. Banking Information
+  const showBankToggle = document.getElementById('setting-show-bank');
+  if (showBankToggle) current.showBank = showBankToggle.checked;
+
+  const gBankName = document.getElementById('bank-groom-name');
+  if (gBankName && current.banking && current.banking.groom) current.banking.groom.bankName = gBankName.value.trim();
+  const gBankAcc = document.getElementById('bank-groom-account');
+  if (gBankAcc && current.banking && current.banking.groom) {
+    const acc = gBankAcc.value.trim();
+    current.banking.groom.accountNumber = acc;
+    const holder = (document.getElementById('bank-groom-holder')?.value || current.banking.groom.accountName || '').trim().toUpperCase();
+    current.banking.groom.qrUrl = `https://img.vietqr.io/image/MB-${acc}-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh&accountName=${encodeURIComponent(holder)}`;
+  }
+  const gBankHolder = document.getElementById('bank-groom-holder');
+  if (gBankHolder && current.banking && current.banking.groom) current.banking.groom.accountName = gBankHolder.value.trim().toUpperCase();
+
+  const bBankName = document.getElementById('bank-bride-name');
+  if (bBankName && current.banking && current.banking.bride) current.banking.bride.bankName = bBankName.value.trim();
+  const bBankAcc = document.getElementById('bank-bride-account');
+  if (bBankAcc && current.banking && current.banking.bride) {
+    const acc = bBankAcc.value.trim();
+    current.banking.bride.accountNumber = acc;
+    const holder = (document.getElementById('bank-bride-holder')?.value || current.banking.bride.accountName || '').trim().toUpperCase();
+    current.banking.bride.qrUrl = `https://img.vietqr.io/image/VCB-${acc}-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh&accountName=${encodeURIComponent(holder)}`;
+  }
+  const bBankHolder = document.getElementById('bank-bride-holder');
+  if (bBankHolder && current.banking && current.banking.bride) current.banking.bride.accountName = bBankHolder.value.trim().toUpperCase();
+
+  // 5. Events / Ceremonies
+  const eventTitles = document.querySelectorAll('.event-field-title');
+  const eventTimes = document.querySelectorAll('.event-field-time');
+  const eventVenues = document.querySelectorAll('.event-field-venue');
+  const eventAddresses = document.querySelectorAll('.event-field-address');
+  const eventMaps = document.querySelectorAll('.event-field-map');
+
+  if (eventTitles.length > 0 && current.events) {
+    eventTitles.forEach((el, idx) => {
+      if (current.events[idx]) {
+        current.events[idx].title = el.value.trim();
+        if (eventVenues[idx]) current.events[idx].venue = eventVenues[idx].value.trim();
+        if (eventAddresses[idx]) current.events[idx].address = eventAddresses[idx].value.trim();
+        if (eventMaps[idx]) current.events[idx].mapUrl = eventMaps[idx].value.trim();
+        if (eventTimes[idx]) {
+          const val = eventTimes[idx].value.trim();
+          const parts = val.split('—');
+          if (parts.length > 1) {
+            current.events[idx].time = parts[0].trim();
+            current.events[idx].dateText = parts[1].trim();
+          } else {
+            current.events[idx].time = val;
+          }
+        }
+      }
+    });
+  }
+
+  // 6. Photo inputs
+  const heroPhotoInput = document.getElementById('hero-photo-input');
+  if (heroPhotoInput && heroPhotoInput.value.trim()) {
+    current.wedding.heroPhoto = heroPhotoInput.value.trim();
+  }
+
+  // Save to LocalStorage & Auto Sync
+  WeddingDB.saveSettings(current);
+
+  const now = new Date();
+  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+  const indicator = document.getElementById('admin-save-indicator');
+  if (indicator) {
+    indicator.innerHTML = `🟢 Đã tự động lưu (${timeStr})`;
+    indicator.style.background = '#ecfdf5';
+    indicator.style.borderColor = '#a7f3d0';
+    indicator.style.color = '#065f46';
+  }
+}
+
+window.quickSaveAllAndSync = function() {
+  collectAndSaveSettings();
+  const current = WeddingDB.getSettings();
+
+  fetch('/api/save-settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(current)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showAdminToast('✅ Đã lưu và đồng bộ trực tiếp vào dữ liệu dự án!');
+    } else {
+      showAdminToast('Đã lưu thành công vào trình duyệt!');
+    }
+  })
+  .catch(() => {
+    showAdminToast('Đã lưu thành công vào bộ nhớ trình duyệt!');
+  });
+};
+
+window.copySettingsCode = function() {
+  collectAndSaveSettings();
+  const settings = WeddingDB.getSettings();
+  const code = JSON.stringify(settings, null, 2);
+  navigator.clipboard.writeText(code).then(() => {
+    alert('Đã sao chép toàn bộ cấu hình vào Clipboard! Bạn có thể dán (Paste) vào chat hoặc file data.js.');
+  }).catch(() => {
+    prompt('Vui lòng sao chép đoạn mã cấu hình dưới đây:', code);
+  });
+};

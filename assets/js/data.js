@@ -55,163 +55,226 @@ const WEDDING_THEMES = [
 ];
 
 const DEFAULT_SETTINGS = {
-  themeId: 'tender',
-  showBank: true,
-  theme: {
-    name: 'Tender Burgundy & Gold',
-    primaryColor: '#511419',
-    primaryDark: '#380a0e',
-    secondaryColor: '#c9a24a',
-    accentColor: '#8a252d',
-    bgColor: '#fff7eb',
-    textColor: '#2e181b'
+  "themeId": "tender",
+  "showBank": true,
+  "theme": {
+    "name": "Tender Burgundy & Gold",
+    "primaryColor": "#511419",
+    "primaryDark": "#380a0e",
+    "secondaryColor": "#c9a24a",
+    "accentColor": "#8a252d",
+    "bgColor": "#fff7eb",
+    "textColor": "#2e181b"
   },
-
-  couple: {
-    groom: {
-      fullName: 'Hồ Đức Anh',
-      shortName: 'Đức Anh',
-      role: 'Trưởng Nam',
-      bio: 'Chàng trai điềm tĩnh, ấm áp và luôn dành trọn tình yêu thương, chở che cho người phụ nữ của cuộc đời mình.',
-      photo: 'assets/images/groom.jpg',
-      father: 'Hồ Xuân Tươi',
-      mother: 'Vũ Thị Tươi',
-      address: '18LK 15 Khu đô thị Phú Lương - Văn Phú - Hà Đông',
-      familySide: 'Nhà Trai'
+  "couple": {
+    "groom": {
+      "fullName": "Hồ Đức Anh",
+      "shortName": "Đức Anh",
+      "role": "Trưởng Nam",
+      "bio": "Chàng trai điềm tĩnh, ấm áp và luôn dành trọn tình yêu thương, chở che cho người phụ nữ của cuộc đời mình.",
+      "photo": "assets/images/groom.jpg",
+      "father": "Hồ Xuân Tươi",
+      "mother": "Vũ Thị Tươi",
+      "address": "18LK 15 Khu đô thị Phú Lương - Văn Phú - Hà Đông",
+      "familySide": "Nhà Trai"
     },
-    bride: {
-      fullName: 'Thái Thuỳ Linh',
-      shortName: 'Thuỳ Linh',
-      role: 'Út Nữ',
-      bio: 'Cô gái dịu dàng với nụ cười tỏa nắng, luôn mang lại niềm vui, sự bình yên và ấm áp cho tổ ấm tương lai.',
-      photo: 'assets/images/bride.jpg',
-      father: 'Thái Đức Tuyển',
-      mother: 'Nguyễn Thị Tố Hoài',
-      address: 'Số 2 ngõ 4 Đường Thống Nhất - Phú Nhiêu - Phú Xuyên - Hà Nội',
-      familySide: 'Nhà Gái'
+    "bride": {
+      "fullName": "Thái Thuỳ Linh",
+      "shortName": "Thuỳ Linh",
+      "role": "Út Nữ",
+      "bio": "Cô gái dịu dàng với nụ cười tỏa nắng, luôn mang lại niềm vui, sự bình yên và ấm áp cho tổ ấm tương lai.",
+      "photo": "assets/images/bride.jpg",
+      "father": "Thái Đức Tuyển",
+      "mother": "Nguyễn Thị Tố Hoài",
+      "address": "Số 2 ngõ 4 Đường Thống Nhất - Phú Nhiêu - Phú Xuyên - Hà Nội",
+      "familySide": "Nhà Gái"
     }
   },
-  wedding: {
-    date: '2026-11-29',
-    time: '11:00',
-    receptionTime: '10:30',
-    dateText: 'Chủ Nhật, 29 Tháng 11, 2026',
-    lunarDateText: 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ',
-    venueName: 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)',
-    venueAddress: 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội',
-    mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
-    heroQuote: 'TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN',
-    heroPhoto: 'assets/images/hero_couple.jpg',
-    thankYouQuote: 'Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!',
-    announcementText: 'TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CHÚNG TÔI',
-    groomStk: '0988889999',
-    groomBank: 'MB Bank',
-    groomAccountHolder: 'HO DUC ANH',
-    brideStk: '9988776655',
-    brideBank: 'Vietcombank',
-    brideAccountHolder: 'THAI THUY LINH',
-    musicUrl: 'https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3',
-    musicTitle: 'Wedding Waltz - Romantic Piano',
-    adminPasscode: '123456'
+  "wedding": {
+    "date": "2026-11-29",
+    "time": "11:00",
+    "receptionTime": "10:30",
+    "dateText": "Chủ Nhật, 29 Tháng 11, 2026",
+    "lunarDateText": "Tức Ngày 21 Tháng 10 Năm Bính Ngọ",
+    "venueName": "Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)",
+    "venueAddress": "Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội",
+    "mapUrl": "https://maps.app.goo.gl/ijkYsunZoUQ79kQbA",
+    "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
+    "heroPhoto": "assets/images/hero_couple.jpg",
+    "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!",
+    "announcementText": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CHÚNG TÔI",
+    "groomStk": "0988889999",
+    "groomBank": "MB Bank",
+    "groomAccountHolder": "HO DUC ANH",
+    "brideStk": "9988776655",
+    "brideBank": "Vietcombank",
+    "brideAccountHolder": "THAI THUY LINH",
+    "musicUrl": "https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3",
+    "musicTitle": "Wedding Waltz - Romantic Piano",
+    "adminPasscode": "123456"
   },
-  events: [
+  "events": [
     {
-      id: 'event-main',
-      type: 'main',
-      badge: 'TIỆC CƯỚI CHÍNH',
-      title: 'Lễ Thành Hôn & Tiệc Chiêu Đãi',
-      time: '11:00',
-      date: '2026-11-29',
-      dateText: 'Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)',
-      venue: 'Trung tâm tiệc cưới Hoàng Gia Palace',
-      address: 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội',
-      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
-      isPrimary: true
+      "id": "event-main",
+      "type": "main",
+      "badge": "TIỆC CƯỚI CHÍNH",
+      "title": "Lễ Thành Hôn & Tiệc Chiêu Đãi",
+      "time": "11:00",
+      "date": "2026-11-29",
+      "dateText": "Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)",
+      "venue": "Trung tâm tiệc cưới Hoàng Gia Palace",
+      "address": "Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội",
+      "mapUrl": "https://maps.app.goo.gl/ijkYsunZoUQ79kQbA",
+      "isPrimary": true
     },
     {
-      id: 'event-bride',
-      type: 'bride',
-      badge: 'NHÀ GÁI',
-      title: 'Tiệc Cưới Nhà Gái (Lễ Vu Quy)',
-      time: '17:30',
-      date: '2026-11-28',
-      dateText: 'Thứ Bảy, 28/11/2026 (20/10 Âm Lịch)',
-      venue: 'Tư Gia Nhà Gái',
-      address: 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội',
-      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
-      isPrimary: false
+      "id": "event-bride",
+      "type": "bride",
+      "badge": "NHÀ GÁI",
+      "title": "Tiệc Cưới Nhà Gái (Lễ Vu Quy)",
+      "time": "17:30",
+      "date": "2026-11-28",
+      "dateText": "Thứ Bảy, 28/11/2026 (20/10 Âm Lịch)",
+      "venue": "Tư Gia Nhà Gái",
+      "address": "Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội",
+      "mapUrl": "https://maps.app.goo.gl/ijkYsunZoUQ79kQbA",
+      "isPrimary": false
     },
     {
-      id: 'event-groom',
-      type: 'groom',
-      badge: 'NHÀ TRAI',
-      title: 'Tiệc Cưới Nhà Trai (Lễ Tân Hôn)',
-      time: '09:00',
-      date: '2026-11-29',
-      dateText: 'Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)',
-      venue: 'Tư Gia Nhà Trai',
-      address: '18LK 15 Khu đô thị Phú Lương, Văn Phú, Quận Hà Đông, Hà Nội',
-      mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
-      isPrimary: false
+      "id": "event-groom",
+      "type": "groom",
+      "badge": "NHÀ TRAI",
+      "title": "Tiệc Cưới Nhà Trai (Lễ Tân Hôn)",
+      "time": "09:00",
+      "date": "2026-11-29",
+      "dateText": "Chủ Nhật, 29/11/2026 (21/10 Âm Lịch)",
+      "venue": "Tư Gia Nhà Trai",
+      "address": "18LK 15 Khu đô thị Phú Lương, Văn Phú, Quận Hà Đông, Hà Nội",
+      "mapUrl": "https://maps.app.goo.gl/ijkYsunZoUQ79kQbA",
+      "isPrimary": false
     }
   ],
-  stories: [
+  "stories": [
     {
-      id: 'story-1',
-      year: 'Năm 2021',
-      title: 'Chạm Ánh Mắt Đầu Tiên',
-      description: 'Một buổi chiều thu Hà Nội dịu dàng, chúng mình vô tình quen nhau qua những người bạn chung. Một nụ cười làm say cả một đời.',
-      photo: 'assets/images/gallery/photo_01.jpg'
+      "id": "story-1",
+      "year": "Năm 2021",
+      "title": "Chạm Ánh Mắt Đầu Tiên",
+      "description": "Một buổi chiều thu Hà Nội dịu dàng, chúng mình vô tình quen nhau qua những người bạn chung. Một nụ cười làm say cả một đời.",
+      "photo": "assets/images/gallery/photo_01.jpg"
     },
     {
-      id: 'story-2',
-      year: 'Năm 2024',
-      title: 'Lời Cầu Hôn Ngọt Ngào',
-      description: 'Dưới ánh nến lung linh và tiếng sóng biển vỗ rì rào, anh trao chiếc nhẫn nhỏ cùng lời hẹn ước: “Hãy cùng anh đi trọn cuộc đời này nhé!”.',
-      photo: 'assets/images/gallery/photo_02.jpg'
+      "id": "story-2",
+      "year": "Năm 2024",
+      "title": "Lời Cầu Hôn Ngọt Ngào",
+      "description": "Dưới ánh nến lung linh và tiếng sóng biển vỗ rì rào, anh trao chiếc nhẫn nhỏ cùng lời hẹn ước: “Hãy cùng anh đi trọn cuộc đời này nhé!”.",
+      "photo": "assets/images/gallery/photo_02.jpg"
     },
     {
-      id: 'story-3',
-      year: 'Năm 2026',
-      title: 'Ngày Chung Đôi Trọn Vẹn',
-      description: 'Sau ngần ấy năm gắn bó và sẻ chia, chúng mình hạnh phúc nắm chặt tay nhau bước vào ngưỡng cửa hôn nhân, bắt đầu tổ ấm nhỏ tràn ngập yêu thương.',
-      photo: 'assets/images/gallery/photo_03.jpg'
+      "id": "story-3",
+      "year": "Năm 2026",
+      "title": "Ngày Chung Đôi Trọn Vẹn",
+      "description": "Sau ngần ấy năm gắn bó và sẻ chia, chúng mình hạnh phúc nắm chặt tay nhau bước vào ngưỡng cửa hôn nhân, bắt đầu tổ ấm nhỏ tràn ngập yêu thương.",
+      "photo": "assets/images/gallery/photo_03.jpg"
     }
   ],
-  gallery: [
-    { id: 'g1', src: 'assets/images/hero_couple.jpg', caption: 'Đức Anh & Thuỳ Linh - Tình yêu thăng hoa' },
-    { id: 'g2', src: 'assets/images/gallery/photo_01.jpg', caption: 'Nụ cười rạng rỡ của đôi uyên ương' },
-    { id: 'g3', src: 'assets/images/gallery/photo_02.jpg', caption: 'Khoảnh khắc ngọt ngào trao nhau' },
-    { id: 'g4', src: 'assets/images/gallery/photo_03.jpg', caption: 'Ánh mắt đong đầy yêu thương' },
-    { id: 'g5', src: 'assets/images/gallery/photo_04.jpg', caption: 'Chú rể Đức Anh thanh lịch' },
-    { id: 'g6', src: 'assets/images/gallery/photo_05.jpg', caption: 'Cô dâu Thuỳ Linh duyên dáng' },
-    { id: 'g7', src: 'assets/images/gallery/photo_06.jpg', caption: 'Tay trong tay bước vào tương lai' },
-    { id: 'g8', src: 'assets/images/gallery/photo_07.jpg', caption: 'Chuyện tình yêu đơm hoa kết trái' },
-    { id: 'g9', src: 'assets/images/gallery/photo_08.jpg', caption: 'Nét đẹp kiêu sa trong ngày hạnh phúc' },
-    { id: 'g10', src: 'assets/images/gallery/photo_09.jpg', caption: 'Hẹn ước trọn đời' },
-    { id: 'g11', src: 'assets/images/gallery/photo_10.jpg', caption: 'Từng phút giây bên em đều quý giá' },
-    { id: 'g12', src: 'assets/images/gallery/photo_11.jpg', caption: 'Hạnh phúc giản đơn là có nhau' },
-    { id: 'g13', src: 'assets/images/gallery/photo_12.jpg', caption: 'Bức tranh tình yêu hoàn hảo' },
-    { id: 'g14', src: 'assets/images/gallery/photo_13.jpg', caption: 'Ngày đẹp nhất trần đời' },
-    { id: 'g15', src: 'assets/images/gallery/photo_14.jpg', caption: 'Bình yên là khi ở bên anh' },
-    { id: 'g16', src: 'assets/images/gallery/photo_15.jpg', caption: 'Mãi mãi một tình yêu' }
-  ],
-  banking: {
-    groom: {
-      bankName: 'MB Bank (Quân Đội)',
-      bankBin: '970422',
-      accountNumber: '0988889999',
-      accountName: 'HO DUC ANH',
-      branch: 'Hà Nội',
-      qrUrl: 'https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh'
+  "gallery": [
+    {
+      "id": "g1",
+      "src": "assets/images/hero_couple.jpg",
+      "caption": "Đức Anh & Thuỳ Linh - Tình yêu thăng hoa"
     },
-    bride: {
-      bankName: 'Vietcombank',
-      bankBin: '970436',
-      accountNumber: '9988776655',
-      accountName: 'THAI THUY LINH',
-      branch: 'Hà Nội',
-      qrUrl: 'https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh'
+    {
+      "id": "g2",
+      "src": "assets/images/gallery/photo_01.jpg",
+      "caption": "Nụ cười rạng rỡ của đôi uyên ương"
+    },
+    {
+      "id": "g3",
+      "src": "assets/images/gallery/photo_02.jpg",
+      "caption": "Khoảnh khắc ngọt ngào trao nhau"
+    },
+    {
+      "id": "g4",
+      "src": "assets/images/gallery/photo_03.jpg",
+      "caption": "Ánh mắt đong đầy yêu thương"
+    },
+    {
+      "id": "g5",
+      "src": "assets/images/gallery/photo_04.jpg",
+      "caption": "Chú rể Đức Anh thanh lịch"
+    },
+    {
+      "id": "g6",
+      "src": "assets/images/gallery/photo_05.jpg",
+      "caption": "Cô dâu Thuỳ Linh duyên dáng"
+    },
+    {
+      "id": "g7",
+      "src": "assets/images/gallery/photo_06.jpg",
+      "caption": "Tay trong tay bước vào tương lai"
+    },
+    {
+      "id": "g8",
+      "src": "assets/images/gallery/photo_07.jpg",
+      "caption": "Chuyện tình yêu đơm hoa kết trái"
+    },
+    {
+      "id": "g9",
+      "src": "assets/images/gallery/photo_08.jpg",
+      "caption": "Nét đẹp kiêu sa trong ngày hạnh phúc"
+    },
+    {
+      "id": "g10",
+      "src": "assets/images/gallery/photo_09.jpg",
+      "caption": "Hẹn ước trọn đời"
+    },
+    {
+      "id": "g11",
+      "src": "assets/images/gallery/photo_10.jpg",
+      "caption": "Từng phút giây bên em đều quý giá"
+    },
+    {
+      "id": "g12",
+      "src": "assets/images/gallery/photo_11.jpg",
+      "caption": "Hạnh phúc giản đơn là có nhau"
+    },
+    {
+      "id": "g13",
+      "src": "assets/images/gallery/photo_12.jpg",
+      "caption": "Bức tranh tình yêu hoàn hảo"
+    },
+    {
+      "id": "g14",
+      "src": "assets/images/gallery/photo_13.jpg",
+      "caption": "Ngày đẹp nhất trần đời"
+    },
+    {
+      "id": "g15",
+      "src": "assets/images/gallery/photo_14.jpg",
+      "caption": "Bình yên là khi ở bên anh"
+    },
+    {
+      "id": "g16",
+      "src": "assets/images/gallery/photo_15.jpg",
+      "caption": "Mãi mãi một tình yêu"
+    }
+  ],
+  "banking": {
+    "groom": {
+      "bankName": "MB Bank (Quân Đội)",
+      "bankBin": "970422",
+      "accountNumber": "0988889999",
+      "accountName": "HO DUC ANH",
+      "branch": "Hà Nội",
+      "qrUrl": "https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh"
+    },
+    "bride": {
+      "bankName": "Vietcombank",
+      "bankBin": "970436",
+      "accountNumber": "9988776655",
+      "accountName": "THAI THUY LINH",
+      "branch": "Hà Nội",
+      "qrUrl": "https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh"
     }
   }
 };
@@ -352,6 +415,13 @@ const WeddingDB = {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('wedding_settings_updated', { detail: settings }));
+        if (typeof fetch !== 'undefined') {
+          fetch('/api/save-settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+          }).catch(() => {});
+        }
       }
       return true;
     } catch (e) {

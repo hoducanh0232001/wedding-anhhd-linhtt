@@ -35,6 +35,36 @@ const server = http.createServer((req, res) => {
     pathname = '/admin.html';
   }
 
+  // API endpoint to save settings into assets/js/data.js
+  if (req.method === 'POST' && pathname === '/api/save-settings') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const newSettings = JSON.parse(body);
+        const dataJsPath = path.join(BASE_DIR, 'assets', 'js', 'data.js');
+        if (fs.existsSync(dataJsPath)) {
+          let content = fs.readFileSync(dataJsPath, 'utf8');
+          const sMarker = 'const DEFAULT_SETTINGS = {';
+          const eMarker = 'const DEFAULT_GUESTS = [';
+          const sIdx = content.indexOf(sMarker);
+          const eIdx = content.indexOf(eMarker, sIdx);
+          if (sIdx !== -1 && eIdx !== -1) {
+            const newCode = "const DEFAULT_SETTINGS = " + JSON.stringify(newSettings, null, 2) + ";\r\n\r\n";
+            content = content.substring(0, sIdx) + newCode + content.substring(eIdx);
+            fs.writeFileSync(dataJsPath, content, 'utf8');
+          }
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ success: true, message: 'Đã lưu và đồng bộ trực tiếp vào file data.js!' }));
+      } catch (e) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
+    });
+    return;
+  }
+
   const filePath = path.join(BASE_DIR, pathname);
 
   // Security check to avoid path traversal

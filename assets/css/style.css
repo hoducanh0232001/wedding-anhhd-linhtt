@@ -725,14 +725,14 @@ html, body {
 
 .card-flower-float.mr {
   top: 50%;
-  right: -45px;
-  width: 220px;
+  right: -55px;
+  width: 155px;
   animation: drFloatMid 6s ease-in-out infinite;
 }
 
 @keyframes drFloatMid {
   0%, 100% { transform: translateY(-50%) rotate(8deg); }
-  50% { transform: translateY(calc(-50% - 8px)) rotate(8deg); }
+  50% { transform: translateY(calc(-50% - 6px)) rotate(8deg); }
 }
 
 .card-flower-float img {

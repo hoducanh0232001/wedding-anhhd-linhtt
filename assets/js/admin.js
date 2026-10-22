@@ -348,6 +348,11 @@ function setupEventListeners() {
       const brideAccNum = document.getElementById('bank-bride-account').value.trim();
       const brideAccName = document.getElementById('bank-bride-holder').value.trim().toUpperCase();
 
+      const showBankCheckbox = document.getElementById('setting-show-bank');
+      if (showBankCheckbox) {
+        current.showBank = showBankCheckbox.checked;
+      }
+
       current.banking.groom.bankName = groomBankName;
       current.banking.groom.accountNumber = groomAccNum;
       current.banking.groom.accountName = groomAccName;
@@ -543,6 +548,14 @@ function populateBankingForm(settings) {
   document.getElementById('bank-bride-name').value = bride.bankName;
   document.getElementById('bank-bride-account').value = bride.accountNumber;
   document.getElementById('bank-bride-holder').value = bride.accountName;
+
+  const showBankCheckbox = document.getElementById('setting-show-bank');
+  if (showBankCheckbox) {
+    showBankCheckbox.checked = settings.showBank !== false;
+    if (showBankCheckbox.nextElementSibling) {
+      showBankCheckbox.nextElementSibling.style.backgroundColor = showBankCheckbox.checked ? '#511419' : '#ccc';
+    }
+  }
 
   const previewGroom = document.getElementById('admin-groom-qr-preview');
   if (previewGroom) previewGroom.src = groom.qrUrl;

@@ -907,11 +907,15 @@ html, body {
 /* ==========================================================================
    9. ALBUM ẢNH CƯỚI (Chuẩn 2 Cột Chung Đôi Tender)
    ========================================================================== */
-.gallery-section-tender {
+/* ==========================================================================
+   9. ALBUM ẢNH CƯỚI (3D Cylindrical Arc Coverflow)
+   ========================================================================== */
+.carousel-3d-section {
   position: relative;
   z-index: 10;
-  padding: 34px 18px 24px;
+  padding: 34px 0 24px;
   text-align: center;
+  overflow-x: clip;
 }
 
 .section-title-tender {
@@ -932,36 +936,135 @@ html, body {
   margin-bottom: 18px;
 }
 
-.gallery-grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+.carousel-3d-stage {
+  position: relative;
   width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
+  height: 380px;
+  margin: 14px auto 0;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  touch-action: pan-y pinch-zoom;
 }
 
-.gallery-grid-item {
-  border-radius: 6px;
+@media (min-width: 640px) {
+  .carousel-3d-stage {
+    height: 440px;
+    perspective: 1200px;
+    -webkit-perspective: 1200px;
+  }
+}
+
+.carousel-cards-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.carousel-3d-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 310px;
+  margin-left: -110px;
+  margin-top: -155px;
+  border-radius: 16px;
   overflow: hidden;
-  aspect-ratio: 1 / 1;
+  background: #f7efe6;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(81, 20, 25, 0.12);
-  background: rgba(81, 20, 25, 0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease, box-shadow 0.45s ease;
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-.gallery-grid-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(81, 20, 25, 0.16);
+@media (min-width: 640px) {
+  .carousel-3d-card {
+    width: 260px;
+    height: 360px;
+    margin-left: -130px;
+    margin-top: -180px;
+    border-radius: 18px;
+  }
 }
 
-.gallery-grid-item img {
+.carousel-3d-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+}
+
+.carousel-3d-card.active-center {
+  box-shadow: 0 14px 36px rgba(81, 20, 25, 0.28);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(81, 20, 25, 0.18);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 60;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.25s ease;
+}
+
+.carousel-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.carousel-nav-btn.prev {
+  left: 10px;
+}
+
+.carousel-nav-btn.next {
+  right: 10px;
+}
+
+@media (min-width: 640px) {
+  .carousel-nav-btn.prev { left: 24px; }
+  .carousel-nav-btn.next { right: 24px; }
+}
+
+.carousel-nav-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+.carousel-page-counter {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(81, 20, 25, 0.7);
+  letter-spacing: 0.1em;
+  margin-top: 18px;
+  font-weight: 500;
 }
 
 /* ==========================================================================
@@ -1196,8 +1299,74 @@ html, body {
 }
 
 /* ==========================================================================
-   12. BANK / VIETQR GIFT BOX
+   12. BANK / VIETQR GIFT BOX & COLLAPSIBLE TOGGLE
    ========================================================================== */
+.gift-section-tender {
+  position: relative;
+  z-index: 10;
+  padding: 24px 20px;
+  max-width: 440px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.btn-toggle-qr {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: #fffaf3;
+  border: 1.5px solid var(--primary);
+  padding: 10px 24px;
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-toggle-qr:hover {
+  background: #380a0e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(81, 20, 25, 0.35);
+}
+
+.btn-toggle-qr.active {
+  background: rgba(81, 20, 25, 0.08);
+  color: var(--primary);
+  border-color: rgba(81, 20, 25, 0.35);
+  box-shadow: none;
+}
+
+.qr-btn-icon {
+  font-size: 16px;
+}
+
+.qr-btn-arrow {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.3s ease;
+}
+
+.btn-toggle-qr.active .qr-btn-arrow {
+  transform: rotate(180deg);
+}
+
+.collapsible-qr-container {
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+  max-height: 900px;
+  opacity: 1;
+}
+
+.collapsible-qr-container.collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .gift-card-envelope {
   position: relative;
   border-radius: 14px;

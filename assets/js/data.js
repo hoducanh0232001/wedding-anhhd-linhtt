@@ -56,6 +56,7 @@ const WEDDING_THEMES = [
 
 const DEFAULT_SETTINGS = {
   themeId: 'tender',
+  showBank: true,
   theme: {
     name: 'Tender Burgundy & Gold',
     primaryColor: '#511419',

@@ -1156,6 +1156,22 @@ body.admin-body {
              ========================================== -->
         <div id="panel-banking" class="tab-panel">
           <form id="form-banking-settings">
+            <!-- Master Toggle Bật/Tắt Hộp Mừng Cưới -->
+            <div class="admin-card" style="margin-bottom:18px;">
+              <div class="admin-card-body" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;">
+                <div>
+                  <h4 style="margin:0 0 4px;font-size:15px;color:var(--admin-primary);font-weight:600;">Hiển thị Hộp Mừng Cưới & Mã VietQR trên thiệp</h4>
+                  <p style="margin:0;font-size:13px;color:#666;">Bật để hiển thị mục mừng cưới, hoặc tắt nếu không muốn công khai thông tin tài khoản</p>
+                </div>
+                <label style="position:relative;display:inline-block;width:48px;height:26px;margin:0;cursor:pointer;">
+                  <input type="checkbox" id="setting-show-bank" checked style="opacity:0;width:0;height:0;" onchange="this.nextElementSibling.style.backgroundColor = this.checked ? '#511419' : '#ccc'" />
+                  <span style="position:absolute;cursor:pointer;inset:0;background-color:#511419;transition:.3s;border-radius:26px;">
+                    <span style="position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;" id="switch-thumb"></span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
             <div class="form-grid-2">
               <!-- Groom Bank -->
               <div class="admin-card">

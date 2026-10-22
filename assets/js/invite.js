@@ -117,6 +117,16 @@ function initDynamicContent(settings) {
     const brideStk = document.getElementById('bride-stk');
     if (brideStk) brideStk.textContent = brideBank.accountNumber || '9988776655';
   }
+
+  // Show/Hide Bank / QR Section
+  const giftSection = document.getElementById('section-gift');
+  if (giftSection) {
+    if (settings.showBank === false) {
+      giftSection.style.display = 'none';
+    } else {
+      giftSection.style.display = 'block';
+    }
+  }
 }
 
 // 2. Guest Personalization via URL Parameters
@@ -332,43 +342,210 @@ function initCountdown(targetDateStr) {
   setInterval(update, 1000);
 }
 
-// 7. GALLERY (Chuẩn Chung Đôi Tender 2 Cột)
+// 7. 3D CYLINDRICAL ARC COVERFLOW CAROUSEL (Khớp 100% Ảnh Yêu Cầu & Counter X/16)
 let currentGalleryList = [];
 let currentLightboxIdx = 0;
+let carouselActiveIdx = 0;
+let carouselAutoTimer = null;
+let carouselIsHovered = false;
 
 function initGallery(gallery) {
-  const container = document.getElementById('gallery-grid-box');
-  if (!container || !gallery || !Array.isArray(gallery)) return;
+  const track = document.getElementById('carousel-cards-track');
+  const counter = document.getElementById('carousel-page-counter');
+  const prevBtn = document.getElementById('carousel-prev-btn');
+  const nextBtn = document.getElementById('carousel-next-btn');
+  const stage = document.getElementById('carousel-3d-stage');
+
+  if (!track || !gallery || !Array.isArray(gallery) || gallery.length === 0) return;
 
   currentGalleryList = gallery;
-  container.innerHTML = '';
+  track.innerHTML = '';
+  const count = gallery.length;
+  carouselActiveIdx = 0;
+
+  const cards = [];
 
   gallery.forEach((item, idx) => {
-    const itemEl = document.createElement('div');
-    itemEl.className = 'gallery-grid-item';
-    itemEl.setAttribute('tabindex', '0');
-    itemEl.setAttribute('role', 'button');
-    itemEl.setAttribute('aria-label', item.caption || `Ảnh cưới ${idx + 1}`);
+    const card = document.createElement('div');
+    card.className = 'carousel-3d-card';
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', item.caption || `Ảnh cưới ${idx + 1}`);
 
     const img = document.createElement('img');
     img.src = item.src;
     img.alt = item.caption || `Ảnh cưới ${idx + 1}`;
     img.loading = 'lazy';
+    card.appendChild(img);
 
-    itemEl.appendChild(img);
-    itemEl.addEventListener('click', () => openLightbox(idx));
-    itemEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
+    card.addEventListener('click', () => {
+      if (idx === carouselActiveIdx) {
+        // Bấm ảnh giữa để phóng to xem Lightbox
         openLightbox(idx);
+      } else {
+        // Bấm ảnh hai bên để xoay đến vị trí giữa
+        carouselActiveIdx = idx;
+        render3DCarousel();
+        resetCarouselAutoTimer();
       }
     });
 
-    container.appendChild(itemEl);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (idx === carouselActiveIdx) {
+          openLightbox(idx);
+        } else {
+          carouselActiveIdx = idx;
+          render3DCarousel();
+          resetCarouselAutoTimer();
+        }
+      }
+    });
+
+    track.appendChild(card);
+    cards.push(card);
   });
+
+  function render3DCarousel() {
+    const isMobile = window.innerWidth < 640;
+    
+    // Spacing constants tuned to match user's screenshot
+    const transXStep = isMobile ? 85 : 110;
+    const transZStep = isMobile ? 80 : 90;
+    const rotateStep = 32;
+
+    cards.forEach((card, idx) => {
+      let l = idx - carouselActiveIdx;
+      // Wrap-around circular math
+      if (l > count / 2) l -= count;
+      else if (l < -count / 2) l += count;
+
+      const o = Math.abs(l);
+
+      if (o > 3) {
+        card.style.opacity = '0';
+        card.style.visibility = 'hidden';
+        card.style.pointerEvents = 'none';
+        card.style.zIndex = '0';
+      } else {
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'auto';
+
+        let scale = 1;
+        let opacity = 1;
+        let translateX = 0;
+        let translateZ = 0;
+        let rotateY = 0;
+        let zIndex = 50 - o * 10;
+
+        if (o === 0) {
+          scale = 1;
+          opacity = 1;
+          translateX = 0;
+          translateZ = 0;
+          rotateY = 0;
+          card.classList.add('active-center');
+        } else {
+          card.classList.remove('active-center');
+          scale = Math.max(0.64, 1 - 0.12 * o);
+          opacity = Math.max(0.35, 1 - 0.18 * o);
+          translateX = (l > 0 ? 1 : -1) * (transXStep + (o - 1) * (isMobile ? 65 : 85));
+          translateZ = -(transZStep + (o - 1) * (isMobile ? 70 : 80));
+          rotateY = (l > 0 ? -1 : 1) * (rotateStep + (o - 1) * 10);
+        }
+
+        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+        card.style.opacity = opacity;
+        card.style.zIndex = zIndex;
+      }
+    });
+
+    if (counter) {
+      counter.textContent = `${carouselActiveIdx + 1} / ${count}`;
+    }
+  }
+
+  function nextSlide() {
+    carouselActiveIdx = (carouselActiveIdx + 1) % count;
+    render3DCarousel();
+  }
+
+  function prevSlide() {
+    carouselActiveIdx = (carouselActiveIdx - 1 + count) % count;
+    render3DCarousel();
+  }
+
+  function resetCarouselAutoTimer() {
+    if (carouselAutoTimer) clearInterval(carouselAutoTimer);
+    if (!carouselIsHovered) {
+      carouselAutoTimer = setInterval(nextSlide, 3500);
+    }
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = (e) => {
+      e.stopPropagation();
+      nextSlide();
+      resetCarouselAutoTimer();
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = (e) => {
+      e.stopPropagation();
+      prevSlide();
+      resetCarouselAutoTimer();
+    };
+  }
+
+  // Hover pause
+  if (stage) {
+    stage.addEventListener('mouseenter', () => {
+      carouselIsHovered = true;
+      if (carouselAutoTimer) clearInterval(carouselAutoTimer);
+    });
+    stage.addEventListener('mouseleave', () => {
+      carouselIsHovered = false;
+      resetCarouselAutoTimer();
+    });
+
+    // Touch Swipe Support
+    let touchStartX = 0;
+    let touchStartY = 0;
+    stage.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      if (carouselAutoTimer) clearInterval(carouselAutoTimer);
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      resetCarouselAutoTimer();
+    }, { passive: true });
+  }
+
+  window.addEventListener('resize', () => {
+    render3DCarousel();
+  });
+
+  // Initial render & timer
+  render3DCarousel();
+  resetCarouselAutoTimer();
 }
 
-// 8. LIGHTBOX VIEW WITH SMOOTH CAROUSEL NAVIGATION
+// 8. LIGHTBOX VIEW WITH SMOOTH NAVIGATION
 window.openLightbox = function(idx) {
   if (!currentGalleryList || currentGalleryList.length === 0) return;
   currentLightboxIdx = (idx + currentGalleryList.length) % currentGalleryList.length;
@@ -432,6 +609,25 @@ document.addEventListener('keydown', (e) => {
     nextLightbox();
   }
 });
+
+// Bật / Tắt mã QR Mừng Cưới (Accordion Toggle)
+window.toggleQrBox = function() {
+  const container = document.getElementById('collapsible-qr-container');
+  const btn = document.getElementById('btn-toggle-qr');
+  const text = document.getElementById('toggle-qr-text');
+  if (!container || !btn) return;
+
+  const isCollapsed = container.classList.contains('collapsed');
+  if (isCollapsed) {
+    container.classList.remove('collapsed');
+    btn.classList.add('active');
+    if (text) text.textContent = 'Thu gọn / Ẩn mã QR';
+  } else {
+    container.classList.add('collapsed');
+    btn.classList.remove('active');
+    if (text) text.textContent = 'Mở mã QR Mừng Cưới';
+  }
+};
 
 window.fillQuickWish = function(text) {
   const wishTextarea = document.getElementById('rsvp-wish');

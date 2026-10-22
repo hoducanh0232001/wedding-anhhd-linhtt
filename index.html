@@ -181,20 +181,29 @@
       </div>
     </section>
 
-    <!-- 5. ALBUM ẢNH CƯỚI (Chuẩn 2 Cột Chung Đôi Tender) -->
-    <section class="gallery-section-tender" id="section-gallery">
+    <!-- 5. ALBUM ẢNH CƯỚI (3D Cylindrical Arc Coverflow) -->
+    <section class="carousel-3d-section" id="section-gallery">
       <!-- Castle Silhouette Background -->
-      <img src="assets/images/theme/castle.webp" alt="" class="castle-bg" style="top:-6%;width:150%;" />
+      <img src="assets/images/theme/castle.webp" alt="" class="castle-bg" style="top:-4%;width:150%;" />
 
-      <h3 class="section-title-tender">
-        ALBUM ẢNH CƯỚI
-      </h3>
-      <p class="section-subtitle-tender">
-        Chạm vào ảnh để xem trọn bộ khoảnh khắc ngọt ngào
-      </p>
+      <h3 class="section-title-tender">ALBUM ẢNH CƯỚI</h3>
 
-      <!-- 2-Column Grid Gallery -->
-      <div id="gallery-grid-box" class="gallery-grid-container"></div>
+      <!-- 3D Carousel Stage -->
+      <div class="carousel-3d-stage" id="carousel-3d-stage">
+        <!-- Navigation Buttons -->
+        <button type="button" class="carousel-nav-btn prev" id="carousel-prev-btn" aria-label="Ảnh trước">
+          <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="carousel-nav-btn next" id="carousel-next-btn" aria-label="Ảnh tiếp">
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- Carousel Track with 3D Preserved Perspective -->
+        <div id="carousel-cards-track" class="carousel-cards-track"></div>
+      </div>
+
+      <!-- Clean Page Indicator (e.g. 14 / 16) -->
+      <div class="carousel-page-counter" id="carousel-page-counter">1 / 16</div>
     </section>
 
     <!-- 6. PARTY & RECEPTION CARD (Tiệc Cưới & Mini Calendar) -->
@@ -381,52 +390,64 @@
       </div>
     </section>
 
-    <!-- 11. HỘP MỪNG CƯỚI (VIETQR GIFT BOX) -->
-    <section style="position:relative;z-index:10;padding:24px 20px;max-width:440px;margin:20px auto;text-align:center;">
+    <!-- 10. HỘP MỪNG CƯỚI (VIETQR GIFT BOX & BẬT/TẮT QR) -->
+    <section id="section-gift" class="gift-section-tender">
       <h3 class="section-title-tender" style="margin-bottom:6px;">
         HỘP MỪNG CƯỚI
       </h3>
-      <p class="section-subtitle-tender" style="margin-bottom:16px;font-style:normal;">
+      <p class="section-subtitle-tender" style="margin-bottom:18px;font-style:normal;">
         Món quà tinh thần chúc phúc cho khởi đầu mới của Đức Anh & Thuỳ Linh
       </p>
 
-      <div style="display:flex;justify-content:center;gap:12px;margin-bottom:12px;">
-        <button class="btn-copy-acc active" id="tab-groom-btn" onclick="toggleGiftTab('groom')">
-          Mừng Chú Rể
-        </button>
-        <button class="btn-copy-acc" id="tab-bride-btn" onclick="toggleGiftTab('bride')">
-          Mừng Cô Dâu
-        </button>
-      </div>
-
-      <!-- Groom Gift Box -->
-      <div class="gift-card-envelope" id="gift-groom-box">
-        <div class="qr-image-display">
-          <img id="groom-qr-img" src="https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh" alt="VietQR Chú Rể" />
-        </div>
-        <div class="bank-detail-text">
-          <strong>MB Bank (Ngân hàng Quân Đội)</strong><br />
-          Số tài khoản: <strong id="groom-stk" style="font-size:16px;color:var(--primary);">0988889999</strong><br />
-          Chủ tài khoản: <strong>HO DUC ANH</strong>
-        </div>
-        <button type="button" class="btn-copy-acc" onclick="copyStk('0988889999')">
-          📋 Sao chép số tài khoản
+      <!-- Toggle Button to Bật/Tắt QR Code -->
+      <div style="margin-bottom:16px;">
+        <button type="button" id="btn-toggle-qr" class="btn-toggle-qr" onclick="toggleQrBox()">
+          <span class="qr-btn-icon">🎁</span>
+          <span id="toggle-qr-text">Mở mã QR Mừng Cưới</span>
+          <svg class="qr-btn-arrow" id="toggle-qr-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
 
-      <!-- Bride Gift Box -->
-      <div class="gift-card-envelope" id="gift-bride-box" style="display:none;">
-        <div class="qr-image-display">
-          <img id="bride-qr-img" src="https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh" alt="VietQR Cô Dâu" />
+      <!-- Collapsible Container for QR Code & Tabs -->
+      <div id="collapsible-qr-container" class="collapsible-qr-container collapsed">
+        <div style="display:flex;justify-content:center;gap:12px;margin-bottom:14px;">
+          <button class="btn-copy-acc active" id="tab-groom-btn" onclick="toggleGiftTab('groom')">
+            Mừng Chú Rể
+          </button>
+          <button class="btn-copy-acc" id="tab-bride-btn" onclick="toggleGiftTab('bride')">
+            Mừng Cô Dâu
+          </button>
         </div>
-        <div class="bank-detail-text">
-          <strong>Vietcombank (Ngoại Thương)</strong><br />
-          Số tài khoản: <strong id="bride-stk" style="font-size:16px;color:var(--primary);">9988776655</strong><br />
-          Chủ tài khoản: <strong>THAI THUY LINH</strong>
+
+        <!-- Groom Gift Box -->
+        <div class="gift-card-envelope" id="gift-groom-box">
+          <div class="qr-image-display">
+            <img id="groom-qr-img" src="https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh" alt="VietQR Chú Rể" />
+          </div>
+          <div class="bank-detail-text">
+            <strong>MB Bank (Ngân hàng Quân Đội)</strong><br />
+            Số tài khoản: <strong id="groom-stk" style="font-size:16px;color:var(--primary);">0988889999</strong><br />
+            Chủ tài khoản: <strong>HO DUC ANH</strong>
+          </div>
+          <button type="button" class="btn-copy-acc" onclick="copyStk('0988889999')">
+            📋 Sao chép số tài khoản
+          </button>
         </div>
-        <button type="button" class="btn-copy-acc" onclick="copyStk('9988776655')">
-          📋 Sao chép số tài khoản
-        </button>
+
+        <!-- Bride Gift Box -->
+        <div class="gift-card-envelope" id="gift-bride-box" style="display:none;">
+          <div class="qr-image-display">
+            <img id="bride-qr-img" src="https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh" alt="VietQR Cô Dâu" />
+          </div>
+          <div class="bank-detail-text">
+            <strong>Vietcombank (Ngoại Thương)</strong><br />
+            Số tài khoản: <strong id="bride-stk" style="font-size:16px;color:var(--primary);">9988776655</strong><br />
+            Chủ tài khoản: <strong>THAI THUY LINH</strong>
+          </div>
+          <button type="button" class="btn-copy-acc" onclick="copyStk('9988776655')">
+            📋 Sao chép số tài khoản
+          </button>
+        </div>
       </div>
     </section>
 

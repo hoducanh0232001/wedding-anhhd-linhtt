@@ -522,6 +522,8 @@ let ytPlayerReady = false;
 let isYouTubeAudio = false;
 let isAudioPlaying = false;
 let pendingPlay = false;
+let currentMusicUrl = null;
+let musicListenersAttached = false;
 
 function extractYouTubeId(url) {
   if (!url || typeof url !== 'string') return null;
@@ -538,45 +540,98 @@ function initMusicPlayer(settings) {
   if (!toggleBtn) return;
 
   const musicUrl = settings && settings.wedding && settings.wedding.musicUrl ? settings.wedding.musicUrl.trim() : '';
+
+  // If already configured for this exact URL, do not re-create player
+  if (currentMusicUrl !== null && currentMusicUrl === musicUrl) {
+    return;
+  }
+
+  const wasPlaying = isAudioPlaying;
+  currentMusicUrl = musicUrl;
+
+  // 1. Cleanup any previous HTML5 Audio
+  if (audioObj) {
+    try {
+      audioObj.pause();
+      audioObj.src = '';
+    } catch (e) {}
+    audioObj = null;
+  }
+
+  // 2. Cleanup any previous YouTube Player
+  cleanupYouTubePlayer();
+
   const ytVideoId = extractYouTubeId(musicUrl);
 
   if (ytVideoId) {
     isYouTubeAudio = true;
-    setupYouTubePlayer(ytVideoId);
+    setupYouTubePlayer(ytVideoId, wasPlaying);
   } else {
     isYouTubeAudio = false;
     const audioSrc = musicUrl || 'https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3';
     audioObj = new Audio(audioSrc);
     audioObj.loop = true;
     audioObj.preload = 'auto';
+    if (wasPlaying) {
+      audioObj.play().then(() => {
+        isAudioPlaying = true;
+        toggleBtn.classList.add('playing');
+        toggleBtn.title = 'Tạm dừng nhạc';
+      }).catch(err => {
+        console.warn('Playback resume pending user gesture:', err);
+      });
+    }
   }
 
-  toggleBtn.addEventListener('click', () => {
-    if (isAudioPlaying) {
-      pauseBackgroundMusic();
-    } else {
-      playBackgroundMusic();
-    }
-  });
+  if (!musicListenersAttached) {
+    musicListenersAttached = true;
+    toggleBtn.addEventListener('click', () => {
+      if (isAudioPlaying) {
+        pauseBackgroundMusic();
+      } else {
+        playBackgroundMusic();
+      }
+    });
 
-  // Resume on user interaction if initial autoplay was waiting for interaction
-  const resumeOnGesture = () => {
-    if (pendingPlay && !isAudioPlaying) {
-      playBackgroundMusic();
-    }
-  };
-  document.addEventListener('click', resumeOnGesture, { passive: true });
-  document.addEventListener('touchstart', resumeOnGesture, { passive: true });
+    // Resume on user interaction if initial autoplay was waiting for interaction
+    const resumeOnGesture = () => {
+      if (pendingPlay && !isAudioPlaying) {
+        playBackgroundMusic();
+      }
+    };
+    document.addEventListener('click', resumeOnGesture, { passive: true });
+    document.addEventListener('touchstart', resumeOnGesture, { passive: true });
+  }
 }
 
-function setupYouTubePlayer(videoId) {
-  let ytContainer = document.getElementById('youtube-audio-player');
-  if (!ytContainer) {
-    ytContainer = document.createElement('div');
-    ytContainer.id = 'youtube-audio-player';
-    ytContainer.style.cssText = 'position:fixed;bottom:-200px;right:-200px;width:10px;height:10px;opacity:0.001;pointer-events:none;z-index:-9999;';
-    document.body.appendChild(ytContainer);
+function cleanupYouTubePlayer() {
+  if (ytPlayer) {
+    try {
+      if (typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+      if (typeof ytPlayer.destroy === 'function') ytPlayer.destroy();
+    } catch (e) {}
+    ytPlayer = null;
+    ytPlayerReady = false;
   }
+  const oldContainer = document.getElementById('youtube-audio-player');
+  if (oldContainer) {
+    oldContainer.remove();
+  }
+}
+
+function setupYouTubePlayer(videoId, autoPlayIfPending) {
+  if (autoPlayIfPending) {
+    pendingPlay = true;
+  }
+
+  cleanupYouTubePlayer();
+
+  const ytContainer = document.createElement('div');
+  ytContainer.id = 'youtube-audio-player';
+  // Kept within viewport (top:0, left:0, 1px) so mobile browsers won't pause as an offscreen iframe
+  ytContainer.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-1;';
+  ytContainer.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(ytContainer);
 
   function createPlayer() {
     try {
@@ -1609,6 +1664,7 @@ window.addEventListener('storage', (e) => {
     document.body.setAttribute('data-theme', WeddingDB.getThemeId());
     initDynamicContent(updated);
     if (updated.gallery) initGallery(updated.gallery);
+    initMusicPlayer(updated);
   }
 });
 
@@ -1617,6 +1673,7 @@ window.addEventListener('wedding_settings_updated', (e) => {
   document.body.setAttribute('data-theme', WeddingDB.getThemeId());
   initDynamicContent(updated);
   if (updated.gallery) initGallery(updated.gallery);
+  initMusicPlayer(updated);
 });
 
 // 15. Scroll-triggered Text & Section Reveal (IntersectionObserver)

@@ -1667,7 +1667,10 @@ body.admin-body {
                 <div class="form-grid-2">
                   <div class="admin-form-group">
                     <label class="admin-form-label">Link nhạc nền (MP3 hoặc YouTube)</label>
-                    <input type="text" id="music-url-input" class="admin-form-input" placeholder="Dán link YouTube (vd: https://youtu.be/...) hoặc file .mp3" />
+                    <div style="display:flex;gap:8px;">
+                      <input type="text" id="music-url-input" class="admin-form-input" style="flex:1;" placeholder="Dán link YouTube (vd: https://youtu.be/...) hoặc file .mp3" />
+                      <button type="button" id="btn-test-admin-music" class="admin-btn admin-btn-outline" style="white-space:nowrap;padding:8px 14px;font-size:13px;">▶️ Nghe thử</button>
+                    </div>
                     <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Hỗ trợ dán trực tiếp link video YouTube hoặc link file .mp3</small>
                   </div>
                   <div class="admin-form-group">

@@ -324,6 +324,51 @@ function setupEventListeners() {
     });
   }
 
+  // Music preview tester
+  let adminAudioTestObj = null;
+  const btnTestMusic = document.getElementById('btn-test-admin-music');
+  if (btnTestMusic) {
+    btnTestMusic.addEventListener('click', () => {
+      if (adminAudioTestObj) {
+        try {
+          if (adminAudioTestObj.pause) adminAudioTestObj.pause();
+        } catch (e) {}
+        adminAudioTestObj = null;
+        btnTestMusic.innerHTML = '▶️ Nghe thử';
+        return;
+      }
+
+      const inputUrl = (document.getElementById('music-url-input').value || '').trim();
+      if (!inputUrl) {
+        showAdminToast('Vui lòng nhập link YouTube hoặc file MP3 trước.');
+        return;
+      }
+
+      const ytMatch = inputUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        const videoId = ytMatch[1];
+        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank');
+        showAdminToast('Đang mở video YouTube để kiểm tra phát nhạc.');
+      } else {
+        try {
+          adminAudioTestObj = new Audio(inputUrl);
+          adminAudioTestObj.play().then(() => {
+            btnTestMusic.innerHTML = '⏹️ Dừng thử';
+            adminAudioTestObj.onended = () => {
+              btnTestMusic.innerHTML = '▶️ Nghe thử';
+              adminAudioTestObj = null;
+            };
+          }).catch(err => {
+            showAdminToast('Không thể phát link này: ' + err.message);
+            btnTestMusic.innerHTML = '▶️ Nghe thử';
+          });
+        } catch (err) {
+          showAdminToast('Lỗi URL âm thanh: ' + err.message);
+        }
+      }
+    });
+  }
+
   // Add Guest Form
   const addGuestForm = document.getElementById('form-add-guest');
   if (addGuestForm) {

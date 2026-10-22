@@ -109,8 +109,8 @@ const DEFAULT_SETTINGS = {
     "brideStk": "",
     "brideBank": "Vietcombank",
     "brideAccountHolder": "THAI THUY LINH",
-    "musicUrl": "https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3",
-    "musicTitle": "Wedding Waltz - Romantic Piano",
+    "musicUrl": "https://youtu.be/dElRVQFqj-k?si=nmDMWT9fAJ3GGVpz",
+    "musicTitle": "Marry You - Bruno Mars",
     "adminPasscode": "123456"
   },
   "events": [

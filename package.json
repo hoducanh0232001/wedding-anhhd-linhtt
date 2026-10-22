@@ -2,10 +2,8 @@
   "name": "wedding-invite",
   "version": "1.0.0",
   "description": "Online Wedding Invitation based on ChungDoi Tender template with Admin Customizer and Guest Personalization",
-  "main": "server.js",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "node dev-server.cjs"
   },
   "keywords": [
     "wedding",

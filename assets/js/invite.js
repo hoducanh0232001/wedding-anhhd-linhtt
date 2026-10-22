@@ -380,7 +380,6 @@ function initEnvelopeOpener() {
     if (!envelopeScreen) return;
     envelopeScreen.classList.add('opened');
     playBackgroundMusic();
-    launchWeddingFireworks();
     fireWeddingStickerConfetti();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1153,14 +1152,13 @@ function initRSVPForm() {
       initWishesList();
     }
 
-    fireConfetti();
     showToast('Xác nhận tham dự thành công! Cảm ơn bạn rất nhiều ❤');
 
     if (wishInput) wishInput.value = '';
   });
 }
 
-// 13. Wedding Sticker & Flower & Heart Confetti Cannon
+// 13. Lightweight & Ultra-Fast Confetti Burst on Envelope Open (Zero Lag, 1.2s max)
 function fireWeddingStickerConfetti() {
   const oldCanvas = document.getElementById('wedding-confetti-canvas');
   if (oldCanvas) oldCanvas.remove();
@@ -1172,34 +1170,24 @@ function fireWeddingStickerConfetti() {
   canvas.style.width = '100vw';
   canvas.style.height = '100vh';
   canvas.style.pointerEvents = 'none';
-  canvas.style.zIndex = '100000'; // Higher than envelope screen (9999) & fireworks
+  canvas.style.zIndex = '100000';
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let width = (canvas.width = window.innerWidth * dpr);
-  let height = (canvas.height = window.innerHeight * dpr);
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
 
   const onResize = () => {
     if (canvas && canvas.parentNode) {
-      width = canvas.width = window.innerWidth * dpr;
-      height = canvas.height = window.innerHeight * dpr;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     }
   };
   window.addEventListener('resize', onResize);
 
-  const flowerStickers = ['🌸', '🌹', '🌺', '🌷', '💐', '🌼', '💮'];
-  const heartStickers = ['❤️', '💖', '💕', '💗', '💓', '💝', '🤍'];
-  const sparkles = ['✨', '⭐'];
-  const colors = [
-    '#c9a24a', // Luxury Gold
-    '#e5c97d', // Champagne Gold
-    '#8a252d', // Red Wine
-    '#511419', // Velvet Burgundy
-    '#ff6b81', // Rose Pink
-    '#ffd700', // Bright Gold
-    '#ffffff'  // Pearl White
-  ];
+  const flowerStickers = ['🌸', '🌹', '🌺', '🌷', '💐'];
+  const heartStickers = ['❤️', '💖', '💕', '💗', '💝'];
+  const colors = ['#c9a24a', '#e5c97d', '#8a252d', '#511419', '#ff6b81', '#ffd700'];
 
   const particles = [];
 
@@ -1208,24 +1196,19 @@ function fireWeddingStickerConfetti() {
     let type = 'ribbon';
     let sticker = '';
 
-    if (randType < 0.35) {
+    if (randType < 0.45) {
       type = 'sticker_flower';
       sticker = flowerStickers[Math.floor(Math.random() * flowerStickers.length)];
-    } else if (randType < 0.70) {
+    } else if (randType < 0.85) {
       type = 'sticker_heart';
       sticker = heartStickers[Math.floor(Math.random() * heartStickers.length)];
-    } else if (randType < 0.85) {
-      type = 'heart_vector';
-    } else if (randType < 0.92) {
-      type = 'sticker_sparkle';
-      sticker = sparkles[Math.floor(Math.random() * sparkles.length)];
     } else {
       type = 'ribbon';
     }
 
     const vx = Math.cos(angle) * speed;
     let vy = Math.sin(angle) * speed;
-    if (isCenter) vy -= 4 * dpr;
+    if (isCenter) vy -= 3;
 
     particles.push({
       x: x,
@@ -1234,47 +1217,52 @@ function fireWeddingStickerConfetti() {
       vy: vy,
       type: type,
       sticker: sticker,
-      size: (type.startsWith('sticker') ? Math.random() * 12 + 22 : Math.random() * 8 + 8) * dpr,
+      size: type.startsWith('sticker') ? Math.random() * 8 + 22 : Math.random() * 6 + 10,
       color: colors[Math.floor(Math.random() * colors.length)],
       angle: Math.random() * 360,
-      angleSpeed: (Math.random() - 0.5) * 8,
+      angleSpeed: (Math.random() - 0.5) * 6,
       wobble: Math.random() * 10,
       wobbleSpeed: Math.random() * 0.08 + 0.04,
-      wobbleRadius: (Math.random() * 1.6 + 0.6) * dpr,
-      gravity: (Math.random() * 0.12 + 0.22) * dpr,
-      drag: 0.983,
+      wobbleRadius: Math.random() * 1.5 + 0.5,
+      gravity: Math.random() * 0.12 + 0.25,
+      drag: 0.98,
       alpha: 1.0,
       life: 0,
-      maxLife: Math.floor(Math.random() * 70 + 240) // ~4.5 - 5.5s
+      maxLife: Math.floor(Math.random() * 25 + 55) // ~1.0s - 1.3s max
     });
   }
 
-  // Dual cannons from bottom left & right + Center wax seal pop
-  const leftX = width * 0.12;
-  const leftY = height * 0.90;
-  for (let i = 0; i < 70; i++) {
-    const angle = (-40 - Math.random() * 45) * (Math.PI / 180);
-    const speed = (Math.random() * 14 + 16) * dpr;
+  // 15 from left, 15 from right, 12 from center seal = 42 total particles (Ultra lightweight!)
+  const leftX = width * 0.15;
+  const leftY = height * 0.85;
+  for (let i = 0; i < 15; i++) {
+    const angle = (-40 - Math.random() * 40) * (Math.PI / 180);
+    const speed = Math.random() * 10 + 13;
     createParticle(leftX, leftY, angle, speed, false);
   }
 
-  const rightX = width * 0.88;
-  const rightY = height * 0.90;
-  for (let i = 0; i < 70; i++) {
-    const angle = (-140 + Math.random() * 45) * (Math.PI / 180);
-    const speed = (Math.random() * 14 + 16) * dpr;
+  const rightX = width * 0.85;
+  const rightY = height * 0.85;
+  for (let i = 0; i < 15; i++) {
+    const angle = (-140 + Math.random() * 40) * (Math.PI / 180);
+    const speed = Math.random() * 10 + 13;
     createParticle(rightX, rightY, angle, speed, false);
   }
 
   const centerX = width * 0.5;
-  const centerY = height * 0.45;
-  for (let i = 0; i < 60; i++) {
+  const centerY = height * 0.5;
+  for (let i = 0; i < 12; i++) {
     const angle = Math.random() * 2 * Math.PI;
-    const speed = (Math.random() * 15 + 6) * dpr;
+    const speed = Math.random() * 10 + 5;
     createParticle(centerX, centerY, angle, speed, true);
   }
 
   let animId = null;
+
+  // Pre-configure font ONCE outside the loop to eliminate frame-drop lag!
+  ctx.font = '24px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
   function render() {
     ctx.clearRect(0, 0, width, height);
@@ -1295,11 +1283,12 @@ function fireWeddingStickerConfetti() {
       p.angle += p.angleSpeed;
       const scaleX = Math.cos(p.wobble);
 
-      if (p.life > p.maxLife - 60) {
-        p.alpha = Math.max(0, (p.maxLife - p.life) / 60);
+      // Fade out rapidly after 35 frames (~0.6s)
+      if (p.life > p.maxLife - 30) {
+        p.alpha = Math.max(0, (p.maxLife - p.life) / 30);
       }
 
-      if (p.alpha <= 0 || p.y > height + 60) {
+      if (p.alpha <= 0 || p.y > height + 40) {
         continue;
       }
 
@@ -1308,27 +1297,14 @@ function fireWeddingStickerConfetti() {
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate((p.angle * Math.PI) / 180);
-      ctx.scale(scaleX, 1);
+      ctx.scale(scaleX * (p.size / 24), p.size / 24);
       ctx.globalAlpha = p.alpha;
 
       if (p.type.startsWith('sticker')) {
-        ctx.font = `${Math.round(p.size)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
         ctx.fillText(p.sticker, 0, 0);
-      } else if (p.type === 'heart_vector') {
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        const s = p.size * 0.8;
-        ctx.moveTo(0, s * 0.3);
-        ctx.bezierCurveTo(-s / 2, -s * 0.35, -s, s / 3, 0, s);
-        ctx.bezierCurveTo(s, s / 3, s / 2, -s * 0.35, 0, s * 0.3);
-        ctx.closePath();
-        ctx.fill();
       } else {
-        // Metallic ribbon
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size * 0.4, p.size, p.size * 0.8);
+        ctx.fillRect(-10, -6, 20, 12);
       }
 
       ctx.restore();
@@ -1346,9 +1322,8 @@ function fireWeddingStickerConfetti() {
   animId = requestAnimationFrame(render);
 }
 
-// 13. Legacy alias for RSVP & wishes
 function fireConfetti() {
-  fireWeddingStickerConfetti();
+  // Silent fallback
 }
 
 window.fireWeddingStickerConfetti = fireWeddingStickerConfetti;

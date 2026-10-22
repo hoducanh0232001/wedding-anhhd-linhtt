@@ -245,7 +245,7 @@ function initDynamicContent(settings) {
     const groomQr = document.getElementById('groom-qr-img');
     if (groomQr && groomBank.qrUrl) groomQr.src = groomBank.qrUrl;
     const groomStk = document.getElementById('groom-stk');
-    if (groomStk) groomStk.textContent = groomBank.accountNumber || '0988889999';
+    if (groomStk) groomStk.textContent = groomBank.accountNumber || 'Chưa cập nhật';
     const groomBankName = document.getElementById('groom-bank-name');
     if (groomBankName) groomBankName.textContent = groomBank.bankName || 'MB Bank (Ngân hàng Quân Đội)';
     const groomHolder = document.getElementById('groom-holder');
@@ -256,7 +256,7 @@ function initDynamicContent(settings) {
     const brideQr = document.getElementById('bride-qr-img');
     if (brideQr && brideBank.qrUrl) brideQr.src = brideBank.qrUrl;
     const brideStk = document.getElementById('bride-stk');
-    if (brideStk) brideStk.textContent = brideBank.accountNumber || '9988776655';
+    if (brideStk) brideStk.textContent = brideBank.accountNumber || 'Chưa cập nhật';
     const brideBankName = document.getElementById('bride-bank-name');
     if (brideBankName) brideBankName.textContent = brideBank.bankName || 'Vietcombank (Ngoại Thương)';
     const brideHolder = document.getElementById('bride-holder');
@@ -1148,13 +1148,13 @@ window.copyStk = function(stk) {
 
 window.copyGroomStk = function() {
   const settings = WeddingDB.getSettings();
-  const stk = settings.banking?.groom?.accountNumber || '0988889999';
+  const stk = settings.banking?.groom?.accountNumber || ''; if (!stk) { showToast('Thông tin số tài khoản chưa được cung cấp.'); return; }
   window.copyStk(stk);
 };
 
 window.copyBrideStk = function() {
   const settings = WeddingDB.getSettings();
-  const stk = settings.banking?.bride?.accountNumber || '9988776655';
+  const stk = settings.banking?.bride?.accountNumber || ''; if (!stk) { showToast('Thông tin số tài khoản chưa được cung cấp.'); return; }
   window.copyStk(stk);
 };
 
@@ -1192,6 +1192,11 @@ function initWishesList() {
 
   const wishes = WeddingDB.getWishes();
   container.innerHTML = '';
+
+  if (!wishes || wishes.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:36px 16px;color:#8a6d3b;font-style:italic;background:rgba(201,162,74,0.06);border-radius:12px;border:1px dashed rgba(201,162,74,0.3);margin:16px 0;">💌 Hãy là người đầu tiên gửi lời chúc phúc đến Đức Anh &amp; Thuỳ Linh nhé! ✨</div>';
+    return;
+  }
 
   wishes.forEach(w => {
     const card = document.createElement('div');

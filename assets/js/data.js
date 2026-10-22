@@ -56,7 +56,7 @@ const WEDDING_THEMES = [
 
 const DEFAULT_SETTINGS = {
   "themeId": "tender",
-  "showBank": true,
+  "showBank": false,
   "theme": {
     "name": "Tender Burgundy & Gold",
     "primaryColor": "#511419",
@@ -103,10 +103,10 @@ const DEFAULT_SETTINGS = {
     "heroPhoto": "assets/images/hero_couple.jpg",
     "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!",
     "announcementText": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CHÚNG TÔI",
-    "groomStk": "0988889999",
+    "groomStk": "",
     "groomBank": "MB Bank",
     "groomAccountHolder": "HO DUC ANH",
-    "brideStk": "9988776655",
+    "brideStk": "",
     "brideBank": "Vietcombank",
     "brideAccountHolder": "THAI THUY LINH",
     "musicUrl": "https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3",
@@ -263,107 +263,25 @@ const DEFAULT_SETTINGS = {
     "groom": {
       "bankName": "MB Bank (Quân Đội)",
       "bankBin": "970422",
-      "accountNumber": "0988889999",
+      "accountNumber": "",
       "accountName": "HO DUC ANH",
       "branch": "Hà Nội",
-      "qrUrl": "https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh"
+      "qrUrl": ""
     },
     "bride": {
       "bankName": "Vietcombank",
       "bankBin": "970436",
-      "accountNumber": "9988776655",
+      "accountNumber": "",
       "accountName": "THAI THUY LINH",
       "branch": "Hà Nội",
-      "qrUrl": "https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh"
+      "qrUrl": ""
     }
   }
 };
 
-const DEFAULT_GUESTS = [
-  {
-    id: 'guest-1',
-    name: 'Nguyễn Văn Nam',
-    prefix: 'Anh',
-    group: 'Bạn Chú Rể',
-    customMessage: 'Rất mong được đón tiếp anh và người thương đến chung vui cùng gia đình chúng em!',
-    phone: '0987654321',
-    status: 'attending',
-    party: 'event-main',
-    guestCount: 2,
-    createdAt: '2026-10-20'
-  },
-  {
-    id: 'guest-2',
-    name: 'Lê Thuỳ Dung',
-    prefix: 'Bạn',
-    group: 'Bạn Cô Dâu',
-    customMessage: 'Sự hiện diện của bạn là niềm vinh hạnh to lớn cho chúng mình!',
-    phone: '0912345678',
-    status: 'attending',
-    party: 'event-main',
-    guestCount: 1,
-    createdAt: '2026-10-21'
-  },
-  {
-    id: 'guest-3',
-    name: 'Gia đình Bác Thành',
-    prefix: 'Gia đình',
-    group: 'Họ hàng Nhà Trai',
-    customMessage: 'Kính mời Bác cùng toàn thể gia đình đến dự bữa cơm thân mật và chung vui cùng hai cháu!',
-    phone: '0903456789',
-    status: 'attending',
-    party: 'event-groom',
-    guestCount: 4,
-    createdAt: '2026-10-21'
-  },
-  {
-    id: 'guest-4',
-    name: 'Team VTIT',
-    prefix: 'Anh Chị Em',
-    group: 'Đồng Nghiệp',
-    customMessage: 'Trân trọng kính mời toàn thể anh chị em Team đến chung vui quẩy hết mình cùng Đức Anh!',
-    phone: '0966889900',
-    status: 'pending',
-    party: 'event-main',
-    guestCount: 5,
-    createdAt: '2026-10-22'
-  }
-];
+const DEFAULT_GUESTS = [];
 
-const DEFAULT_WISHES = [
-  {
-    id: 'wish-0',
-    name: 'Bí mật',
-    relation: 'Khách quý',
-    message: 'Chúc 105 hạnh phúc 🎉🥂🎉',
-    timestamp: '9:57:58 22/10/2026',
-    likes: 1
-  },
-  {
-    id: 'wish-1',
-    name: 'Nguyễn Văn Nam',
-    relation: 'Bạn thân chú rể',
-    message: 'Chúc mừng Đức Anh và Thuỳ Linh! Chúc hai bạn trăm năm hạnh phúc, đầu bạc răng long, mãi mãi thấu hiểu và yêu thương nhau như ngày đầu nhé!',
-    timestamp: '2026-10-21 14:30',
-    likes: 12
-  },
-  {
-    id: 'wish-2',
-    name: 'Lê Thuỳ Dung',
-    relation: 'Bạn đại học cô dâu',
-    message: 'Nhìn hai đứa hạnh phúc mà xúc động quá! Chúc cô dâu xinh đẹp nhất trần đời và chú rể tuyệt vời có một cuộc hôn nhân ngập tràn mật ngọt!',
-    timestamp: '2026-10-21 18:45',
-    likes: 18
-  },
-  {
-    id: 'wish-3',
-    name: 'Anh Tuấn & Chị Lan',
-    relation: 'Đồng nghiệp',
-    message: 'Chúc hai em có một ngày cưới thật trọn vẹn và đáng nhớ. Cùng nhau xây dựng tổ ấm vững chắc, sớm đón thiên thần nhỏ nhé!',
-    timestamp: '2026-10-22 09:15',
-    likes: 9
-  }
-];
+const DEFAULT_WISHES = [];
 
 const AI_WISH_SUGGESTIONS = {
   friends: [
@@ -433,7 +351,16 @@ const WeddingDB = {
   getGuests() {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.GUESTS);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const filtered = parsed.filter(g => !['guest-1', 'guest-2', 'guest-3', 'guest-4'].includes(g.id));
+          if (filtered.length !== parsed.length) {
+            this.saveGuests(filtered);
+          }
+          return filtered;
+        }
+      }
     } catch (e) {
       console.warn('Error reading guests:', e);
     }
@@ -483,7 +410,16 @@ const WeddingDB = {
   getWishes() {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.WISHES);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const filtered = parsed.filter(w => !['wish-0', 'wish-1', 'wish-2', 'wish-3'].includes(w.id));
+          if (filtered.length !== parsed.length) {
+            this.saveWishes(filtered);
+          }
+          return filtered;
+        }
+      }
     } catch (e) {
       console.warn('Error reading wishes:', e);
     }

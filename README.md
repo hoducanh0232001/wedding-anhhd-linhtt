@@ -107,6 +107,4 @@ npm start
 
 3. Mở trình duyệt và trải nghiệm:
 - **Thiệp cưới mặc định:** [http://localhost:3000/](http://localhost:3000/)
-- **Thiệp cưới cá nhân hoá demo 1 (Anh Nam):** [http://localhost:3000/?to=Nguy%E1%BB%85n+V%C4%83n+Nam&prefix=Anh](http://localhost:3000/?to=Nguy%E1%BB%85n+V%C4%83n+Nam&prefix=Anh)
-- **Thiệp cưới cá nhân hoá demo 2 (Bạn Dung):** [http://localhost:3000/?to=L%C3%AA+Thu%E1%BB%B3+Dung&prefix=B%E1%BA%A1n](http://localhost:3000/?to=L%C3%AA+Thu%E1%BB%B3+Dung&prefix=B%E1%BA%A1n)
 - **Trang quản lý (Admin Dashboard):** [http://localhost:3000/admin.html](http://localhost:3000/admin.html) *(Mã PIN: `123456`)*

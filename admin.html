@@ -637,16 +637,24 @@ body.admin-body {
   margin-top: auto;
 }
 
-/* Professional iOS-style Switch Toggle */
+/* Professional Modern Switch Toggle */
+.admin-switch-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+}
+
 .admin-switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 28px;
+  width: 52px;
+  height: 30px;
   flex-shrink: 0;
   cursor: pointer;
   margin: 0;
   vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .admin-switch input {
@@ -660,27 +668,63 @@ body.admin-body {
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background-color: #d1d5db;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 28px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #cbd5e1;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+  border-radius: 30px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
 .admin-switch-slider::before {
   position: absolute;
   content: "";
-  height: 22px;
-  width: 22px;
+  height: 24px;
+  width: 24px;
   left: 3px;
-  bottom: 3px;
+  top: 3px;
   background-color: #ffffff;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.admin-switch:hover .admin-switch-slider {
+  background-color: #94a3b8;
 }
 
 .admin-switch input:checked + .admin-switch-slider {
   background-color: #10b981;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 12px rgba(16, 185, 129, 0.35);
+}
+
+.admin-switch:hover input:checked + .admin-switch-slider {
+  background-color: #059669;
+}
+
+.admin-switch input:checked + .admin-switch-slider::before {
+  transform: translateX(22px);
+}
+
+.admin-switch-status {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-switch-status.on {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.admin-switch-status.off {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
 /* Photo & Gallery Management Styles */
@@ -1673,15 +1717,18 @@ body.admin-body {
           <form id="form-banking-settings">
             <!-- Master Toggle Bật/Tắt Hộp Mừng Cưới -->
             <div class="admin-card" style="margin-bottom:18px;">
-              <div class="admin-card-body" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;">
+              <div class="admin-card-body" style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-wrap:wrap;gap:14px;">
                 <div>
-                  <h4 style="margin:0 0 4px;font-size:15px;color:var(--admin-primary);font-weight:600;">Hiển thị Hộp Mừng Cưới & Mã VietQR trên thiệp</h4>
-                  <p style="margin:0;font-size:13px;color:#666;">Bật để hiển thị mục mừng cưới, hoặc tắt nếu không muốn công khai thông tin tài khoản</p>
+                  <h4 style="margin:0 0 4px;font-size:15px;color:var(--admin-primary);font-weight:600;">Hiển thị Hộp Mừng Cưới &amp; Mã VietQR trên thiệp</h4>
+                  <p style="margin:0;font-size:13px;color:#666;">Bật/Tắt hiển thị toàn bộ mục Hộp mừng cưới &amp; thông tin tài khoản ngân hàng trên thiệp cưới</p>
                 </div>
-                <label class="admin-switch" title="Gạt công tắc để Bật/Tắt hiển thị thông tin ngân hàng & VietQR">
-                  <input type="checkbox" id="setting-show-bank" checked />
-                  <span class="admin-switch-slider"></span>
-                </label>
+                <div class="admin-switch-wrap">
+                  <span id="setting-show-bank-badge" class="admin-switch-status on">● Đang BẬT</span>
+                  <label class="admin-switch" for="setting-show-bank" title="Gạt công tắc để Bật/Tắt hiển thị mục Mừng cưới">
+                    <input type="checkbox" id="setting-show-bank" checked onchange="handleBankSwitchToggle(this.checked)" />
+                    <span class="admin-switch-slider"></span>
+                  </label>
+                </div>
               </div>
             </div>
 

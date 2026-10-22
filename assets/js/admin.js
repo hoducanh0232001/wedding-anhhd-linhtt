@@ -1,3 +1,20 @@
+
+// Bank switch toggle handler
+window.handleBankSwitchToggle = function(isChecked) {
+  const badge = document.getElementById('setting-show-bank-badge');
+  if (badge) {
+    if (isChecked) {
+      badge.className = 'admin-switch-status on';
+      badge.innerHTML = '● Đang BẬT (Hiển thị)';
+    } else {
+      badge.className = 'admin-switch-status off';
+      badge.innerHTML = '○ Đang TẮT (Ẩn khỏi thiệp)';
+    }
+  }
+  if (typeof triggerAutoSave === 'function') {
+    triggerAutoSave();
+  }
+};
 /**
  * Wedding Admin Portal Logic & Guest Personalization Manager
  * Đức Anh & Thuỳ Linh Wedding Invitation Platform
@@ -439,7 +456,7 @@ function renderGuestsTable() {
 
   container.innerHTML = '';
   if (filtered.length === 0) {
-    container.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#888;padding:24px;">Không tìm thấy khách mời nào</td></tr>`;
+    container.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#6b7280;padding:32px 16px;font-size:14px;">Chưa có khách mời nào trong danh sách.<br><span style="font-size:12.5px;color:#9ca3af;">Bấm nút "+ Thêm Khách Mới" hoặc "Nhập Nhiều Khách" ở trên để tạo link mời cá nhân hoá.</span></td></tr>`;
     return;
   }
 
@@ -560,6 +577,11 @@ function renderAdminWishesList() {
   const wishes = WeddingDB.getWishes();
   container.innerHTML = '';
 
+  if (wishes.length === 0) {
+    container.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:28px 16px;font-size:14px;">Chưa có lời chúc nào từ khách mời.</td></tr>';
+    return;
+  }
+
   wishes.forEach((w, idx) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -602,7 +624,13 @@ function populateBankingForm(settings) {
 
   const showBankCheckbox = document.getElementById('setting-show-bank');
   if (showBankCheckbox) {
-    showBankCheckbox.checked = settings.showBank !== false;
+    const isChecked = settings.showBank !== false;
+    showBankCheckbox.checked = isChecked;
+    const badge = document.getElementById('setting-show-bank-badge');
+    if (badge) {
+      badge.className = isChecked ? 'admin-switch-status on' : 'admin-switch-status off';
+      badge.innerHTML = isChecked ? '● Đang BẬT (Hiển thị)' : '○ Đang TẮT (Ẩn khỏi thiệp)';
+    }
   }
 
   const previewGroom = document.getElementById('admin-groom-qr-preview');

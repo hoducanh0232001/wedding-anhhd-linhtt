@@ -107,10 +107,6 @@ server.listen(PORT, () => {
   console.log('======================================================');
   console.log(`\n👉 Thiệp cưới công khai (Public Invite):`);
   console.log(`   http://localhost:${PORT}/`);
-  console.log(`\n💌 Link thiệp cá nhân hoá cho khách mời demo (Personalized):`);
-  console.log(`   http://localhost:${PORT}/?to=Nguy%E1%BB%85n+V%C4%83n+Nam&prefix=Anh`);
-  console.log(`   http://localhost:${PORT}/?to=L%C3%AA+Thu%E1%BB%B3+Dung&prefix=B%E1%BA%A1n`);
-  console.log(`   http://localhost:${PORT}/?to=Gia+%C4%91%C3%ACnh+B%C3%A1c+Th%C3%A0nh&prefix=Gia+%C4%91%C3%ACnh`);
   console.log(`\n⚙️ Trang Quản Lý Tùy Chỉnh (Admin Dashboard):`);
   console.log(`   http://localhost:${PORT}/admin.html (hoặc http://localhost:${PORT}/admin)`);
   console.log(`   Mã PIN đăng nhập mặc định: 123456`);

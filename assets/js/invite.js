@@ -351,25 +351,40 @@ function renderMiniCalendar(dateStr) {
 // 2. Guest Personalization via URL Parameters
 function initPersonalizedGuest(settings) {
   const urlParams = new URLSearchParams(window.location.search);
-  const guestParam = urlParams.get('to') || urlParams.get('guest');
+  const guestParam = urlParams.get('to') || urlParams.get('guest') || urlParams.get('name');
   const prefixParam = urlParams.get('prefix') || urlParams.get('xungho');
   const guestId = urlParams.get('id');
 
   let guestName = 'Quý Khách';
   let guestPrefix = 'Thân Mời';
 
+  // 1. Prioritize reading directly from URL query parameters (works on all devices & phones)
+  if (guestParam) {
+    try {
+      guestName = decodeURIComponent(guestParam.replace(/\+/g, ' ')).trim();
+    } catch(e) {
+      guestName = guestParam.replace(/\+/g, ' ').trim();
+    }
+  }
+
+  if (prefixParam) {
+    try {
+      guestPrefix = decodeURIComponent(prefixParam.replace(/\+/g, ' ')).trim();
+    } catch(e) {
+      guestPrefix = prefixParam.replace(/\+/g, ' ').trim();
+    }
+  }
+
+  // 2. If guestId exists and local DB has the record, use it to enrich
   if (guestId) {
-    const guests = WeddingDB.getGuests();
-    const found = guests.find(g => g.id === guestId);
-    if (found) {
-      guestName = found.name;
-      guestPrefix = found.prefix ? found.prefix : 'Thân Mời';
-    }
-  } else if (guestParam) {
-    guestName = decodeURIComponent(guestParam);
-    if (prefixParam) {
-      guestPrefix = decodeURIComponent(prefixParam);
-    }
+    try {
+      const guests = WeddingDB.getGuests();
+      const found = guests.find(g => g.id === guestId);
+      if (found) {
+        if (found.name) guestName = found.name;
+        if (found.prefix) guestPrefix = found.prefix;
+      }
+    } catch(e) {}
   }
 
   // Bind to Envelope
@@ -378,6 +393,17 @@ function initPersonalizedGuest(settings) {
 
   const envGuestName = document.getElementById('envelope-guest-name');
   if (envGuestName) envGuestName.textContent = guestName;
+
+  // Personalize title if guest name is provided
+  if (guestName !== 'Quý Khách') {
+    document.title = `Thiệp Cưới Đức Anh & Thuỳ Linh - Thân Mời: ${guestPrefix} ${guestName}`;
+  }
+
+  // Personalize closing quote if guest name is provided
+  const closingQuote = document.querySelector('.closing-tender-quote');
+  if (closingQuote && guestName !== 'Quý Khách') {
+    closingQuote.textContent = `“Sự hiện diện của ${guestPrefix} ${guestName} là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!”`;
+  }
 
   // Auto-fill RSVP name input
   const rsvpNameInput = document.getElementById('rsvp-name');

@@ -40,7 +40,7 @@ html, body {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background-image: url('../images/theme/paper.webp');
+  background-image: url('/assets/images/theme/paper.webp'), url('../images/theme/paper.webp');
   background-size: 100% auto;
   background-position: top center;
   mix-blend-mode: multiply;

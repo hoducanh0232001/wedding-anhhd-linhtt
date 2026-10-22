@@ -1,0 +1,14 @@
+{
+  "name": "wedding-anhhd-linhtt",
+  "version": "1.0.0",
+  "description": "Thiep Cuoi Online Duc Anh & Thuy Linh",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Ready'"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

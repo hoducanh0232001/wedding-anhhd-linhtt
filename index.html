@@ -345,48 +345,58 @@
       </div>
     </section>
 
-    <!-- 9. GUESTBOOK & RSVP (Vintage Papernote Background) -->
+    <!-- 9. GUESTBOOK & RSVP -->
     <section class="papernote-section" id="section-rsvp">
-      <div class="papernote-content">
+      <div class="papernote-header text-center">
         <h3 class="section-title-tender" style="margin-bottom:6px;">
-          SỔ LƯU BÚT & XÁC NHẬN
+          SỔ LƯU BÚT &amp; XÁC NHẬN
         </h3>
-        <p class="section-subtitle-tender" style="margin-bottom:14px;font-style:normal;">
+        <p class="section-subtitle-tender" style="margin-bottom:16px;font-style:normal;">
           Gửi lời chúc mừng và báo trước số người tham dự giúp chúng mình chuẩn bị chu đáo nhé!
         </p>
+      </div>
 
+      <!-- Papernote Parchment Card wrapping ONLY the quick wishes and RSVP form -->
+      <div class="papernote-card">
         <!-- Quick Wish Tags -->
         <div class="quick-wishes-row">
           <button type="button" class="btn-quick-wish" onclick="fillQuickWish('Chúc hai bạn trăm năm hạnh phúc, mãi mãi bên nhau! 🎉')">Trăm năm hạnh phúc 🎉</button>
           <button type="button" class="btn-quick-wish" onclick="fillQuickWish('Vĩnh kết đồng tâm, ngọt ngào viên mãn! 💍')">Vĩnh kết đồng tâm 💍</button>
-          <button type="button" class="btn-quick-wish" onclick="fillQuickWish('Chúc mừng hạnh phúc Đức Anh & Thuỳ Linh! 💖')">Chúc mừng hạnh phúc 💖</button>
+          <button type="button" class="btn-quick-wish" onclick="fillQuickWish('Chúc mừng hạnh phúc Đức Anh &amp; Thuỳ Linh! 💖')">Chúc mừng hạnh phúc 💖</button>
           <button type="button" class="btn-quick-wish" onclick="fillQuickWish('Chúc tổ ấm nhỏ sớm đón thiên thần nhỏ! 👶')">Sớm có quý tử 👶</button>
         </div>
 
-        <form id="wedding-rsvp-form" style="max-width:330px;margin:0 auto;">
+        <form id="wedding-rsvp-form" class="wedding-rsvp-form">
           <input type="text" id="rsvp-name" class="note-input" placeholder="Tên của bạn *" required />
           <input type="tel" id="rsvp-phone" class="note-input" placeholder="Số điện thoại" />
           
-          <select id="rsvp-attend" class="note-input" style="background:#fff;">
-            <option value="yes">🎉 Mình sẽ tham dự</option>
-            <option value="no">😢 Rất tiếc, mình bận</option>
-          </select>
+          <div class="note-select-wrap">
+            <select id="rsvp-attend" class="note-input note-select">
+              <option value="yes">🎉 Mình sẽ tham dự</option>
+              <option value="no">😢 Rất tiếc, mình bận</option>
+            </select>
+          </div>
 
-          <select id="rsvp-count" class="note-input" style="background:#fff;">
-            <option value="1">1 người (Đi một mình)</option>
-            <option value="2">2 người (Cùng người thương)</option>
-            <option value="3">3 người</option>
-            <option value="4">4 người (Cả gia đình)</option>
-          </select>
+          <div class="note-select-wrap">
+            <select id="rsvp-count" class="note-input note-select">
+              <option value="1">1 người (Đi một mình)</option>
+              <option value="2">2 người (Cùng người thương)</option>
+              <option value="3">3 người</option>
+              <option value="4">4 người (Cả gia đình)</option>
+            </select>
+          </div>
 
-          <textarea id="rsvp-wish" class="note-textarea" rows="2" placeholder="Gửi lời chúc ngọt ngào nhất đến cô dâu & chú rể..."></textarea>
+          <textarea id="rsvp-wish" class="note-textarea" rows="2" placeholder="Gửi lời chúc ngọt ngào nhất đến cô dâu &amp; chú rể..."></textarea>
 
           <button type="submit" class="btn-submit-note">
-            Gửi Lời Chúc & Xác Nhận
+            Gửi Lời Chúc &amp; Xác Nhận
           </button>
         </form>
+      </div>
 
-        <div id="wishes-display-box"></div>
+      <!-- Wishes Feed (Positioned below the paper note on the clean page background) -->
+      <div class="wishes-feed-wrapper">
+        <div id="wishes-display-box" class="wishes-display-box"></div>
       </div>
     </section>
 

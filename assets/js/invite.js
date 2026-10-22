@@ -381,6 +381,7 @@ function initEnvelopeOpener() {
     envelopeScreen.classList.add('opened');
     playBackgroundMusic();
     launchWeddingFireworks();
+    fireWeddingStickerConfetti();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -388,18 +389,41 @@ function initEnvelopeOpener() {
   if (waxSeal) waxSeal.addEventListener('click', openEnvelope);
 }
 
-// 5. Audio Player
+// 5. Audio Player (Supports both Direct MP3/Audio and YouTube Video)
 let audioObj = null;
+let ytPlayer = null;
+let ytPlayerReady = false;
+let isYouTubeAudio = false;
 let isAudioPlaying = false;
+let pendingPlay = false;
+
+function extractYouTubeId(url) {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return trimmed;
+  }
+  const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
 
 function initMusicPlayer(settings) {
   const toggleBtn = document.getElementById('music-toggle-btn');
   if (!toggleBtn) return;
 
-  const audioSrc = settings.wedding.musicUrl || 'https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3';
-  audioObj = new Audio(audioSrc);
-  audioObj.loop = true;
-  audioObj.preload = 'auto';
+  const musicUrl = settings && settings.wedding && settings.wedding.musicUrl ? settings.wedding.musicUrl.trim() : '';
+  const ytVideoId = extractYouTubeId(musicUrl);
+
+  if (ytVideoId) {
+    isYouTubeAudio = true;
+    setupYouTubePlayer(ytVideoId);
+  } else {
+    isYouTubeAudio = false;
+    const audioSrc = musicUrl || 'https://assets.mixkit.co/music/preview/mixkit-wedding-waltz-piano-581.mp3';
+    audioObj = new Audio(audioSrc);
+    audioObj.loop = true;
+    audioObj.preload = 'auto';
+  }
 
   toggleBtn.addEventListener('click', () => {
     if (isAudioPlaying) {
@@ -408,14 +432,144 @@ function initMusicPlayer(settings) {
       playBackgroundMusic();
     }
   });
+
+  // Resume on user interaction if initial autoplay was waiting for interaction
+  const resumeOnGesture = () => {
+    if (pendingPlay && !isAudioPlaying) {
+      playBackgroundMusic();
+    }
+  };
+  document.addEventListener('click', resumeOnGesture, { passive: true });
+  document.addEventListener('touchstart', resumeOnGesture, { passive: true });
+}
+
+function setupYouTubePlayer(videoId) {
+  let ytContainer = document.getElementById('youtube-audio-player');
+  if (!ytContainer) {
+    ytContainer = document.createElement('div');
+    ytContainer.id = 'youtube-audio-player';
+    ytContainer.style.cssText = 'position:fixed;bottom:-200px;right:-200px;width:10px;height:10px;opacity:0.001;pointer-events:none;z-index:-9999;';
+    document.body.appendChild(ytContainer);
+  }
+
+  function createPlayer() {
+    try {
+      const playerVars = {
+        autoplay: 0,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        loop: 1,
+        playlist: videoId
+      };
+      if (window.location.protocol.startsWith('http')) {
+        playerVars.origin = window.location.origin;
+      }
+
+      ytPlayer = new YT.Player('youtube-audio-player', {
+        height: '1',
+        width: '1',
+        videoId: videoId,
+        playerVars: playerVars,
+        events: {
+          onReady: function(e) {
+            ytPlayerReady = true;
+            try {
+              if (ytPlayer && ytPlayer.unMute) ytPlayer.unMute();
+              if (ytPlayer && ytPlayer.setVolume) ytPlayer.setVolume(100);
+            } catch (err) {}
+            if (pendingPlay) {
+              playBackgroundMusic();
+            }
+          },
+          onStateChange: function(event) {
+            const toggleBtn = document.getElementById('music-toggle-btn');
+            if (event.data === YT.PlayerState.PLAYING) {
+              isAudioPlaying = true;
+              pendingPlay = false;
+              if (toggleBtn) {
+                toggleBtn.classList.add('playing');
+                toggleBtn.title = 'Tạm dừng nhạc';
+              }
+            } else if (event.data === YT.PlayerState.PAUSED) {
+              isAudioPlaying = false;
+              if (toggleBtn) {
+                toggleBtn.classList.remove('playing');
+                toggleBtn.title = 'Phát nhạc cưới';
+              }
+            } else if (event.data === YT.PlayerState.ENDED) {
+              if (ytPlayer && typeof ytPlayer.seekTo === 'function') {
+                ytPlayer.seekTo(0);
+                ytPlayer.playVideo();
+              }
+            }
+          },
+          onError: function(e) {
+            console.warn('YouTube audio playback error code:', e.data);
+            startWebAudioHarpFallback();
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('Cannot init YT Player:', err);
+      startWebAudioHarpFallback();
+    }
+  }
+
+  if (window.YT && window.YT.Player) {
+    createPlayer();
+  } else {
+    const prevReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function() {
+      if (typeof prevReady === 'function') prevReady();
+      createPlayer();
+    };
+
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      if (firstScriptTag && firstScriptTag.parentNode) {
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      } else {
+        document.head.appendChild(tag);
+      }
+    }
+  }
 }
 
 function playBackgroundMusic() {
   const toggleBtn = document.getElementById('music-toggle-btn');
+
+  if (isYouTubeAudio) {
+    if (ytPlayer && ytPlayerReady && typeof ytPlayer.playVideo === 'function') {
+      try {
+        ytPlayer.unMute();
+        ytPlayer.playVideo();
+        isAudioPlaying = true;
+        pendingPlay = false;
+        if (toggleBtn) {
+          toggleBtn.classList.add('playing');
+          toggleBtn.title = 'Tạm dừng nhạc';
+        }
+      } catch (err) {
+        console.warn('YouTube play failed:', err);
+        startWebAudioHarpFallback();
+      }
+    } else {
+      pendingPlay = true;
+    }
+    return;
+  }
+
   if (!audioObj) return;
 
   audioObj.play().then(() => {
     isAudioPlaying = true;
+    pendingPlay = false;
     if (toggleBtn) {
       toggleBtn.classList.add('playing');
       toggleBtn.title = 'Tạm dừng nhạc';
@@ -428,6 +582,25 @@ function playBackgroundMusic() {
 
 function pauseBackgroundMusic() {
   const toggleBtn = document.getElementById('music-toggle-btn');
+  pendingPlay = false;
+
+  if (isYouTubeAudio) {
+    if (ytPlayer && ytPlayerReady && typeof ytPlayer.pauseVideo === 'function') {
+      try {
+        ytPlayer.pauseVideo();
+      } catch (err) {
+        console.warn('YouTube pause error:', err);
+      }
+    }
+    isAudioPlaying = false;
+    if (toggleBtn) {
+      toggleBtn.classList.remove('playing');
+      toggleBtn.title = 'Phát nhạc cưới';
+    }
+    stopWebAudioHarpFallback();
+    return;
+  }
+
   if (audioObj) audioObj.pause();
   isAudioPlaying = false;
   if (toggleBtn) {
@@ -987,65 +1160,198 @@ function initRSVPForm() {
   });
 }
 
-// 13. Confetti Animation
-function fireConfetti() {
+// 13. Wedding Sticker & Flower & Heart Confetti Cannon
+function fireWeddingStickerConfetti() {
+  const oldCanvas = document.getElementById('wedding-confetti-canvas');
+  if (oldCanvas) oldCanvas.remove();
+
   const canvas = document.createElement('canvas');
+  canvas.id = 'wedding-confetti-canvas';
   canvas.style.position = 'fixed';
-  canvas.style.top = '0';
-  canvas.style.left = '0';
+  canvas.style.inset = '0';
   canvas.style.width = '100vw';
   canvas.style.height = '100vh';
   canvas.style.pointerEvents = 'none';
-  canvas.style.zIndex = '99999';
+  canvas.style.zIndex = '100000'; // Higher than envelope screen (9999) & fireworks
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let width = (canvas.width = window.innerWidth * dpr);
+  let height = (canvas.height = window.innerHeight * dpr);
 
-  const confettiCount = 100;
+  const onResize = () => {
+    if (canvas && canvas.parentNode) {
+      width = canvas.width = window.innerWidth * dpr;
+      height = canvas.height = window.innerHeight * dpr;
+    }
+  };
+  window.addEventListener('resize', onResize);
+
+  const flowerStickers = ['🌸', '🌹', '🌺', '🌷', '💐', '🌼', '💮'];
+  const heartStickers = ['❤️', '💖', '💕', '💗', '💓', '💝', '🤍'];
+  const sparkles = ['✨', '⭐'];
+  const colors = [
+    '#c9a24a', // Luxury Gold
+    '#e5c97d', // Champagne Gold
+    '#8a252d', // Red Wine
+    '#511419', // Velvet Burgundy
+    '#ff6b81', // Rose Pink
+    '#ffd700', // Bright Gold
+    '#ffffff'  // Pearl White
+  ];
+
   const particles = [];
-  const colors = ['#511419', '#c9a24a', '#e5c97d', '#8a252d', '#ffffff'];
 
-  for (let i = 0; i < confettiCount; i++) {
+  function createParticle(x, y, angle, speed, isCenter) {
+    const randType = Math.random();
+    let type = 'ribbon';
+    let sticker = '';
+
+    if (randType < 0.35) {
+      type = 'sticker_flower';
+      sticker = flowerStickers[Math.floor(Math.random() * flowerStickers.length)];
+    } else if (randType < 0.70) {
+      type = 'sticker_heart';
+      sticker = heartStickers[Math.floor(Math.random() * heartStickers.length)];
+    } else if (randType < 0.85) {
+      type = 'heart_vector';
+    } else if (randType < 0.92) {
+      type = 'sticker_sparkle';
+      sticker = sparkles[Math.floor(Math.random() * sparkles.length)];
+    } else {
+      type = 'ribbon';
+    }
+
+    const vx = Math.cos(angle) * speed;
+    let vy = Math.sin(angle) * speed;
+    if (isCenter) vy -= 4 * dpr;
+
     particles.push({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      w: Math.random() * 8 + 4,
-      h: Math.random() * 8 + 4,
-      vx: (Math.random() - 0.5) * 16,
-      vy: (Math.random() - 0.7) * 18,
+      x: x,
+      y: y,
+      vx: vx,
+      vy: vy,
+      type: type,
+      sticker: sticker,
+      size: (type.startsWith('sticker') ? Math.random() * 12 + 22 : Math.random() * 8 + 8) * dpr,
       color: colors[Math.floor(Math.random() * colors.length)],
       angle: Math.random() * 360,
-      tilt: Math.random() * 10 - 5
+      angleSpeed: (Math.random() - 0.5) * 8,
+      wobble: Math.random() * 10,
+      wobbleSpeed: Math.random() * 0.08 + 0.04,
+      wobbleRadius: (Math.random() * 1.6 + 0.6) * dpr,
+      gravity: (Math.random() * 0.12 + 0.22) * dpr,
+      drag: 0.983,
+      alpha: 1.0,
+      life: 0,
+      maxLife: Math.floor(Math.random() * 70 + 240) // ~4.5 - 5.5s
     });
   }
 
-  let frames = 0;
+  // Dual cannons from bottom left & right + Center wax seal pop
+  const leftX = width * 0.12;
+  const leftY = height * 0.90;
+  for (let i = 0; i < 70; i++) {
+    const angle = (-40 - Math.random() * 45) * (Math.PI / 180);
+    const speed = (Math.random() * 14 + 16) * dpr;
+    createParticle(leftX, leftY, angle, speed, false);
+  }
+
+  const rightX = width * 0.88;
+  const rightY = height * 0.90;
+  for (let i = 0; i < 70; i++) {
+    const angle = (-140 + Math.random() * 45) * (Math.PI / 180);
+    const speed = (Math.random() * 14 + 16) * dpr;
+    createParticle(rightX, rightY, angle, speed, false);
+  }
+
+  const centerX = width * 0.5;
+  const centerY = height * 0.45;
+  for (let i = 0; i < 60; i++) {
+    const angle = Math.random() * 2 * Math.PI;
+    const speed = (Math.random() * 15 + 6) * dpr;
+    createParticle(centerX, centerY, angle, speed, true);
+  }
+
+  let animId = null;
+
   function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
+    ctx.clearRect(0, 0, width, height);
+    let activeCount = 0;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.life++;
+
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+      p.vy += p.gravity;
+
+      p.wobble += p.wobbleSpeed;
+      p.x += p.vx + Math.sin(p.wobble) * p.wobbleRadius;
       p.y += p.vy;
-      p.vy += 0.4;
-      p.angle += 4;
+
+      p.angle += p.angleSpeed;
+      const scaleX = Math.cos(p.wobble);
+
+      if (p.life > p.maxLife - 60) {
+        p.alpha = Math.max(0, (p.maxLife - p.life) / 60);
+      }
+
+      if (p.alpha <= 0 || p.y > height + 60) {
+        continue;
+      }
+
+      activeCount++;
+
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate((p.angle * Math.PI) / 180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      ctx.restore();
-    });
+      ctx.scale(scaleX, 1);
+      ctx.globalAlpha = p.alpha;
 
-    frames++;
-    if (frames < 120) {
-      requestAnimationFrame(render);
+      if (p.type.startsWith('sticker')) {
+        ctx.font = `${Math.round(p.size)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.sticker, 0, 0);
+      } else if (p.type === 'heart_vector') {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        const s = p.size * 0.8;
+        ctx.moveTo(0, s * 0.3);
+        ctx.bezierCurveTo(-s / 2, -s * 0.35, -s, s / 3, 0, s);
+        ctx.bezierCurveTo(s, s / 3, s / 2, -s * 0.35, 0, s * 0.3);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        // Metallic ribbon
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size * 0.4, p.size, p.size * 0.8);
+      }
+
+      ctx.restore();
+    }
+
+    if (activeCount > 0) {
+      animId = requestAnimationFrame(render);
     } else {
-      canvas.remove();
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', onResize);
+      if (canvas && canvas.parentNode) canvas.remove();
     }
   }
-  render();
+
+  animId = requestAnimationFrame(render);
 }
+
+// 13. Legacy alias for RSVP & wishes
+function fireConfetti() {
+  fireWeddingStickerConfetti();
+}
+
+window.fireWeddingStickerConfetti = fireWeddingStickerConfetti;
 
 // 14. Grand Wedding Fireworks Celebration (Pháo Hoa Mừng Ngày Chung Đôi)
 function launchWeddingFireworks() {

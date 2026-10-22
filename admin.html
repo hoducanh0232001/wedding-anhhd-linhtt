@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trang Quản Lý Thiệp Cưới | Đức Anh & Thuỳ Linh</title>
+
+  <!-- Open Graph for Admin Links -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://wedding-anhhd-linhtt.vercel.app/" />
+  <meta property="og:title" content="Hồ Đức Anh & Thái Thuỳ Linh | Thiệp Cưới Online" />
+  <meta property="og:description" content="Trân trọng kính mời quý khách đến tham dự lễ thành hôn của Đức Anh & Thuỳ Linh vào 11:00 Chủ Nhật, ngày 29/11/2026." />
+  <meta property="og:image" content="https://wedding-anhhd-linhtt.vercel.app/assets/images/hero_couple.jpg" />
+  <meta property="og:image:secure_url" content="https://wedding-anhhd-linhtt.vercel.app/assets/images/hero_couple.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://wedding-anhhd-linhtt.vercel.app/assets/images/hero_couple.jpg" />
   <style>
 /* ==========================================================================
    ADMIN MANAGEMENT DASHBOARD STYLES
@@ -626,6 +636,56 @@ body.admin-body {
   gap: 8px;
   margin-top: auto;
 }
+
+/* Professional iOS-style Switch Toggle */
+.admin-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.admin-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.admin-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #d1d5db;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 28px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-switch input:checked + .admin-switch-slider {
+  background-color: #10b981;
+}
+
+.admin-switch input:checked + .admin-switch-slider::before {
+  transform: translateX(22px);
+}
   </style>
   <link rel="stylesheet" href="assets/css/admin.css?v=3.1" />
 </head>
@@ -743,6 +803,23 @@ body.admin-body {
              TAB 1: TỔNG QUAN (DASHBOARD)
              ========================================== -->
         <div id="panel-dashboard" class="tab-panel active">
+          <!-- Official Public Invitation Link -->
+          <div style="background:linear-gradient(135deg, #fff7eb, #faeee1);border:1.5px solid rgba(201,162,74,0.45);padding:16px 20px;border-radius:12px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 4px 14px rgba(81,20,25,0.06);">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <span style="font-size:26px;">💌</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:var(--admin-primary);">Link Thiệp Cưới Chính Thức (Gửi Khách & Chia sẻ Zalo, Facebook)</div>
+                <div style="font-size:13px;color:#6b5355;margin-top:3px;">
+                  <code style="background:rgba(255,255,255,0.85);padding:4px 10px;border-radius:6px;border:1px solid #ebdccb;font-weight:600;color:var(--admin-primary);font-size:13px;">https://wedding-anhhd-linhtt.vercel.app/</code>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button type="button" class="admin-btn admin-btn-primary" onclick="copyOfficialLink()">📋 Sao Chép Link Gửi Khách</button>
+              <a href="index.html" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;">Mở Xem Thiệp ↗</a>
+            </div>
+          </div>
+
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon primary">
@@ -1181,11 +1258,9 @@ body.admin-body {
                   <h4 style="margin:0 0 4px;font-size:15px;color:var(--admin-primary);font-weight:600;">Hiển thị Hộp Mừng Cưới & Mã VietQR trên thiệp</h4>
                   <p style="margin:0;font-size:13px;color:#666;">Bật để hiển thị mục mừng cưới, hoặc tắt nếu không muốn công khai thông tin tài khoản</p>
                 </div>
-                <label style="position:relative;display:inline-block;width:48px;height:26px;margin:0;cursor:pointer;">
-                  <input type="checkbox" id="setting-show-bank" checked style="opacity:0;width:0;height:0;" onchange="this.nextElementSibling.style.backgroundColor = this.checked ? '#511419' : '#ccc'" />
-                  <span style="position:absolute;cursor:pointer;inset:0;background-color:#511419;transition:.3s;border-radius:26px;">
-                    <span style="position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;" id="switch-thumb"></span>
-                  </span>
+                <label class="admin-switch" title="Gạt công tắc để Bật/Tắt hiển thị thông tin ngân hàng & VietQR">
+                  <input type="checkbox" id="setting-show-bank" checked />
+                  <span class="admin-switch-slider"></span>
                 </label>
               </div>
             </div>

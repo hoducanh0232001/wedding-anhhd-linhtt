@@ -433,7 +433,11 @@ function renderGuestsTable() {
     return;
   }
 
-  const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '').replace(/\/$/, '') + '/index.html';
+  let domainOrigin = window.location.origin;
+  if (window.location.hostname.includes('vercel.app')) {
+    domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
+  }
+  const baseUrl = `${domainOrigin}/index.html`;
 
   filtered.forEach((g, idx) => {
     // Generate personalized URL
@@ -589,9 +593,6 @@ function populateBankingForm(settings) {
   const showBankCheckbox = document.getElementById('setting-show-bank');
   if (showBankCheckbox) {
     showBankCheckbox.checked = settings.showBank !== false;
-    if (showBankCheckbox.nextElementSibling) {
-      showBankCheckbox.nextElementSibling.style.backgroundColor = showBankCheckbox.checked ? '#511419' : '#ccc';
-    }
   }
 
   const previewGroom = document.getElementById('admin-groom-qr-preview');
@@ -813,4 +814,18 @@ window.switchAdminTab = function(tabName) {
   const btn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
   if (btn) btn.click();
 };
+
+window.copyOfficialLink = function() {
+  const url = 'https://wedding-anhhd-linhtt.vercel.app/';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      showAdminToast('Đã sao chép link thiệp cưới chính thức!');
+    }).catch(() => {
+      prompt('Link thiệp cưới chính thức của bạn:', url);
+    });
+  } else {
+    prompt('Link thiệp cưới chính thức của bạn:', url);
+  }
+};
+
 

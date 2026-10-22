@@ -157,8 +157,9 @@ function initDynamicContent(settings) {
 
   // Polaroid hero image
   const heroPolaroid = document.getElementById('hero-polaroid-img');
-  if (heroPolaroid && settings.gallery && settings.gallery[0]) {
-    heroPolaroid.src = settings.gallery[0].src;
+  if (heroPolaroid) {
+    heroPolaroid.src = (settings.wedding && settings.wedding.heroPhoto) || 
+      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : 'assets/images/hero_couple.jpg');
   }
 
   // Banking
@@ -1019,10 +1020,13 @@ window.addEventListener('storage', (e) => {
     const updated = WeddingDB.getSettings();
     document.body.setAttribute('data-theme', WeddingDB.getThemeId());
     initDynamicContent(updated);
+    if (updated.gallery) initGallery(updated.gallery);
   }
 });
 
 window.addEventListener('wedding_settings_updated', (e) => {
+  const updated = e.detail || WeddingDB.getSettings();
   document.body.setAttribute('data-theme', WeddingDB.getThemeId());
-  initDynamicContent(e.detail || WeddingDB.getSettings());
+  initDynamicContent(updated);
+  if (updated.gallery) initGallery(updated.gallery);
 });

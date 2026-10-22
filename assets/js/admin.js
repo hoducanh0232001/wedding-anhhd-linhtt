@@ -100,6 +100,7 @@ function initSidebarTabs() {
       if (target === 'rsvps') renderRSVPsTable();
       if (target === 'dashboard') updateDashboardStats();
       if (target === 'themes') renderThemesGrid();
+      if (target === 'gallery') renderGalleryAdmin();
     });
   });
 
@@ -118,6 +119,7 @@ function loadAllAdminData() {
   const settings = WeddingDB.getSettings();
   updateDashboardStats();
   renderThemesGrid();
+  renderGalleryAdmin();
   populateSettingsForm(settings);
   populateEventsForm(settings);
   populateBankingForm(settings);
@@ -218,6 +220,8 @@ function populateSettingsForm(settings) {
 
 // 6. Save Settings Form
 function setupEventListeners() {
+  setupGalleryEventListeners();
+
   const dateInput = document.getElementById('wedding-date-input');
   const dateTextInput = document.getElementById('wedding-dateText-input');
   if (dateInput && dateTextInput) {
@@ -826,6 +830,392 @@ window.copyOfficialLink = function() {
   } else {
     prompt('Link thiệp cưới chính thức của bạn:', url);
   }
+};
+
+/* ==========================================================================
+   PHOTO & 3D GALLERY MANAGEMENT LOGIC (ALBUM CƯỚI & ẢNH ĐẠI DIỆN)
+   ========================================================================== */
+
+// Helper: Read and compress image to base64 safely within localStorage size limits
+function readAndOptimizeImage(file, callback, maxDim = 1600, quality = 0.85) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+      callback(dataUrl);
+    };
+    img.onerror = () => {
+      alert('Không thể đọc định dạng ảnh này. Vui lòng thử ảnh khác!');
+    };
+    img.src = e.target.result;
+  };
+  reader.onerror = () => {
+    alert('Lỗi đọc tập tin từ thiết bị!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// 1. Setup Gallery Event Listeners (URL input live previews and file uploads)
+function setupGalleryEventListeners() {
+  // Hero Polaroid photo
+  const heroInput = document.getElementById('admin-hero-photo-input');
+  const heroPreview = document.getElementById('hero-photo-preview-img');
+  const heroFile = document.getElementById('hero-photo-file-upload');
+
+  if (heroInput && heroPreview) {
+    heroInput.addEventListener('input', () => {
+      const v = heroInput.value.trim();
+      if (v) heroPreview.src = v;
+    });
+  }
+
+  if (heroFile && heroInput && heroPreview) {
+    heroFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        readAndOptimizeImage(file, (dataUrl) => {
+          heroInput.value = dataUrl;
+          heroPreview.src = dataUrl;
+          showAdminToast('Đã đọc ảnh bìa Polaroid thành công! Bấm "Lưu" để hoàn tất.');
+        });
+      }
+    });
+  }
+
+  // Groom photo
+  const groomInput = document.getElementById('groom-gallery-photo-input');
+  const groomPreview = document.getElementById('groom-gallery-preview-img');
+  const groomFile = document.getElementById('groom-photo-file-upload');
+
+  if (groomInput && groomPreview) {
+    groomInput.addEventListener('input', () => {
+      const v = groomInput.value.trim();
+      if (v) groomPreview.src = v;
+    });
+  }
+
+  if (groomFile && groomInput && groomPreview) {
+    groomFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        readAndOptimizeImage(file, (dataUrl) => {
+          groomInput.value = dataUrl;
+          groomPreview.src = dataUrl;
+          showAdminToast('Đã đọc ảnh Chú Rể thành công! Bấm "Lưu" để hoàn tất.');
+        });
+      }
+    });
+  }
+
+  // Bride photo
+  const brideInput = document.getElementById('bride-gallery-photo-input');
+  const bridePreview = document.getElementById('bride-gallery-preview-img');
+  const brideFile = document.getElementById('bride-photo-file-upload');
+
+  if (brideInput && bridePreview) {
+    brideInput.addEventListener('input', () => {
+      const v = brideInput.value.trim();
+      if (v) bridePreview.src = v;
+    });
+  }
+
+  if (brideFile && brideInput && bridePreview) {
+    brideFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        readAndOptimizeImage(file, (dataUrl) => {
+          brideInput.value = dataUrl;
+          bridePreview.src = dataUrl;
+          showAdminToast('Đã đọc ảnh Cô Dâu thành công! Bấm "Lưu" để hoàn tất.');
+        });
+      }
+    });
+  }
+
+  // Add new photo into 3D gallery
+  const newUrlInput = document.getElementById('new-photo-url-input');
+  const newPreviewWrap = document.getElementById('new-photo-preview-wrap');
+  const newPreviewImg = document.getElementById('new-photo-preview-img');
+  const newFileInput = document.getElementById('new-photo-file-upload');
+  const newStatus = document.getElementById('new-photo-file-status');
+
+  if (newUrlInput && newPreviewWrap && newPreviewImg) {
+    newUrlInput.addEventListener('input', () => {
+      const v = newUrlInput.value.trim();
+      if (v) {
+        newPreviewImg.src = v;
+        newPreviewWrap.style.display = 'flex';
+      } else {
+        newPreviewWrap.style.display = 'none';
+      }
+    });
+  }
+
+  if (newFileInput && newUrlInput && newPreviewWrap && newPreviewImg) {
+    newFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        readAndOptimizeImage(file, (dataUrl) => {
+          newUrlInput.value = dataUrl;
+          newPreviewImg.src = dataUrl;
+          newPreviewWrap.style.display = 'flex';
+          if (newStatus) newStatus.style.display = 'inline';
+          showAdminToast('Đã đọc ảnh từ máy tính/điện thoại! Nhập chú thích và bấm Thêm.');
+        });
+      }
+    });
+  }
+}
+
+// 2. Render Gallery Tab Data
+function renderGalleryAdmin() {
+  const settings = WeddingDB.getSettings();
+  if (!settings) return;
+
+  // 1. Hero Polaroid Photo
+  const heroInput = document.getElementById('admin-hero-photo-input');
+  const heroPreview = document.getElementById('hero-photo-preview-img');
+  const heroVal = settings.wedding.heroPhoto || (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : 'assets/images/hero_couple.jpg');
+  if (heroInput) heroInput.value = heroVal;
+  if (heroPreview) heroPreview.src = heroVal;
+
+  // 2. Groom & Bride Photos
+  const groomInput = document.getElementById('groom-gallery-photo-input');
+  const groomPreview = document.getElementById('groom-gallery-preview-img');
+  const groomVal = settings.couple.groom.photo || 'assets/images/groom.jpg';
+  if (groomInput) groomInput.value = groomVal;
+  if (groomPreview) groomPreview.src = groomVal;
+
+  const brideInput = document.getElementById('bride-gallery-photo-input');
+  const bridePreview = document.getElementById('bride-gallery-preview-img');
+  const brideVal = settings.couple.bride.photo || 'assets/images/bride.jpg';
+  if (brideInput) brideInput.value = brideVal;
+  if (bridePreview) bridePreview.src = brideVal;
+
+  // 3. 3D Gallery Grid
+  const container = document.getElementById('gallery-admin-list');
+  const badge = document.getElementById('gallery-count-badge');
+  const gallery = Array.isArray(settings.gallery) ? settings.gallery : [];
+
+  if (badge) {
+    badge.textContent = `${gallery.length} ảnh trong Album`;
+  }
+
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (gallery.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:40px 20px;background:#f9fafb;border-radius:12px;border:1px dashed #d1d5db;">
+        <p style="color:#6b7280;margin-bottom:12px;">Hiện tại chưa có ảnh nào trong Album cưới 3D.</p>
+        <button type="button" class="admin-btn admin-btn-primary" onclick="resetGalleryDefault()">
+          🔄 Khôi Phục 16 Ảnh Mẫu Gốc
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  gallery.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'gallery-item-card';
+    card.dataset.idx = idx;
+
+    card.innerHTML = `
+      <div class="gallery-item-thumb-box">
+        <span class="gallery-item-badge">#${idx + 1}</span>
+        <img class="gallery-item-thumb" id="gallery-thumb-${idx}" src="${item.src}" alt="${item.caption || 'Ảnh cưới'}" onerror="this.src='assets/images/hero_couple.jpg'" />
+      </div>
+      <div class="gallery-item-body">
+        <div class="admin-form-group" style="margin:0;">
+          <label class="admin-form-label" style="font-size:0.75rem;">Link / Đường dẫn ảnh:</label>
+          <input type="text" class="admin-form-input gallery-item-src-input" data-idx="${idx}" value="${item.src}" placeholder="Link ảnh..." style="font-size:0.8rem;padding:6px 10px;" />
+        </div>
+        <div class="admin-form-group" style="margin:0;">
+          <label class="admin-form-label" style="font-size:0.75rem;">Chú thích ảnh (Hiển thị khi phóng to):</label>
+          <input type="text" class="admin-form-input gallery-item-caption-input" data-idx="${idx}" value="${item.caption || ''}" placeholder="Nhập chú thích..." style="font-size:0.8rem;padding:6px 10px;" />
+        </div>
+      </div>
+      <div class="gallery-item-actions">
+        <div style="display:flex;gap:4px;">
+          <button type="button" class="admin-btn admin-btn-secondary" style="padding:4px 8px;font-size:0.75rem;" onclick="moveGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''} title="Di chuyển lên trước">
+            ▲ Lên
+          </button>
+          <button type="button" class="admin-btn admin-btn-secondary" style="padding:4px 8px;font-size:0.75rem;" onclick="moveGalleryItem(${idx}, 1)" ${idx === gallery.length - 1 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''} title="Di chuyển xuống sau">
+            ▼ Xuống
+          </button>
+        </div>
+        <button type="button" class="admin-btn admin-btn-danger" style="padding:4px 10px;font-size:0.75rem;" onclick="removeGalleryItem(${idx})">
+          🗑️ Xoá
+        </button>
+      </div>
+    `;
+
+    // Live preview when typing new URL
+    const srcInput = card.querySelector('.gallery-item-src-input');
+    const thumbImg = card.querySelector('.gallery-item-thumb');
+    if (srcInput && thumbImg) {
+      srcInput.addEventListener('input', () => {
+        const v = srcInput.value.trim();
+        if (v) thumbImg.src = v;
+      });
+    }
+
+    container.appendChild(card);
+  });
+}
+
+// 3. Save Hero Polaroid Photo
+window.saveHeroPhotoAdmin = function() {
+  const input = document.getElementById('admin-hero-photo-input');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    alert('Vui lòng nhập đường dẫn hoặc chọn ảnh bìa Polaroid!');
+    input.focus();
+    return;
+  }
+  const settings = WeddingDB.getSettings();
+  settings.wedding.heroPhoto = val;
+  WeddingDB.saveSettings(settings);
+  showAdminToast('Đã cập nhật Ảnh Bìa Polaroid & Thumbnail MXH thành công!');
+};
+
+// 4. Save Couple Portraits
+window.saveCouplePhotosAdmin = function() {
+  const groomInput = document.getElementById('groom-gallery-photo-input');
+  const brideInput = document.getElementById('bride-gallery-photo-input');
+  const settings = WeddingDB.getSettings();
+
+  if (groomInput && groomInput.value.trim()) {
+    settings.couple.groom.photo = groomInput.value.trim();
+    const sInput = document.getElementById('groom-photo-input');
+    if (sInput) sInput.value = groomInput.value.trim();
+  }
+  if (brideInput && brideInput.value.trim()) {
+    settings.couple.bride.photo = brideInput.value.trim();
+    const sInput = document.getElementById('bride-photo-input');
+    if (sInput) sInput.value = brideInput.value.trim();
+  }
+
+  WeddingDB.saveSettings(settings);
+  showAdminToast('Đã lưu ảnh chân dung Chú Rể & Cô Dâu thành công!');
+};
+
+// 5. Add New Photo to 3D Gallery
+window.addPhotoToGallery = function() {
+  const urlInput = document.getElementById('new-photo-url-input');
+  const captionInput = document.getElementById('new-photo-caption-input');
+  const previewWrap = document.getElementById('new-photo-preview-wrap');
+  const statusEl = document.getElementById('new-photo-file-status');
+
+  if (!urlInput) return;
+  const url = urlInput.value.trim();
+  if (!url) {
+    alert('Vui lòng nhập link ảnh hoặc bấm "Tải ảnh từ máy tính/điện thoại"!');
+    urlInput.focus();
+    return;
+  }
+
+  const caption = captionInput ? captionInput.value.trim() : '';
+  const settings = WeddingDB.getSettings();
+  if (!Array.isArray(settings.gallery)) settings.gallery = [];
+
+  const newItem = {
+    id: 'g' + Date.now(),
+    src: url,
+    caption: caption || `Ảnh cưới ${settings.gallery.length + 1}`
+  };
+
+  settings.gallery.push(newItem);
+  WeddingDB.saveSettings(settings);
+
+  // Clear inputs
+  urlInput.value = '';
+  if (captionInput) captionInput.value = '';
+  if (previewWrap) previewWrap.style.display = 'none';
+  if (statusEl) statusEl.style.display = 'none';
+
+  renderGalleryAdmin();
+  showAdminToast('Đã thêm ảnh mới vào Album cưới thành công!');
+};
+
+// 6. Remove Photo from 3D Gallery
+window.removeGalleryItem = function(idx) {
+  const settings = WeddingDB.getSettings();
+  if (!settings.gallery || !settings.gallery[idx]) return;
+
+  const caption = settings.gallery[idx].caption || `ảnh #${idx + 1}`;
+  if (!confirm(`Bạn có chắc chắn muốn xoá ${caption} khỏi Album cưới?`)) return;
+
+  settings.gallery.splice(idx, 1);
+  WeddingDB.saveSettings(settings);
+  renderGalleryAdmin();
+  showAdminToast('Đã xoá ảnh khỏi Album cưới!');
+};
+
+// 7. Move Photo Up / Down in 3D Gallery
+window.moveGalleryItem = function(idx, dir) {
+  const settings = WeddingDB.getSettings();
+  if (!settings.gallery) return;
+  const targetIdx = idx + dir;
+  if (targetIdx < 0 || targetIdx >= settings.gallery.length) return;
+
+  const temp = settings.gallery[idx];
+  settings.gallery[idx] = settings.gallery[targetIdx];
+  settings.gallery[targetIdx] = temp;
+
+  WeddingDB.saveSettings(settings);
+  renderGalleryAdmin();
+};
+
+// 8. Save All Edits in 3D Gallery
+window.saveAllGalleryAdmin = function() {
+  const settings = WeddingDB.getSettings();
+  if (!Array.isArray(settings.gallery)) settings.gallery = [];
+
+  const cards = document.querySelectorAll('.gallery-item-card');
+  cards.forEach(card => {
+    const idx = parseInt(card.dataset.idx, 10);
+    const srcInput = card.querySelector('.gallery-item-src-input');
+    const capInput = card.querySelector('.gallery-item-caption-input');
+    if (!isNaN(idx) && settings.gallery[idx]) {
+      if (srcInput) settings.gallery[idx].src = srcInput.value.trim();
+      if (capInput) settings.gallery[idx].caption = capInput.value.trim();
+    }
+  });
+
+  WeddingDB.saveSettings(settings);
+  renderGalleryAdmin();
+  showAdminToast('Đã lưu toàn bộ Album cưới thành công!');
+};
+
+// 9. Reset 3D Gallery to Default 16 Photos
+window.resetGalleryDefault = function() {
+  if (!confirm('Khôi phục Album cưới về 16 bức ảnh cưới mẫu ban đầu?')) return;
+  const settings = WeddingDB.getSettings();
+  settings.gallery = JSON.parse(JSON.stringify(DEFAULT_SETTINGS.gallery));
+  WeddingDB.saveSettings(settings);
+  renderGalleryAdmin();
+  showAdminToast('Đã khôi phục 16 ảnh cưới mẫu gốc thành công!');
 };
 
 

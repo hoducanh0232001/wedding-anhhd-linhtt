@@ -101,6 +101,7 @@ const DEFAULT_SETTINGS = {
     venueAddress: 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội',
     mapUrl: 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA',
     heroQuote: 'TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN',
+    heroPhoto: 'assets/images/hero_couple.jpg',
     thankYouQuote: 'Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!',
     announcementText: 'TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CHÚNG TÔI',
     groomStk: '0988889999',

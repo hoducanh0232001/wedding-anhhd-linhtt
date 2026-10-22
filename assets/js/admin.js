@@ -464,7 +464,7 @@ function renderGuestsTable() {
   if (window.location.hostname.includes('vercel.app')) {
     domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
   }
-  const baseUrl = `${domainOrigin}/index.html`;
+  const baseUrl = `${domainOrigin}/`;
 
   filtered.forEach((g, idx) => {
     // Generate personalized URL

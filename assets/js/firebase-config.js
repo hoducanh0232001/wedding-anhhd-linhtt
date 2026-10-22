@@ -3,14 +3,14 @@
  * Đức Anh & Thuỳ Linh Wedding Platform
  */
 const DEFAULT_FIREBASE_CONFIG = {
-  // Điền thông tin Firebase của bạn ở đây hoặc dán vào mục Cấu hình trong trang Admin
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDJrKNMi8Rl6DpwryTCNeP0hIFp3Ph4KO8",
+  authDomain: "wedding-anh-linh.firebaseapp.com",
+  databaseURL: "https://wedding-anh-linh-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "wedding-anh-linh",
+  storageBucket: "wedding-anh-linh.firebasestorage.app",
+  messagingSenderId: "555487538238",
+  appId: "1:555487538238:web:eac53ad5099f1c107d756f",
+  measurementId: "G-Q9MCJRZ91Q"
 };
 
 (function() {
@@ -22,23 +22,20 @@ const DEFAULT_FIREBASE_CONFIG = {
         if (parsed && (parsed.projectId || parsed.databaseURL)) return parsed;
       }
     } catch(e) {}
-    if (DEFAULT_FIREBASE_CONFIG.projectId || DEFAULT_FIREBASE_CONFIG.databaseURL) {
-      return DEFAULT_FIREBASE_CONFIG;
-    }
-    return null;
+    return DEFAULT_FIREBASE_CONFIG;
   }
 
   const config = getFirebaseConfig();
-  if (config && typeof firebase !== 'undefined') {
+  if (config && config.projectId && typeof firebase !== 'undefined') {
     try {
       if (!firebase.apps.length) {
         firebase.initializeApp(config);
       }
       const db = firebase.database();
       window.weddingFirebaseDb = db;
-      console.log('🔥 Firebase Realtime Database connected successfully!');
+      console.log('🔥 Firebase Realtime Database connected successfully:', config.projectId);
 
-      // Listen to wishes
+      // 1. Listen to wishes in Realtime
       db.ref('wishes').on('value', snapshot => {
         try {
           const val = snapshot.val();
@@ -51,9 +48,11 @@ const DEFAULT_FIREBASE_CONFIG = {
         } catch(e) {
           console.warn('Sync wishes error:', e);
         }
+      }, err => {
+        console.warn('Realtime Database listen wishes warning:', err.message);
       });
 
-      // Listen to RSVPs
+      // 2. Listen to RSVPs in Realtime
       db.ref('rsvps').on('value', snapshot => {
         try {
           const val = snapshot.val();
@@ -66,12 +65,14 @@ const DEFAULT_FIREBASE_CONFIG = {
         } catch(e) {
           console.warn('Sync RSVPs error:', e);
         }
+      }, err => {
+        console.warn('Realtime Database listen RSVPs warning:', err.message);
       });
 
     } catch(err) {
       console.warn('Firebase init error:', err);
     }
   } else {
-    console.log('Firebase: Not configured yet. Running in offline/local storage mode.');
+    console.log('Firebase: Waiting for configuration...');
   }
 })();

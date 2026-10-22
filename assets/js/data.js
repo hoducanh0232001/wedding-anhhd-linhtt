@@ -268,6 +268,14 @@ const DEFAULT_GUESTS = [
 
 const DEFAULT_WISHES = [
   {
+    id: 'wish-0',
+    name: 'Bí mật',
+    relation: 'Khách quý',
+    message: 'Chúc 105 hạnh phúc 🎉🥂🎉',
+    timestamp: '9:57:58 22/10/2026',
+    likes: 1
+  },
+  {
     id: 'wish-1',
     name: 'Nguyễn Văn Nam',
     relation: 'Bạn thân chú rể',
@@ -414,7 +422,7 @@ const WeddingDB = {
   addWish(wish) {
     const wishes = this.getWishes();
     const now = new Date();
-    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
     const newWish = {
       id: 'wish-' + Date.now(),
       timestamp: timeStr,

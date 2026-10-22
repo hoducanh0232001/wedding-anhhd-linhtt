@@ -629,12 +629,24 @@ window.toggleQrBox = function() {
   }
 };
 
+window.toggleQuickWishes = function() {
+  const popover = document.getElementById('quick-wishes-popover');
+  if (!popover) return;
+  if (popover.style.display === 'none' || !popover.style.display) {
+    popover.style.display = 'block';
+  } else {
+    popover.style.display = 'none';
+  }
+};
+
 window.fillQuickWish = function(text) {
   const wishTextarea = document.getElementById('rsvp-wish');
   if (wishTextarea) {
     wishTextarea.value = text;
     wishTextarea.focus();
     showToast(`Đã chọn lời chúc: "${text}"`);
+    const popover = document.getElementById('quick-wishes-popover');
+    if (popover) popover.style.display = 'none';
   }
 };
 

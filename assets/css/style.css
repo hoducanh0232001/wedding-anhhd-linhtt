@@ -38,7 +38,7 @@
 }
 
 html, body {
-  background-color: var(--page-bg);
+  background-color: #ffffff; /* Lề 2 bên màu trắng */
   color: var(--primary);
   font-family: var(--font-body);
   line-height: 1.6;
@@ -67,15 +67,21 @@ html, body {
   margin: 0 auto;
   min-height: 100vh;
   background-color: var(--page-bg);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
 @media (min-width: 768px) {
   .page-container {
-    max-width: 520px;
+    max-width: 620px; /* Nhỏ lề 2 bên lại */
     border-left: 1px solid rgba(81, 20, 25, 0.12);
     border-right: 1px solid rgba(81, 20, 25, 0.12);
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    max-width: 680px; /* Nhỏ lề 2 bên lại trên desktop */
   }
 }
 
@@ -1187,27 +1193,23 @@ html, body {
 
 
 /* ==========================================================================
-   11. GUESTBOOK / PAPERNOTE (Sổ Lưu Bút & Xác Nhận)
+   11. GUESTBOOK / PAPERNOTE (Sổ Lưu Bút)
    ========================================================================== */
 .papernote-section {
   position: relative;
   z-index: 10;
   margin: 36px auto 28px;
   padding: 0 16px;
-  max-width: 440px;
+  max-width: 520px;
   text-align: center;
 }
 
-.papernote-header {
-  margin-bottom: 14px;
-}
-
-/* Parchment paper card - ONLY wraps the quick wishes and form */
+/* Parchment paper card */
 .papernote-card {
   position: relative;
-  max-width: 380px;
+  max-width: 390px;
   margin: 0 auto;
-  padding: 24px 22px 28px;
+  padding: 30px 24px 28px;
   background-image: url('../images/theme/papernote_card.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -1215,9 +1217,122 @@ html, body {
   box-sizing: border-box;
 }
 
+.papernote-card-title {
+  font-family: var(--font-title);
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
 .wedding-rsvp-form {
-  max-width: 310px;
+  max-width: 320px;
   margin: 0 auto;
+}
+
+.note-input, .note-textarea {
+  width: 100%;
+  border: 1px solid rgba(81, 20, 25, 0.35);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--primary);
+  font-size: 13.5px;
+  margin-bottom: 11px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.note-input::placeholder, .note-textarea::placeholder {
+  color: rgba(81, 20, 25, 0.55);
+}
+
+.note-input:focus, .note-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(81, 20, 25, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.note-textarea {
+  resize: none;
+  min-height: 84px;
+  margin-bottom: 12px;
+}
+
+.note-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-wish-wand {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(81, 20, 25, 0.28);
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-wish-wand:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(81, 20, 25, 0.12);
+}
+
+.btn-submit-note {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.28);
+  transition: all 0.2s ease;
+}
+
+.btn-submit-note:hover {
+  background: #380a0e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(81, 20, 25, 0.38);
+}
+
+/* Quick Wishes Popover Drawer */
+.quick-wishes-popover {
+  margin-top: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(81, 20, 25, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.08);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+.quick-wishes-popover-title {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-align: left;
 }
 
 .quick-wishes-row {
@@ -1225,13 +1340,11 @@ html, body {
   flex-wrap: wrap;
   gap: 6px;
   justify-content: center;
-  margin: 0 auto 13px;
-  max-width: 320px;
 }
 
 .btn-quick-wish {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(81, 20, 25, 0.22);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(81, 20, 25, 0.24);
   color: var(--primary);
   border-radius: 9999px;
   padding: 4px 10px;
@@ -1239,8 +1352,6 @@ html, body {
   font-family: var(--font-body);
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 1px 3px rgba(81, 20, 25, 0.04);
 }
 
 .btn-quick-wish:hover {
@@ -1250,81 +1361,9 @@ html, body {
   transform: translateY(-1px);
 }
 
-.note-input, .note-textarea {
-  width: 100%;
-  border: 1px solid rgba(81, 20, 25, 0.25);
-  border-radius: 8px;
-  padding: 9px 12px;
-  font-family: var(--font-body);
-  background: rgba(255, 255, 255, 0.55);
-  color: var(--primary);
-  font-size: 13px;
-  margin-bottom: 9px;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  box-sizing: border-box;
-}
-
-.note-input::placeholder, .note-textarea::placeholder {
-  color: rgba(81, 20, 25, 0.52);
-}
-
-.note-input:focus, .note-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(81, 20, 25, 0.1);
-  background: rgba(255, 255, 255, 0.88);
-}
-
-.note-select-wrap {
-  position: relative;
-  width: 100%;
-  margin-bottom: 9px;
-}
-
-.note-select {
-  margin-bottom: 0 !important;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23511419' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 11px 7px;
-  padding-right: 34px;
-  cursor: pointer;
-}
-
-.note-textarea {
-  resize: vertical;
-  min-height: 52px;
-}
-
-.btn-submit-note {
-  width: 100%;
-  background: var(--primary);
-  color: #f3e8de;
-  border: none;
-  border-radius: 9999px;
-  padding: 11px 16px;
-  font-family: var(--font-body);
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(81, 20, 25, 0.28);
-  transition: all 0.2s ease;
-  margin-top: 3px;
-}
-
-.btn-submit-note:hover {
-  background: #380a0e;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(81, 20, 25, 0.38);
-}
-
 /* Wishes list - sits BELOW the papernote card on the warm page background */
 .wishes-feed-wrapper {
-  max-width: 370px;
+  max-width: 390px;
   margin: 22px auto 0;
   text-align: left;
 }
@@ -1355,10 +1394,10 @@ html, body {
 }
 
 .wish-item-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(81, 20, 25, 0.2);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(81, 20, 25, 0.22);
   border-radius: 8px;
-  padding: 11px 14px;
+  padding: 12px 16px;
   box-shadow: 0 2px 6px rgba(81, 20, 25, 0.03);
   backdrop-filter: blur(4px);
 }
@@ -1373,20 +1412,44 @@ html, body {
 .wish-item-name {
   font-family: var(--font-title);
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--primary);
 }
 
 .wish-item-time {
-  font-size: 11px;
+  font-size: 10.5px;
   color: rgba(81, 20, 25, 0.55);
+  font-family: var(--font-body);
 }
 
 .wish-item-text {
   font-family: var(--font-body);
-  font-size: 12.5px;
-  color: rgba(46, 24, 27, 0.88);
-  line-height: 1.45;
+  font-size: 13px;
+  color: rgba(46, 24, 27, 0.92);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Closing tender section */
+.closing-tender-section {
+  margin: 22px auto 14px;
+  text-align: center;
+  max-width: 390px;
+}
+
+.closing-tender-quote {
+  font-family: var(--font-title);
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(81, 20, 25, 0.76);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.closing-tender-copyright {
+  font-size: 11px;
+  color: rgba(81, 20, 25, 0.45);
+  letter-spacing: 0.04em;
 }
 
 /* ==========================================================================

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang Quản Lý Thiệp Cưới | Đức Anh & Thuỳ Linh</title>
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- ==========================================
+       PASSCODE AUTHENTICATION MODAL
+       ========================================== -->
+  <div id="admin-auth-overlay" class="admin-auth-overlay">
+    <div class="admin-auth-card">
+      <div class="auth-lock-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      </div>
+      <h2 style="color:var(--admin-primary);margin-bottom:8px;font-family:Georgia,serif;">Quản Trị Thiệp Cưới</h2>
+      <p style="font-size:0.85rem;color:var(--admin-muted);margin-bottom:20px;">
+        Vui lòng nhập mã bảo vệ để quản lý thông tin thiệp cưới & khách mời
+      </p>
+
+      <form id="admin-auth-form">
+        <div class="admin-form-group">
+          <input type="password" id="admin-pass-input" class="admin-form-input" style="text-align:center;font-size:1.2rem;letter-spacing:4px;" placeholder="Mã PIN (Mặc định: 123456)" autofocus required />
+        </div>
+        <button type="submit" class="admin-btn admin-btn-primary" style="width:100%;justify-content:center;padding:12px;">
+          Mở Trang Quản Trị
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ADMIN PORTAL LAYOUT
+       ========================================== -->
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="brand-monogram">Đ&T</div>
+        <div class="brand-info">
+          <h2>Đức Anh & Thuỳ Linh</h2>
+          <span>Quản lý thiệp cưới</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          <span>Tổng Quan</span>
+        </button>
+
+        <button class="nav-item" data-tab="guests">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          <span>Khách Mời & Cá Nhân Hoá</span>
+        </button>
+
+        <button class="nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span>Thông Tin Cặp Đôi</span>
+        </button>
+
+        <button class="nav-item" data-tab="events">
+          <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+          <span>Lịch Trình Sự Kiện</span>
+        </button>
+
+        <button class="nav-item" data-tab="banking">
+          <svg viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg>
+          <span>Mừng Cưới & VietQR</span>
+        </button>
+
+        <button class="nav-item" data-tab="rsvps">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          <span>Phản Hồi RSVP & Lời Chúc</span>
+        </button>
+
+        <button class="nav-item" data-tab="backup">
+          <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+          <span>Sao Lưu & Dữ Liệu</span>
+        </button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <span>Phiên bản 1.0</span>
+        <button id="btn-admin-logout" style="background:none;border:none;color:#ff8585;cursor:pointer;font-size:0.8rem;">
+          Đăng xuất
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobile-sidebar-toggle" class="mobile-admin-toggle">☰</button>
+          <div class="admin-header-title">
+            <h1>Bảng Điều Khiển Quản Trị</h1>
+          </div>
+        </div>
+
+        <div class="admin-header-actions">
+          <a href="index.html" target="_blank" class="btn-view-invite">
+            <svg style="width:16px;height:16px;fill:currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            Xem Thiệp Thực Tế
+          </a>
+        </div>
+      </header>
+
+      <div class="admin-content-body">
+        
+        <!-- ==========================================
+             TAB 1: TỔNG QUAN (DASHBOARD)
+             ========================================== -->
+        <div id="panel-dashboard" class="tab-panel active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon primary">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              </div>
+              <div>
+                <div id="stat-total-guests" class="stat-value">0</div>
+                <div class="stat-label">Tổng khách mời</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon success">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </div>
+              <div>
+                <div id="stat-attending-guests" class="stat-value">0</div>
+                <div class="stat-label">Sẽ tham dự</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon warning">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              </div>
+              <div>
+                <div id="stat-declined-guests" class="stat-value">0</div>
+                <div class="stat-label">Không thể đến</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon gold">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+              </div>
+              <div>
+                <div id="stat-total-wishes" class="stat-value">0</div>
+                <div class="stat-label">Lời chúc đã nhận</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Khách Mời Gần Đây</h3>
+              <button class="admin-btn admin-btn-secondary" onclick="document.querySelector('.nav-item[data-tab=\'guests\']').click()">
+                Xem tất cả
+              </button>
+            </div>
+            <div class="admin-card-body" id="recent-activity-list"></div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             TAB 2: QUẢN LÝ KHÁCH MỜI & CÁ NHÂN HÓA (KEY FEATURE)
+             ========================================== -->
+        <div id="panel-guests" class="tab-panel">
+          
+          <!-- Add Guest Card -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>➕ Thêm Khách Mời Mới</h3>
+            </div>
+            <div class="admin-card-body">
+              <form id="form-add-guest">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên khách mời *</label>
+                    <input type="text" id="guest-add-name" class="admin-form-input" placeholder="Ví dụ: Hoàng Tuấn Anh" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Cách xưng hô (Hiển thị đầu thiệp)</label>
+                    <select id="guest-add-prefix" class="admin-form-select">
+                      <option value="Anh">Anh</option>
+                      <option value="Chị">Chị</option>
+                      <option value="Bạn">Bạn</option>
+                      <option value="Em">Em</option>
+                      <option value="Gia đình">Gia đình</option>
+                      <option value="Bác">Bác</option>
+                      <option value="Cô">Cô</option>
+                      <option value="Chú">Chú</option>
+                      <option value="Thân Mời">Thân Mời</option>
+                      <option value="Kính Mời">Kính Mời</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Nhóm khách mời</label>
+                    <select id="guest-add-group" class="admin-form-select">
+                      <option value="Bạn Chú Rể">Bạn Chú Rể</option>
+                      <option value="Bạn Cô Dâu">Bạn Cô Dâu</option>
+                      <option value="Đồng Nghiệp">Đồng Nghiệp</option>
+                      <option value="Họ hàng Nhà Trai">Họ hàng Nhà Trai</option>
+                      <option value="Họ hàng Nhà Gái">Họ hàng Nhà Gái</option>
+                      <option value="Khác">Khác</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Số điện thoại (tùy chọn)</label>
+                    <input type="tel" id="guest-add-phone" class="admin-form-input" placeholder="Ví dụ: 0912 345 678" />
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Lời ngỏ riêng cho khách này (Hiển thị trên thiệp):</label>
+                  <input type="text" id="guest-add-message" class="admin-form-input" placeholder="Ví dụ: Rất mong được đón tiếp anh và người thương đến chung vui cùng gia đình chúng em!" />
+                </div>
+
+                <button type="submit" class="admin-btn admin-btn-primary">
+                  Lưu & Tạo Link Cá Nhân Hoá
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Bulk Add Card -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>⚡ Thêm Nhanh Hàng Loạt Khách Mời</h3>
+            </div>
+            <div class="admin-card-body">
+              <form id="form-bulk-guests">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Xưng hô mặc định</label>
+                    <select id="bulk-prefix-select" class="admin-form-select">
+                      <option value="Bạn">Bạn</option>
+                      <option value="Anh">Anh</option>
+                      <option value="Chị">Chị</option>
+                      <option value="Em">Em</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Nhóm mặc định</label>
+                    <select id="bulk-group-select" class="admin-form-select">
+                      <option value="Bạn Chú Rể">Bạn Chú Rể</option>
+                      <option value="Bạn Cô Dâu">Bạn Cô Dâu</option>
+                      <option value="Đồng Nghiệp">Đồng Nghiệp</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Dán danh sách tên (mỗi người 1 dòng):</label>
+                  <textarea id="bulk-names-input" class="admin-form-textarea" rows="4" placeholder="Nguyễn Văn A&#10;Trần Thị B&#10;Lê Văn C"></textarea>
+                </div>
+
+                <button type="submit" class="admin-btn admin-btn-gold">
+                  Tạo Nhanh Danh Sách
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Guest List Table -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h3>Danh Sách Khách Mời & Link Cá Nhân Hoá</h3>
+                <span id="filtered-guest-count" style="font-size:0.8rem;color:#888;"></span>
+              </div>
+              
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <input type="text" id="search-guest-input" class="admin-form-input" style="width:200px;padding:6px 12px;" placeholder="Tìm tên hoặc SĐT..." />
+                <select id="filter-guest-group" class="admin-form-select" style="width:160px;padding:6px 12px;">
+                  <option value="all">Tất cả nhóm</option>
+                  <option value="Bạn Chú Rể">Bạn Chú Rể</option>
+                  <option value="Bạn Cô Dâu">Bạn Cô Dâu</option>
+                  <option value="Đồng Nghiệp">Đồng Nghiệp</option>
+                  <option value="Họ hàng Nhà Trai">Họ hàng Nhà Trai</option>
+                  <option value="Họ hàng Nhà Gái">Họ hàng Nhà Gái</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Khách Mời</th>
+                    <th>Nhóm</th>
+                    <th>Trạng Thái</th>
+                    <th>Link Riêng Cá Nhân Hoá</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="guests-table-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             TAB 3: THÔNG TIN CẶP ĐÔI & LỄ CƯỚI
+             ========================================== -->
+        <div id="panel-settings" class="tab-panel">
+          <form id="form-wedding-settings">
+            <!-- Groom & Bride -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3>🤵 Thông Tin Chú Rể</h3>
+              </div>
+              <div class="admin-card-body">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ và tên đầy đủ</label>
+                    <input type="text" id="groom-fullName" class="admin-form-input" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên gọi thân mật</label>
+                    <input type="text" id="groom-shortName" class="admin-form-input" required />
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Tiểu sử ngắn</label>
+                  <input type="text" id="groom-bio-input" class="admin-form-input" />
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Link ảnh chân dung Chú rể</label>
+                  <input type="text" id="groom-photo-input" class="admin-form-input" />
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ tên Thân Phụ (Bố)</label>
+                    <input type="text" id="groom-father-input" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ tên Thân Mẫu (Mẹ)</label>
+                    <input type="text" id="groom-mother-input" class="admin-form-input" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3>👰 Thông Tin Cô Dâu</h3>
+              </div>
+              <div class="admin-card-body">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ và tên đầy đủ</label>
+                    <input type="text" id="bride-fullName" class="admin-form-input" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên gọi thân mật</label>
+                    <input type="text" id="bride-shortName" class="admin-form-input" required />
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Tiểu sử ngắn</label>
+                  <input type="text" id="bride-bio-input" class="admin-form-input" />
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Link ảnh chân dung Cô dâu</label>
+                  <input type="text" id="bride-photo-input" class="admin-form-input" />
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ tên Thân Phụ (Bố)</label>
+                    <input type="text" id="bride-father-input" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Họ tên Thân Mẫu (Mẹ)</label>
+                    <input type="text" id="bride-mother-input" class="admin-form-input" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date, Venue & Quotes -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3>🗓 Ngày Cưới & Địa Điểm Chính</h3>
+              </div>
+              <div class="admin-card-body">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày tổ chức (YYYY-MM-DD)</label>
+                    <input type="date" id="wedding-date-input" class="admin-form-input" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ bắt đầu (HH:MM)</label>
+                    <input type="time" id="wedding-time-input" class="admin-form-input" required />
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày Dương lịch hiển thị</label>
+                    <input type="text" id="wedding-dateText-input" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày Âm lịch hiển thị</label>
+                    <input type="text" id="wedding-lunar-input" class="admin-form-input" />
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Nhà Hàng / Trung Tâm Tiệc Cưới</label>
+                    <input type="text" id="wedding-venue-input" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Địa chỉ chi tiết</label>
+                    <input type="text" id="wedding-address-input" class="admin-form-input" />
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Link bản đồ Google Maps</label>
+                  <input type="text" id="wedding-mapUrl-input" class="admin-form-input" />
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Châm ngôn tình yêu (Đầu thiệp)</label>
+                  <textarea id="hero-quote-input" class="admin-form-textarea" rows="2"></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Lời cảm ơn (Chân thiệp)</label>
+                  <textarea id="thankyou-quote-input" class="admin-form-textarea" rows="2"></textarea>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Link nhạc nền MP3</label>
+                    <input type="text" id="music-url-input" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Mật khẩu bảo vệ trang quản lý</label>
+                    <input type="text" id="admin-passcode-input" class="admin-form-input" />
+                  </div>
+                </div>
+
+                <button type="submit" class="admin-btn admin-btn-primary" style="padding:12px 28px;">
+                  💾 Lưu Toàn Bộ Cài Đặt
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- ==========================================
+             TAB 4: LỊCH TRÌNH SỰ KIỆN
+             ========================================== -->
+        <div id="panel-events" class="tab-panel">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Các Sự Kiện Cưới (Nhà Trai, Nhà Gái, Tiệc Chính)</h3>
+            </div>
+            <div class="admin-card-body">
+              <div id="events-admin-list"></div>
+              <button class="admin-btn admin-btn-primary" onclick="saveEventsFromAdmin()">
+                💾 Lưu Lịch Trình Sự Kiện
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             TAB 5: MỪNG CƯỚI & VIETQR
+             ========================================== -->
+        <div id="panel-banking" class="tab-panel">
+          <form id="form-banking-settings">
+            <div class="form-grid-2">
+              <!-- Groom Bank -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <h3>💳 Tài Khoản Chú Rể</h3>
+                </div>
+                <div class="admin-card-body">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Ngân hàng</label>
+                    <input type="text" id="bank-groom-name" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Số Tài Khoản</label>
+                    <input type="text" id="bank-groom-account" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Chủ Tài Khoản (Không dấu)</label>
+                    <input type="text" id="bank-groom-holder" class="admin-form-input" />
+                  </div>
+                  <div style="text-align:center;margin-top:16px;">
+                    <div style="font-size:0.8rem;color:#888;margin-bottom:8px;">Xem trước mã VietQR tự động:</div>
+                    <img id="admin-groom-qr-preview" style="max-width:180px;margin:0 auto;border:1px solid #ddd;border-radius:8px;" src="" alt="Groom QR" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bride Bank -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <h3>💳 Tài Khoản Cô Dâu</h3>
+                </div>
+                <div class="admin-card-body">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Ngân hàng</label>
+                    <input type="text" id="bank-bride-name" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Số Tài Khoản</label>
+                    <input type="text" id="bank-bride-account" class="admin-form-input" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Chủ Tài Khoản (Không dấu)</label>
+                    <input type="text" id="bank-bride-holder" class="admin-form-input" />
+                  </div>
+                  <div style="text-align:center;margin-top:16px;">
+                    <div style="font-size:0.8rem;color:#888;margin-bottom:8px;">Xem trước mã VietQR tự động:</div>
+                    <img id="admin-bride-qr-preview" style="max-width:180px;margin:0 auto;border:1px solid #ddd;border-radius:8px;" src="" alt="Bride QR" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="admin-btn admin-btn-primary" style="padding:12px 28px;">
+              💾 Lưu Cài Đặt Ngân Hàng & Cập Nhật VietQR
+            </button>
+          </form>
+        </div>
+
+        <!-- ==========================================
+             TAB 6: PHẢN HỒI RSVP & LỜI CHÚC
+             ========================================== -->
+        <div id="panel-rsvps" class="tab-panel">
+          <!-- RSVPs -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Danh Sách Khách Xác Nhận Tham Dự</h3>
+              <button class="admin-btn admin-btn-secondary" onclick="exportRSVPToCSV()">
+                📥 Xuất File Excel / CSV
+              </button>
+            </div>
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Khách Mời</th>
+                    <th>Trạng Thái</th>
+                    <th>Sự Kiện</th>
+                    <th>Lời Chúc Đi Kèm</th>
+                    <th>Thời Gian</th>
+                  </tr>
+                </thead>
+                <tbody id="rsvps-table-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Wishes -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Quản Lý Lời Chúc Trong Sổ Lưu Bút</h3>
+            </div>
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Người Gửi</th>
+                    <th>Nội Dung Lời Chúc</th>
+                    <th>Thời Gian</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-wishes-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             TAB 7: SAO LƯU & DỮ LIỆU
+             ========================================== -->
+        <div id="panel-backup" class="tab-panel">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>Sao Lưu & Phục Hồi Dữ Liệu Thiệp Cưới</h3>
+            </div>
+            <div class="admin-card-body">
+              <p style="font-size:0.9rem;color:var(--admin-muted);line-height:1.7;">
+                Toàn bộ thông tin thiệp cưới, danh sách khách mời, phản hồi tham dự và lời chúc được lưu trữ an toàn trong trình duyệt của bạn. Bạn có thể xuất file sao lưu (JSON) để lưu giữ hoặc chuyển sang máy khác.
+              </p>
+
+              <div style="display:flex;gap:16px;flex-wrap:wrap;margin:24px 0;">
+                <button class="admin-btn admin-btn-primary" onclick="exportDataAsJSON()">
+                  📤 Tải Về File Sao Lưu (.json)
+                </button>
+                <button class="admin-btn admin-btn-secondary" onclick="importDataFromJSON()">
+                  📥 Nhập Dữ Liệu Từ File (.json)
+                </button>
+              </div>
+
+              <hr style="border:none;border-top:1px solid #eee;margin:32px 0;" />
+
+              <h4 style="color:var(--admin-danger);margin-bottom:8px;">Vùng Nguy Hiểm</h4>
+              <p style="font-size:0.85rem;color:#888;margin-bottom:12px;">
+                Khôi phục lại toàn bộ dữ liệu mẫu ban đầu của Chung Đôi (Đức Anh & Thuỳ Linh).
+              </p>
+              <button class="admin-btn admin-btn-danger" onclick="resetAllData()">
+                Khôi Phục Mẫu Thiệp Gốc
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

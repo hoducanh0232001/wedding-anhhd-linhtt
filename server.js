@@ -27,6 +27,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(rootDir, 'index.html'));
 });
 
+// Route to resolve Google Maps short links
+app.get('/api/resolve-map', async (req, res) => {
+  const targetUrl = req.query.url;
+  if (!targetUrl) return res.status(400).json({ error: 'Missing url' });
+  try {
+    const response = await fetch(targetUrl, { redirect: 'follow' });
+    res.json({ finalUrl: response.url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 5. Fallback: only return index.html for page routes, NOT for broken asset files
 app.get('*', (req, res) => {
   if (req.path.includes('.')) {

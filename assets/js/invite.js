@@ -1,3 +1,59 @@
+
+// Helper: Convert any Google Maps URL to an exact Embed iframe URL
+function parseMapUrlToEmbed(url, venueName, venueAddress) {
+  if (!url) {
+    const cleanQ = ((venueName || '') + ' ' + (venueAddress || ''))
+      .replace(/\(Cơ sở \d+\)/g, '')
+      .replace(/Tầng \d+,/g, '')
+      .trim();
+    return 'https://maps.google.com/maps?q=' + encodeURIComponent(cleanQ) + '&z=16&output=embed';
+  }
+
+  const trimmed = url.trim();
+
+  // 1. If already embed URL
+  if (trimmed.includes('/maps/embed')) {
+    return trimmed;
+  }
+
+  // 2. Known default wedding venue short link
+  if (trimmed.includes('ijkYsunZoUQ79kQbA')) {
+    return 'https://maps.google.com/maps?q=20.9589449,105.7683679&z=16&output=embed';
+  }
+
+  // 3. Extract coordinates (lat,lng)
+  const coordMatch = trimmed.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ||
+                     trimmed.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) ||
+                     trimmed.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/) ||
+                     trimmed.match(/[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+
+  if (coordMatch) {
+    const lat = coordMatch[1];
+    const lng = coordMatch[2];
+    return 'https://maps.google.com/maps?q=' + lat + ',' + lng + '&z=16&output=embed';
+  }
+
+  // 4. Extract place name
+  const placeMatch = trimmed.match(/\/maps\/place\/([^/@?]+)/);
+  if (placeMatch) {
+    const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+    return 'https://maps.google.com/maps?q=' + encodeURIComponent(place) + '&z=16&output=embed';
+  }
+
+  // 5. Query param
+  const qParamMatch = trimmed.match(/[?&]q=([^&]+)/);
+  if (qParamMatch) {
+    return 'https://maps.google.com/maps?q=' + qParamMatch[1] + '&z=16&output=embed';
+  }
+
+  // 6. Fallback
+  const cleanQ = ((venueName || '') + ' ' + (venueAddress || ''))
+    .replace(/\(Cơ sở \d+\)/g, '')
+    .replace(/Tầng \d+,/g, '')
+    .trim();
+  return 'https://maps.google.com/maps?q=' + encodeURIComponent(cleanQ) + '&z=16&output=embed';
+}
+
 /**
  * Wedding Invitation Interactions & Dynamic Renderer
  * Chung Đôi "Tender" Theme - Đức Anh & Thuỳ Linh
@@ -129,10 +185,27 @@ function initDynamicContent(settings) {
     mapBtn.href = settings.wedding.mapUrl;
   }
 
-  const mapIframe = document.getElementById('wedding-map-iframe');
-  if (mapIframe && (settings.wedding.venueName || settings.wedding.venueAddress)) {
-    const q = encodeURIComponent(`${settings.wedding.venueName || ''} ${settings.wedding.venueAddress || ''}`.trim());
-    mapIframe.src = `https://maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+    const mapIframe = document.getElementById('wedding-map-iframe');
+  if (mapIframe) {
+    const initialEmbed = parseMapUrlToEmbed(settings.wedding.mapUrl, settings.wedding.venueName, settings.wedding.venueAddress);
+    if (initialEmbed) {
+      mapIframe.src = initialEmbed;
+    }
+
+    // If mapUrl is a short link from Google Maps, dynamically resolve coordinates in background
+    if (settings.wedding.mapUrl && /goo\.gl/.test(settings.wedding.mapUrl) && !settings.wedding.mapUrl.includes('ijkYsunZoUQ79kQbA')) {
+      fetch('/api/resolve-map?url=' + encodeURIComponent(settings.wedding.mapUrl))
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.finalUrl) {
+            const resolvedEmbed = parseMapUrlToEmbed(data.finalUrl, settings.wedding.venueName, settings.wedding.venueAddress);
+            if (resolvedEmbed && resolvedEmbed !== mapIframe.src) {
+              mapIframe.src = resolvedEmbed;
+            }
+          }
+        })
+        .catch(() => {});
+    }
   }
 
   // Timeline

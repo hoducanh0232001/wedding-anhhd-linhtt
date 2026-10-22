@@ -311,28 +311,60 @@ function initPersonalizedGuest(settings) {
   }
 }
 
-// 3. Ambient Petals & Hearts in Envelope Screen
+// 3. Natural Botanical Petals & Champagne Gold Dust in Envelope Screen
 function initAmbientPetals() {
   const container = document.getElementById('petals-container');
   if (!container) return;
 
-  const icons = ['🌸', '✨', '❤️', '🍃', '💍'];
-  const count = 18;
+  container.innerHTML = '';
 
-  for (let i = 0; i < count; i++) {
+  const petalTypes = ['rose-crimson', 'rose-blush', 'sakura-pink', 'ivory-jasmine'];
+  const totalPetals = 24;
+  const totalDust = 16;
+
+  // 1. Organic botanical petals (natural 3D fluttering, replacing generic AI star emojis)
+  for (let i = 0; i < totalPetals; i++) {
     const el = document.createElement('div');
-    el.className = 'falling-heart';
-    el.textContent = icons[Math.floor(Math.random() * icons.length)];
-    el.style.left = Math.random() * 95 + '%';
-    el.style.fontSize = Math.random() * 12 + 14 + 'px';
-    el.style.setProperty('--sway', (Math.random() * 60 - 30) + 'px');
-    el.style.animationDuration = (Math.random() * 8 + 10) + 's';
-    el.style.animationDelay = -(Math.random() * 12) + 's';
+    const pType = petalTypes[Math.floor(Math.random() * petalTypes.length)];
+    el.className = `organic-petal ${pType}`;
+    el.style.left = (Math.random() * 95) + '%';
+
+    const scale = (Math.random() * 0.5 + 0.75).toFixed(2);
+    el.style.width = Math.round(15 * scale) + 'px';
+    el.style.height = Math.round(19 * scale) + 'px';
+
+    const sway = Math.round(Math.random() * 80 - 40);
+    el.style.setProperty('--sway', sway + 'px');
+
+    const duration = (Math.random() * 6 + 9).toFixed(1);
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = (-(Math.random() * 15)).toFixed(1) + 's';
+
     container.appendChild(el);
+  }
+
+  // 2. Soft glowing champagne golden dust (natural ambient lighting)
+  for (let i = 0; i < totalDust; i++) {
+    const dust = document.createElement('div');
+    dust.className = 'organic-gold-dust';
+    dust.style.left = (Math.random() * 95) + '%';
+
+    const size = Math.round(Math.random() * 4 + 3);
+    dust.style.width = size + 'px';
+    dust.style.height = size + 'px';
+
+    const sway = Math.round(Math.random() * 50 - 25);
+    dust.style.setProperty('--sway', sway + 'px');
+
+    const duration = (Math.random() * 7 + 10).toFixed(1);
+    dust.style.animationDuration = duration + 's';
+    dust.style.animationDelay = (-(Math.random() * 16)).toFixed(1) + 's';
+
+    container.appendChild(dust);
   }
 }
 
-// 4. Envelope Opening & Audio Autoplay
+// 4. Envelope Opening & Audio Autoplay & Grand Wedding Fireworks
 function initEnvelopeOpener() {
   const envelopeScreen = document.getElementById('envelope-screen');
   const btnOpen = document.getElementById('btn-open-envelope');
@@ -348,6 +380,7 @@ function initEnvelopeOpener() {
     if (!envelopeScreen) return;
     envelopeScreen.classList.add('opened');
     playBackgroundMusic();
+    launchWeddingFireworks();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1013,6 +1046,242 @@ function fireConfetti() {
   }
   render();
 }
+
+// 14. Grand Wedding Fireworks Celebration (Pháo Hoa Mừng Ngày Chung Đôi)
+function launchWeddingFireworks() {
+  let canvas = document.getElementById('wedding-fireworks-canvas');
+  if (canvas) canvas.remove();
+
+  canvas = document.createElement('canvas');
+  canvas.id = 'wedding-fireworks-canvas';
+  canvas.style.position = 'fixed';
+  canvas.style.inset = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '99998';
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  const onResize = () => {
+    if (canvas && canvas.parentNode) {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+  };
+  window.addEventListener('resize', onResize);
+
+  // Romantic wedding firework palettes
+  const goldPalette = ['#ffd700', '#ffea75', '#ffffff', '#f5d061', '#fff8e7', '#f39c12'];
+  const rosePalette = ['#ff6b81', '#f472b6', '#fbcfe8', '#ff4757', '#ffffff', '#e84393'];
+  const royalPalette = ['#e63946', '#ff7675', '#ffd700', '#fbc531', '#ffffff'];
+  const champagnePalette = ['#f7d794', '#f5cd79', '#ffffff', '#eccc68', '#ff6b6b'];
+
+  const rockets = [];
+  const sparks = [];
+
+  class Rocket {
+    constructor(startX, startY, targetX, targetY, colors, isHeart = false) {
+      this.x = startX;
+      this.y = startY;
+      this.targetX = targetX;
+      this.targetY = targetY;
+      this.colors = colors;
+      this.isHeart = isHeart;
+      this.speed = Math.random() * 2 + 11;
+      this.angle = Math.atan2(targetY - startY, targetX - startX);
+      this.coordinates = [];
+      this.coordinateCount = 4;
+      while (this.coordinateCount--) {
+        this.coordinates.push([this.x, this.y]);
+      }
+    }
+
+    update(index) {
+      this.coordinates.pop();
+      this.coordinates.unshift([this.x, this.y]);
+
+      const vx = Math.cos(this.angle) * this.speed;
+      const vy = Math.sin(this.angle) * this.speed;
+
+      this.x += vx;
+      this.y += vy;
+
+      // Rocket spark trail
+      if (Math.random() < 0.65) {
+        sparks.push(new Spark(this.x, this.y, (Math.random() - 0.5) * 1.5, Math.random() * 1.5, '#ffd700', 0.85, 0.05, 1.6, false));
+      }
+
+      // Check apex arrival
+      if (Math.hypot(this.targetX - this.x, this.targetY - this.y) <= this.speed || this.y <= this.targetY) {
+        this.explode();
+        rockets.splice(index, 1);
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+      ctx.lineTo(this.x, this.y);
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+    }
+
+    explode() {
+      if (this.isHeart) {
+        createHeartBurst(this.targetX, this.targetY, this.colors);
+      } else {
+        createPeonyBurst(this.targetX, this.targetY, this.colors);
+      }
+    }
+  }
+
+  class Spark {
+    constructor(x, y, vx, vy, color, alpha = 1, decay = 0.016, size = 2.5, flickers = true) {
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.color = color;
+      this.alpha = alpha;
+      this.decay = decay;
+      this.size = size;
+      this.flickers = flickers;
+      this.gravity = 0.085;
+      this.friction = 0.972;
+      this.coordinates = [];
+      this.coordinateCount = 3;
+      while (this.coordinateCount--) {
+        this.coordinates.push([this.x, this.y]);
+      }
+    }
+
+    update(index) {
+      this.coordinates.pop();
+      this.coordinates.unshift([this.x, this.y]);
+
+      this.vx *= this.friction;
+      this.vy *= this.friction;
+      this.vy += this.gravity;
+
+      this.x += this.vx;
+      this.y += this.vy;
+      this.alpha -= this.decay;
+
+      if (this.alpha <= 0) {
+        sparks.splice(index, 1);
+      }
+    }
+
+    draw() {
+      ctx.save();
+      const drawAlpha = this.flickers && Math.random() < 0.28 ? this.alpha * 0.35 : this.alpha;
+      ctx.globalAlpha = Math.max(0, drawAlpha);
+
+      // Sparkling light streak
+      ctx.beginPath();
+      ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+      ctx.lineTo(this.x, this.y);
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = this.size;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Glowing spark head
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 0.75, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  function createPeonyBurst(cx, cy, colors) {
+    const sparkCount = Math.min(85, Math.floor(width / 12) + 50);
+    for (let i = 0; i < sparkCount; i++) {
+      const angle = (Math.PI * 2 / sparkCount) * i + (Math.random() - 0.5) * 0.35;
+      const speed = Math.random() * 6.5 + 1.8;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const decay = Math.random() * 0.012 + 0.012;
+      const size = Math.random() * 1.8 + 1.8;
+      sparks.push(new Spark(cx, cy, Math.cos(angle) * speed, Math.sin(angle) * speed, color, 1, decay, size, true));
+    }
+  }
+
+  function createHeartBurst(cx, cy, colors) {
+    const heartPoints = 72;
+    for (let i = 0; i < heartPoints; i++) {
+      const t = (Math.PI * 2 / heartPoints) * i;
+      // Mathematical Heart Curve
+      const hx = 16 * Math.pow(Math.sin(t), 3);
+      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      const speedScale = 0.28 + (Math.random() - 0.5) * 0.035;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const decay = Math.random() * 0.01 + 0.012;
+      sparks.push(new Spark(cx, cy, hx * speedScale, hy * speedScale, color, 1, decay, 2.6, true));
+    }
+  }
+
+  // Choreographed series of wedding fireworks launches
+  const launches = [
+    { delay: 60, x: width * 0.50, targetY: height * 0.32, colors: goldPalette, heart: true },
+    { delay: 450, x: width * 0.25, targetY: height * 0.28, colors: rosePalette, heart: false },
+    { delay: 750, x: width * 0.75, targetY: height * 0.30, colors: champagnePalette, heart: false },
+    { delay: 1250, x: width * 0.40, targetY: height * 0.22, colors: royalPalette, heart: true },
+    { delay: 1450, x: width * 0.60, targetY: height * 0.24, colors: goldPalette, heart: false },
+    { delay: 1950, x: width * 0.20, targetY: height * 0.34, colors: rosePalette, heart: false },
+    { delay: 2200, x: width * 0.80, targetY: height * 0.26, colors: champagnePalette, heart: false },
+    { delay: 2600, x: width * 0.50, targetY: height * 0.18, colors: goldPalette, heart: true }
+  ];
+
+  launches.forEach(launch => {
+    setTimeout(() => {
+      if (!canvas || !canvas.parentNode) return;
+      const startX = launch.x + (Math.random() - 0.5) * 40;
+      rockets.push(new Rocket(startX, height + 10, launch.x, launch.targetY, launch.colors, launch.heart));
+    }, launch.delay);
+  });
+
+  let animId = null;
+  const startTime = Date.now();
+
+  function loop() {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      rockets[i].draw();
+      rockets[i].update(i);
+    }
+
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      sparks[i].draw();
+      sparks[i].update(i);
+    }
+
+    // Auto cleanup after sequence finishes
+    if (Date.now() - startTime > 6500 && rockets.length === 0 && sparks.length === 0) {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', onResize);
+      if (canvas && canvas.parentNode) canvas.remove();
+      return;
+    }
+
+    animId = requestAnimationFrame(loop);
+  }
+
+  animId = requestAnimationFrame(loop);
+}
+
+// Global hook for user interaction or testing
+window.launchWeddingFireworks = launchWeddingFireworks;
 
 // 12. Real-time synchronization when admin saves in another tab or same window
 window.addEventListener('storage', (e) => {

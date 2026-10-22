@@ -173,6 +173,50 @@ html, body {
   100% { transform: translateY(105vh) translateX(var(--sway, 20px)) rotate(360deg); opacity: 0; }
 }
 
+@keyframes organicPetalFlutter {
+  0% {
+    transform: translateY(0) translateX(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(50vh) translateX(var(--sway, 40px)) rotateX(280deg) rotateY(180deg) rotateZ(190deg);
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(105vh) translateX(calc(var(--sway, 40px) * -0.5)) rotateX(540deg) rotateY(360deg) rotateZ(380deg);
+    opacity: 0;
+  }
+}
+
+@keyframes organicDustDrift {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+    transform: translateY(18vh) translateX(var(--sway, 20px)) scale(1.1);
+  }
+  55% {
+    opacity: 0.65;
+    transform: translateY(55vh) translateX(calc(var(--sway, 20px) * -0.6)) scale(0.85);
+  }
+  85% {
+    opacity: 0.85;
+    transform: translateY(85vh) translateX(var(--sway, 20px)) scale(1);
+  }
+  100% {
+    transform: translateY(105vh) translateX(calc(var(--sway, 20px) * -0.3)) scale(0.4);
+    opacity: 0;
+  }
+}
+
 @keyframes shine {
   0% { left: -100%; }
   35%, 100% { left: 200%; }
@@ -204,7 +248,61 @@ html, body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+/* Natural Botanical Petals (Replaces generic AI emojis/stars) */
+.organic-petal {
+  position: absolute;
+  top: -40px;
+  pointer-events: none;
+  user-select: none;
+  border-radius: 60% 0 60% 60%;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
+  will-change: transform, opacity;
+  animation: organicPetalFlutter 12s ease-in-out infinite;
+}
+
+.organic-petal.rose-crimson {
+  background: radial-gradient(circle at 35% 35%, #c53030 0%, #821c24 65%, #42080c 100%);
+  width: 16px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+.organic-petal.rose-blush {
+  background: radial-gradient(circle at 40% 40%, #fed7e2 0%, #f472b6 65%, #be185d 100%);
+  width: 13px;
+  height: 17px;
+  opacity: 0.85;
+}
+
+.organic-petal.sakura-pink {
+  background: radial-gradient(circle at 30% 30%, #fff1f2 0%, #fda4af 60%, #e11d48 100%);
+  width: 14px;
+  height: 19px;
+  border-radius: 50% 20% 50% 50%;
+  opacity: 0.88;
+}
+
+.organic-petal.ivory-jasmine {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fef3c7 70%, #d4af37 100%);
+  width: 12px;
+  height: 16px;
+  opacity: 0.82;
+}
+
+/* Champagne Golden Ambient Dust (Soft organic light, not digital star) */
+.organic-gold-dust {
+  position: absolute;
+  top: -20px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 10%, #ffd700 50%, rgba(201, 162, 74, 0) 100%);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  animation: organicDustDrift 14s ease-in-out infinite;
 }
 
 .falling-heart {

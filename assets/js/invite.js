@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWishesList();
   initScrollReveal();
   initAutoScrollControls();
+  initSecretAdminTap();
 });
 
 // Helper: Toast notification
@@ -1791,3 +1792,37 @@ window.addEventListener('wedding_wishes_synced', () => {
     initWishesList();
   }
 });
+
+// Secret Admin Access: Tap 7 times on the couple names at the footer
+function initSecretAdminTap() {
+  const footerNames = document.getElementById('footer-couple-names');
+  if (!footerNames) return;
+
+  let clickCount = 0;
+  let clickTimer = null;
+
+  footerNames.style.cursor = 'pointer';
+  footerNames.style.userSelect = 'none';
+  footerNames.setAttribute('title', ''); // subtle
+
+  footerNames.addEventListener('click', () => {
+    clickCount++;
+    clearTimeout(clickTimer);
+
+    if (clickCount >= 7) {
+      clickCount = 0;
+      if (typeof showToast === 'function') {
+        showToast('🔓 Mở trang Quản trị Admin...');
+      }
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 400);
+      return;
+    }
+
+    // Reset if no clicks for 2.5s
+    clickTimer = setTimeout(() => {
+      clickCount = 0;
+    }, 2500);
+  });
+}

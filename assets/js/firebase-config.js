@@ -65,6 +65,39 @@ const DEFAULT_FIREBASE_CONFIG = {
         }
       });
 
+      
+      // 4. Listen to Guests in Realtime & Cloud Sync
+      db.ref('guests').on('value', snapshot => {
+        try {
+          const val = snapshot.val();
+          if (val) {
+            let list = [];
+            if (Array.isArray(val)) {
+              list = val.filter(Boolean);
+            } else if (typeof val === 'object') {
+              list = Object.keys(val).map(k => ({ id: k, ...val[k] }));
+            }
+            localStorage.setItem('wedding_invite_guests', JSON.stringify(list));
+            window.dispatchEvent(new CustomEvent('wedding_guests_synced', { detail: list }));
+          } else {
+            // If Firebase has no guests yet, but local device has guests, upload them!
+            const localSaved = localStorage.getItem('wedding_invite_guests');
+            if (localSaved) {
+              try {
+                const localList = JSON.parse(localSaved);
+                if (Array.isArray(localList) && localList.length > 0) {
+                  const map = {};
+                  localList.forEach(g => { if (g && g.id) map[g.id] = g; });
+                  db.ref('guests').set(map).catch(() => {});
+                }
+              } catch(e) {}
+            }
+          }
+        } catch(e) {
+          console.warn('Sync guests error:', e);
+        }
+      });
+
       // 2. Listen to RSVPs in Realtime
       db.ref('rsvps').on('value', snapshot => {
         try {

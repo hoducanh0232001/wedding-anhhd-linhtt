@@ -373,6 +373,18 @@ const WeddingDB = {
   saveGuests(guests) {
     try {
       localStorage.setItem(STORAGE_KEYS.GUESTS, JSON.stringify(guests));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('wedding_guests_synced', { detail: guests }));
+        if (window.weddingFirebaseDb) {
+          try {
+            const map = {};
+            guests.forEach(g => {
+              if (g && g.id) map[g.id] = g;
+            });
+            window.weddingFirebaseDb.ref('guests').set(map).catch(() => {});
+          } catch(e) {}
+        }
+      }
       return true;
     } catch (e) {
       console.error('Error saving guests:', e);

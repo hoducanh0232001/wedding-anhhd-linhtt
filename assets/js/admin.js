@@ -1515,6 +1515,10 @@ window.addEventListener('wedding_wishes_synced', () => {
   if (typeof renderAdminWishesList === 'function') renderAdminWishesList();
   if (typeof updateDashboardStats === 'function') updateDashboardStats();
 });
+window.addEventListener('wedding_guests_synced', () => {
+  if (typeof renderGuestsTable === 'function') renderGuestsTable();
+  if (typeof updateDashboardStats === 'function') updateDashboardStats();
+});
 window.addEventListener('wedding_rsvps_synced', () => {
   if (typeof renderRSVPsAdmin === 'function') renderRSVPsAdmin();
   if (typeof updateDashboardStats === 'function') updateDashboardStats();

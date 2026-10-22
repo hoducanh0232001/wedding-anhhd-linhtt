@@ -1185,7 +1185,7 @@ function initRSVPForm() {
   });
 }
 
-// 13. Floral & Heart Burst ON OUTSIDE SCREEN ONLY (Zero-lag GPU CSS Particles)
+// 13. Royal Wedding Foil & Starlight Burst ON OUTSIDE SCREEN ONLY (Zero-lag GPU CSS Particles)
 function triggerEnvelopeFlowerBurst(e) {
   const container = document.getElementById('envelope-burst-container');
   if (!container) return;
@@ -1207,26 +1207,47 @@ function triggerEnvelopeFlowerBurst(e) {
     }
   }
 
-  const stickers = ['🌸', '🌹', '🌺', '🌷', '💐', '❤️', '💖', '💕', '💗', '💝', '✨'];
-  const particleCount = 26;
+  // Bespoke royal wedding elements: Diamond rings, golden 4-point stars, velvet hearts, champagne pearls, white doves
+  const luxuryElements = [
+    // 1. Golden 4-point Diamond Starlight
+    `<svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#ffd700"/></svg>`,
+    // 2. Champagne Sparkle Star
+    `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 0l2.5 8.5L23 11l-8.5 2.5L12 22l-2.5-8.5L1 11l8.5-2.5z" fill="#f5d061"/></svg>`,
+    // 3. Velvet Wine-Red Heart
+    `<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#8a252d"/></svg>`,
+    // 4. Royal Gold Heart
+    `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#c9a24a"/></svg>`,
+    // 5. Wedding Diamond Ring (Nhẫn cưới hoàng gia)
+    `<svg viewBox="0 0 24 24" width="28" height="28"><polygon points="12,2 15,6 9,6" fill="#ffffff" filter="drop-shadow(0 0 3px #ffd700)"/><circle cx="12" cy="14" r="6.5" fill="none" stroke="#ffd700" stroke-width="2.2"/><circle cx="12" cy="14" r="4.5" fill="none" stroke="#f5d061" stroke-width="1.2"/></svg>`,
+    // 6. Velvet Rose Petal (Cánh hoa nhung đỏ)
+    `<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3C8 3 5 7 5 12c0 5 3 9 7 9s7-4 7-9c0-5-3-9-7-9z" fill="#6e1a20" opacity="0.95"/></svg>`,
+    // 7. Shimmering Gold Pearl (Hạt ngọc vàng óng ánh)
+    `<div style="width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #fff8e7, #ffd700, #c9a24a);box-shadow:0 0 10px rgba(255,215,0,0.85);"></div>`,
+    // 8. Pearl White Starlight
+    `<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 1l2.5 8.5L23 12l-8.5 2.5L12 23l-2.5-8.5L1 12l8.5-2.5z" fill="#ffffff" filter="drop-shadow(0 0 4px #ffd700)"/></svg>`,
+    // 9. Pure White Peace Dove (Chim bồ câu trắng)
+    `<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 3c-1.5 0-3 1.5-3 3 0 .8.3 1.5.8 2-2.3.5-4.8 2-6.8 5 3.5-.5 6-1 7.5-2 .5 1.5 1.5 3 3.5 3 3 0 6-3 7-7 0-2-1.5-4-3.5-4-.5 0-1 .2-1.5.5C13.5 3.2 12.8 3 12 3z" fill="#ffffff" filter="drop-shadow(0 0 3px rgba(255,215,0,0.6))"/></svg>`,
+    // 10. Royal Champagne Cheers (Ly nâng ly)
+    `<svg viewBox="0 0 24 24" width="24" height="24" fill="#ffd700"><path d="M7 2v6c0 2.2 1.8 4 4 4v7H8v2h8v-2h-3v-7c2.2 0 4-1.8 4-4V2H7zm8 6c0 1.1-.9 2-2 2s-2-.9-2-2V4h4v4z"/></svg>`
+  ];
+
+  const particleCount = 28;
 
   for (let i = 0; i < particleCount; i++) {
     const item = document.createElement('div');
     item.className = 'envelope-burst-item';
-    item.textContent = stickers[Math.floor(Math.random() * stickers.length)];
+    item.innerHTML = luxuryElements[i % luxuryElements.length];
 
     item.style.left = `${originX}px`;
     item.style.top = `${originY}px`;
 
     const angle = (i / particleCount) * 2 * Math.PI + (Math.random() * 0.35 - 0.17);
-    const distance = Math.random() * 180 + 120;
+    const distance = Math.random() * 190 + 130;
     const dx = Math.cos(angle) * distance;
     const dy = Math.sin(angle) * distance - 35;
     const rot = Math.round(Math.random() * 120 - 60) + 'deg';
     const scale = (Math.random() * 0.5 + 1.15).toFixed(2);
-    const size = Math.round(Math.random() * 8 + 24) + 'px';
 
-    item.style.fontSize = size;
     item.style.setProperty('--dx', `${Math.round(dx)}px`);
     item.style.setProperty('--dy', `${Math.round(dy)}px`);
     item.style.setProperty('--rot', rot);

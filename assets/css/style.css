@@ -316,11 +316,11 @@ html, body {
   position: relative;
   z-index: 10;
   width: 90%;
-  max-width: 350px;
+  max-width: 440px;
 }
 
 @media (min-width: 600px) {
-  .envelope-card-box { max-width: 400px; }
+  .envelope-card-box { max-width: 490px; }
 }
 
 .envelope-inner-card {

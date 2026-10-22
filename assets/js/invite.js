@@ -40,14 +40,16 @@ function showToast(message) {
 
 // 1. Dynamic Content Binding from settings
 function initDynamicContent(settings) {
-  // Short names (for envelope & hero)
+  if (!settings) settings = WeddingDB.getSettings();
+
+  // Short names (for envelope)
   const groomShortEls = document.querySelectorAll('.bind-groom-short');
   groomShortEls.forEach(el => el.textContent = settings.couple.groom.shortName || 'Đức Anh');
 
   const brideShortEls = document.querySelectorAll('.bind-bride-short');
   brideShortEls.forEach(el => el.textContent = settings.couple.bride.shortName || 'Thuỳ Linh');
 
-  // Full names
+  // Full names (for hero & ceremony cards)
   const groomNameEls = document.querySelectorAll('.bind-groom-name');
   groomNameEls.forEach(el => el.textContent = settings.couple.groom.fullName || 'Hồ Đức Anh');
 
@@ -72,8 +74,42 @@ function initDynamicContent(settings) {
   if (brideAddress) brideAddress.textContent = settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
 
   // Dates & Venue
+  const weddingDateStr = settings.wedding.date || '2026-11-29';
+  const weddingTimeStr = settings.wedding.time || '11:00';
+  const weddingDateObj = new Date(`${weddingDateStr}T${weddingTimeStr}`);
+
+  const daysOfWeek = ['CHỦ NHẬT', 'THỨ HAI', 'THỨ BA', 'THỨ TƯ', 'THỨ NĂM', 'THỨ SÁU', 'THỨ BẢY'];
+  const dayOfWeek = !isNaN(weddingDateObj) ? daysOfWeek[weddingDateObj.getDay()] : 'CHỦ NHẬT';
+  const dayNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getDate()).padStart(2, '0') : '29';
+  const monthNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getMonth() + 1).padStart(2, '0') : '11';
+  const yearNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getFullYear()) : '2026';
+
+  // Ceremony Big Date Box
+  const dayOfWeekEl = document.getElementById('ceremony-dayofweek');
+  if (dayOfWeekEl) dayOfWeekEl.textContent = dayOfWeek;
+
+  const dayNumEl = document.getElementById('ceremony-day-num');
+  if (dayNumEl) dayNumEl.textContent = dayNum;
+
+  const monthYearEl = document.getElementById('ceremony-month-year');
+  if (monthYearEl) monthYearEl.textContent = `THÁNG ${monthNum} / ${yearNum}`;
+
+  // Reception time display
+  const receptionTimeEl = document.getElementById('reception-time-display');
+  if (receptionTimeEl) {
+    receptionTimeEl.textContent = `${weddingTimeStr} — ${dayOfWeek}, ${dayNum} THÁNG ${monthNum} NĂM ${yearNum}`;
+  }
+
+  const receptionGuestTimeEl = document.getElementById('reception-guest-time-display');
+  if (receptionGuestTimeEl) {
+    receptionGuestTimeEl.textContent = `(ĐÓN TIẾP KHÁCH QUÝ: ${settings.wedding.receptionTime || '10:30'})`;
+  }
+
+  // Mini Calendar Widget
+  renderMiniCalendar(weddingDateStr);
+
   const dateTexts = document.querySelectorAll('.bind-date-text');
-  dateTexts.forEach(el => el.textContent = settings.wedding.dateText || 'Chủ Nhật, 29 Tháng 11, 2026');
+  dateTexts.forEach(el => el.textContent = settings.wedding.dateText || `${dayOfWeek}, ${dayNum} Tháng ${monthNum}, ${yearNum}`);
 
   const lunarTexts = document.querySelectorAll('.bind-lunar-date');
   lunarTexts.forEach(el => el.textContent = settings.wedding.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ');
@@ -84,6 +120,30 @@ function initDynamicContent(settings) {
   const venueDesc = document.getElementById('wedding-venue-desc');
   if (venueDesc) venueDesc.textContent = settings.wedding.venueAddress || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
 
+  // Google Maps button & iframe
+  const mapBtn = document.getElementById('wedding-map-btn');
+  if (mapBtn && settings.wedding.mapUrl) {
+    mapBtn.href = settings.wedding.mapUrl;
+  }
+
+  const mapIframe = document.getElementById('wedding-map-iframe');
+  if (mapIframe && (settings.wedding.venueName || settings.wedding.venueAddress)) {
+    const q = encodeURIComponent(`${settings.wedding.venueName || ''} ${settings.wedding.venueAddress || ''}`.trim());
+    mapIframe.src = `https://maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+  }
+
+  // Timeline
+  const timelineReception = document.getElementById('timeline-reception-time');
+  if (timelineReception) {
+    timelineReception.textContent = `${settings.wedding.receptionTime || '10:30'} — ĐÓN TIẾP KHÁCH QUÝ`;
+  }
+
+  const timelineCeremony = document.getElementById('timeline-ceremony-time');
+  if (timelineCeremony) {
+    timelineCeremony.textContent = `${weddingTimeStr} — LỄ THÀNH HÔN & CẮT BÁNH`;
+  }
+
+  // Quotes
   const heroQuote = document.getElementById('hero-quote-text');
   if (heroQuote && settings.wedding.heroQuote) {
     heroQuote.textContent = settings.wedding.heroQuote;
@@ -109,6 +169,10 @@ function initDynamicContent(settings) {
     if (groomQr && groomBank.qrUrl) groomQr.src = groomBank.qrUrl;
     const groomStk = document.getElementById('groom-stk');
     if (groomStk) groomStk.textContent = groomBank.accountNumber || '0988889999';
+    const groomBankName = document.getElementById('groom-bank-name');
+    if (groomBankName) groomBankName.textContent = groomBank.bankName || 'MB Bank (Ngân hàng Quân Đội)';
+    const groomHolder = document.getElementById('groom-holder');
+    if (groomHolder) groomHolder.textContent = groomBank.accountName || settings.couple.groom.fullName || 'HO DUC ANH';
   }
 
   if (brideBank) {
@@ -116,7 +180,30 @@ function initDynamicContent(settings) {
     if (brideQr && brideBank.qrUrl) brideQr.src = brideBank.qrUrl;
     const brideStk = document.getElementById('bride-stk');
     if (brideStk) brideStk.textContent = brideBank.accountNumber || '9988776655';
+    const brideBankName = document.getElementById('bride-bank-name');
+    if (brideBankName) brideBankName.textContent = brideBank.bankName || 'Vietcombank (Ngoại Thương)';
+    const brideHolder = document.getElementById('bride-holder');
+    if (brideHolder) brideHolder.textContent = brideBank.accountName || settings.couple.bride.fullName || 'THAI THUY LINH';
   }
+
+  // Footer
+  const footerCoupleNames = document.getElementById('footer-couple-names');
+  if (footerCoupleNames) {
+    footerCoupleNames.textContent = `${settings.couple.groom.fullName} & ${settings.couple.bride.fullName}`;
+  }
+
+  const footerWeddingDate = document.getElementById('footer-wedding-date');
+  if (footerWeddingDate) {
+    footerWeddingDate.textContent = `${dayNum} . ${monthNum} . ${yearNum}`;
+  }
+
+  // Document Title
+  if (settings.couple.groom.fullName && settings.couple.bride.fullName) {
+    document.title = `${settings.couple.groom.fullName} & ${settings.couple.bride.fullName} | Thiệp Cưới Online`;
+  }
+
+  // Live Countdown Re-init
+  initCountdown(`${weddingDateStr}T${weddingTimeStr}`);
 
   // Show/Hide Bank / QR Section
   const giftSection = document.getElementById('section-gift');
@@ -127,6 +214,61 @@ function initDynamicContent(settings) {
       giftSection.style.display = 'block';
     }
   }
+}
+
+// Helper: Render Dynamic Mini-Calendar
+function renderMiniCalendar(dateStr) {
+  const tbody = document.getElementById('mini-cal-tbody');
+  const monthTitle = document.getElementById('mini-cal-month-title');
+  if (!tbody) return;
+
+  const weddingDate = new Date(dateStr);
+  if (isNaN(weddingDate)) return;
+
+  const year = weddingDate.getFullYear();
+  const month = weddingDate.getMonth(); // 0-indexed
+  const weddingDay = weddingDate.getDate();
+
+  if (monthTitle) {
+    monthTitle.textContent = `Tháng ${month + 1}`;
+  }
+
+  // First day of month (0: Sunday, 1: Monday, ..., 6: Saturday)
+  const firstDay = new Date(year, month, 1).getDay();
+  // Monday = 0, Tuesday = 1, ..., Sunday = 6
+  const startOffset = (firstDay + 6) % 7;
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  let html = '<tr>';
+  let dayCol = 0;
+
+  for (let i = 0; i < startOffset; i++) {
+    html += '<td></td>';
+    dayCol++;
+  }
+
+  for (let d = 1; d <= totalDays; d++) {
+    if (dayCol === 7) {
+      html += '</tr><tr>';
+      dayCol = 0;
+    }
+
+    if (d === weddingDay) {
+      html += `<td class="active-day"><span class="cal-heart" title="Ngày cưới: ${weddingDay} Tháng ${month + 1}"><svg class="cal-heart-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="cal-heart-number">${d}</span></span></td>`;
+    } else {
+      html += `<td>${d}</td>`;
+    }
+    dayCol++;
+  }
+
+  if (dayCol > 0 && dayCol < 7) {
+    for (let i = dayCol; i < 7; i++) {
+      html += '<td></td>';
+    }
+  }
+  html += '</tr>';
+
+  tbody.innerHTML = html;
 }
 
 // 2. Guest Personalization via URL Parameters
@@ -305,6 +447,8 @@ function stopWebAudioHarpFallback() {
   }
 }
 
+let countdownTimer = null;
+
 // 6. Live Countdown Clock
 function initCountdown(targetDateStr) {
   const daysEl = document.getElementById('count-days');
@@ -313,6 +457,7 @@ function initCountdown(targetDateStr) {
   const secsEl = document.getElementById('count-secs');
 
   if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+  if (countdownTimer) clearInterval(countdownTimer);
 
   function update() {
     const target = new Date(targetDateStr).getTime();
@@ -339,7 +484,7 @@ function initCountdown(targetDateStr) {
   }
 
   update();
-  setInterval(update, 1000);
+  countdownTimer = setInterval(update, 1000);
 }
 
 // 7. 3D CYLINDRICAL ARC COVERFLOW CAROUSEL (Khớp 100% Ảnh Yêu Cầu & Counter X/16)
@@ -694,12 +839,33 @@ window.copyStk = function(stk) {
   }
 };
 
+window.copyGroomStk = function() {
+  const settings = WeddingDB.getSettings();
+  const stk = settings.banking?.groom?.accountNumber || '0988889999';
+  window.copyStk(stk);
+};
+
+window.copyBrideStk = function() {
+  const settings = WeddingDB.getSettings();
+  const stk = settings.banking?.bride?.accountNumber || '9988776655';
+  window.copyStk(stk);
+};
+
 // 10. Add to Google Calendar
 window.addToGoogleCalendar = function(title, date, time, location) {
-  const startDateTime = `${date.replace(/-/g, '')}T${time.replace(/:/g, '')}00`;
-  const endDateTime = `${date.replace(/-/g, '')}T140000`;
-  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDateTime}/${endDateTime}&details=Đức+Anh+%26+Thuỳ+Linh+Wedding&location=${encodeURIComponent(location)}`;
+  const startDateTime = `${(date || '2026-11-29').replace(/-/g, '')}T${(time || '11:00').replace(/:/g, '')}00`;
+  const endDateTime = `${(date || '2026-11-29').replace(/-/g, '')}T140000`;
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(title)}&location=${encodeURIComponent(location)}`;
   window.open(url, '_blank');
+};
+
+window.addActiveWeddingToCalendar = function() {
+  const settings = WeddingDB.getSettings();
+  const title = `Lễ Thành Hôn ${settings.couple.groom.fullName || 'Hồ Đức Anh'} & ${settings.couple.bride.fullName || 'Thái Thuỳ Linh'}`;
+  const date = settings.wedding.date || '2026-11-29';
+  const time = settings.wedding.time || '11:00';
+  const location = `${settings.wedding.venueName || ''} - ${settings.wedding.venueAddress || ''}`.trim();
+  window.addToGoogleCalendar(title, date, time, location);
 };
 
 // 11. Wishes Book Renderer
@@ -845,3 +1011,15 @@ function fireConfetti() {
   }
   render();
 }
+
+// 12. Real-time synchronization when admin saves in another tab or same window
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEYS.SETTINGS) {
+    const updated = WeddingDB.getSettings();
+    initDynamicContent(updated);
+  }
+});
+
+window.addEventListener('wedding_settings_updated', (e) => {
+  initDynamicContent(e.detail || WeddingDB.getSettings());
+});

@@ -218,14 +218,42 @@ function populateSettingsForm(settings) {
 
 // 6. Save Settings Form
 function setupEventListeners() {
+  const dateInput = document.getElementById('wedding-date-input');
+  const dateTextInput = document.getElementById('wedding-dateText-input');
+  if (dateInput && dateTextInput) {
+    dateInput.addEventListener('change', () => {
+      if (dateInput.value) {
+        const d = new Date(dateInput.value);
+        if (!isNaN(d)) {
+          const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+          dateTextInput.value = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
+        }
+      }
+    });
+  }
+
   const settingsForm = document.getElementById('form-wedding-settings');
   if (settingsForm) {
     settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const current = WeddingDB.getSettings();
 
-      current.couple.groom.fullName = document.getElementById('groom-fullName').value.trim();
-      current.couple.groom.shortName = document.getElementById('groom-shortName').value.trim();
+      const groomFull = document.getElementById('groom-fullName').value.trim();
+      let groomShort = document.getElementById('groom-shortName').value.trim();
+      if (!groomShort && groomFull) {
+        const words = groomFull.split(' ');
+        groomShort = words[words.length - 1];
+      }
+
+      const brideFull = document.getElementById('bride-fullName').value.trim();
+      let brideShort = document.getElementById('bride-shortName').value.trim();
+      if (!brideShort && brideFull) {
+        const words = brideFull.split(' ');
+        brideShort = words[words.length - 1];
+      }
+
+      current.couple.groom.fullName = groomFull;
+      current.couple.groom.shortName = groomShort;
       current.couple.groom.bio = document.getElementById('groom-bio-input').value.trim();
       current.couple.groom.photo = document.getElementById('groom-photo-input').value.trim();
       current.couple.groom.father = document.getElementById('groom-father-input').value.trim();
@@ -233,8 +261,8 @@ function setupEventListeners() {
       const gAddr = document.getElementById('groom-address-input');
       if (gAddr) current.couple.groom.address = gAddr.value.trim();
 
-      current.couple.bride.fullName = document.getElementById('bride-fullName').value.trim();
-      current.couple.bride.shortName = document.getElementById('bride-shortName').value.trim();
+      current.couple.bride.fullName = brideFull;
+      current.couple.bride.shortName = brideShort;
       current.couple.bride.bio = document.getElementById('bride-bio-input').value.trim();
       current.couple.bride.photo = document.getElementById('bride-photo-input').value.trim();
       current.couple.bride.father = document.getElementById('bride-father-input').value.trim();
@@ -244,7 +272,16 @@ function setupEventListeners() {
 
       current.wedding.date = document.getElementById('wedding-date-input').value;
       current.wedding.time = document.getElementById('wedding-time-input').value;
-      current.wedding.dateText = document.getElementById('wedding-dateText-input').value.trim();
+      
+      let dateTextVal = document.getElementById('wedding-dateText-input').value.trim();
+      if (!dateTextVal && current.wedding.date) {
+        const d = new Date(current.wedding.date);
+        if (!isNaN(d)) {
+          const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+          dateTextVal = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
+        }
+      }
+      current.wedding.dateText = dateTextVal;
       current.wedding.lunarDateText = document.getElementById('wedding-lunar-input').value.trim();
       current.wedding.venueName = document.getElementById('wedding-venue-input').value.trim();
       current.wedding.venueAddress = document.getElementById('wedding-address-input').value.trim();
@@ -625,6 +662,16 @@ window.saveEventsFromAdmin = function() {
       current.events[idx].venue = venues[idx].value.trim();
       current.events[idx].address = addresses[idx].value.trim();
       current.events[idx].mapUrl = maps[idx].value.trim();
+      if (times[idx]) {
+        const val = times[idx].value.trim();
+        const parts = val.split('—');
+        if (parts.length > 1) {
+          current.events[idx].time = parts[0].trim();
+          current.events[idx].dateText = parts[1].trim();
+        } else {
+          current.events[idx].time = val;
+        }
+      }
     }
   });
 

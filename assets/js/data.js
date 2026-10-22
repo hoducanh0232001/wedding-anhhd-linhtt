@@ -318,6 +318,19 @@ const AI_WISH_SUGGESTIONS = {
   ]
 };
 
+function deepMergeSettings(target, source) {
+  if (!source) return target;
+  const result = Array.isArray(target) ? [...target] : { ...target };
+  for (const key of Object.keys(source)) {
+    if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMergeSettings(target[key] || {}, source[key]);
+    } else if (source[key] !== undefined) {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}
+
 // Database helper functions
 const WeddingDB = {
   getSettings() {
@@ -325,23 +338,20 @@ const WeddingDB = {
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.couple && (parsed.couple.groom.fullName === 'Nguyễn Đức Anh' || parsed.couple.bride.fullName === 'Trần Thuỳ Linh')) {
-          parsed.couple = DEFAULT_SETTINGS.couple;
-          parsed.wedding = { ...parsed.wedding, ...DEFAULT_SETTINGS.wedding };
-          parsed.gallery = DEFAULT_SETTINGS.gallery;
-          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(parsed));
-        }
-        return { ...DEFAULT_SETTINGS, ...parsed };
+        return deepMergeSettings(DEFAULT_SETTINGS, parsed);
       }
     } catch (e) {
       console.warn('Error reading settings from localStorage:', e);
     }
-    return DEFAULT_SETTINGS;
+    return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
   },
 
   saveSettings(settings) {
     try {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('wedding_settings_updated', { detail: settings }));
+      }
       return true;
     } catch (e) {
       console.error('Error saving settings:', e);

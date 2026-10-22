@@ -115,9 +115,9 @@
 
       <!-- Couple Names in Viaoda Libre Editorial Serif -->
       <div class="couple-names-block">
-        <div class="couple-single-name bind-groom-short">Hồ Đức Anh</div>
+        <div class="couple-single-name bind-groom-name">Hồ Đức Anh</div>
         <div class="couple-names-amp">&</div>
-        <div class="couple-single-name bind-bride-short">Thái Thuỳ Linh</div>
+        <div class="couple-single-name bind-bride-name">Thái Thuỳ Linh</div>
       </div>
     </header>
 
@@ -168,11 +168,11 @@
 
         <!-- Big Date Display -->
         <div class="ceremony-date-block">
-          <span class="ceremony-date-part">CHỦ NHẬT</span>
+          <span class="ceremony-date-part" id="ceremony-dayofweek">CHỦ NHẬT</span>
           <div class="ceremony-date-divider"></div>
-          <span class="ceremony-big-day">29</span>
+          <span class="ceremony-big-day" id="ceremony-day-num">29</span>
           <div class="ceremony-date-divider"></div>
-          <span class="ceremony-date-part">THÁNG 11 / 2026</span>
+          <span class="ceremony-date-part" id="ceremony-month-year">THÁNG 11 / 2026</span>
         </div>
 
         <div class="ceremony-lunar-date bind-lunar-date">
@@ -219,21 +219,21 @@
 
         <h3 class="card-title-gold">TIỆC CƯỚI</h3>
 
-        <div class="reception-time-str">
+        <div class="reception-time-str" id="reception-time-display">
           11:00 — CHỦ NHẬT, 29 THÁNG 11 NĂM 2026
         </div>
-        <div style="font-family:var(--font-sub);color:var(--cream-muted);font-size:12px;margin-top:-8px;margin-bottom:14px;text-transform:uppercase;">
+        <div id="reception-guest-time-display" style="font-family:var(--font-sub);color:var(--cream-muted);font-size:12px;margin-top:-8px;margin-bottom:14px;text-transform:uppercase;">
           (ĐÓN TIẾP KHÁCH QUÝ: 10:30)
         </div>
 
         <!-- Mini Calendar Widget (Chung Đôi Signature in Cream) -->
         <div class="mini-calendar-wrapper">
-          <div class="mini-cal-title">Tháng 11</div>
+          <div class="mini-cal-title" id="mini-cal-month-title">Tháng 11</div>
           <table class="mini-cal-table">
             <thead>
               <tr><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th></tr>
             </thead>
-            <tbody>
+            <tbody id="mini-cal-tbody">
               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td></tr>
               <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
               <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
@@ -269,7 +269,7 @@
             XÁC NHẬN THAM DỰ (RSVP)
           </a>
 
-          <button type="button" class="btn-calendar-link" onclick="addToGoogleCalendar('Lễ Thành Hôn Hồ Đức Anh & Thái Thuỳ Linh', '2026-11-29', '11:00', 'Hoàng Gia Palace Văn Phú Hà Đông')">
+          <button type="button" class="btn-calendar-link" onclick="addActiveWeddingToCalendar()">
             📅 Thêm vào lịch Google / Apple
           </button>
         </div>
@@ -293,6 +293,7 @@
       <!-- Interactive Google Maps Card -->
       <div class="map-card-tender">
         <iframe 
+          id="wedding-map-iframe"
           src="https://maps.google.com/maps?q=Ho%C3%A0ng%20Gia%20Palace%20Victoria%20V%C4%83n%20Ph%C3%BA%20H%C3%A0%20%C4%90%C3%B4ng&t=&z=15&ie=UTF8&iwloc=&output=embed"
           title="Bản đồ Hoàng Gia Palace"
           loading="lazy"
@@ -300,7 +301,7 @@
         </iframe>
       </div>
 
-      <a href="https://maps.app.goo.gl/ijkYsunZoUQ79kQbA" target="_blank" rel="noopener noreferrer" class="btn-map-gold">
+      <a id="wedding-map-btn" href="https://maps.app.goo.gl/ijkYsunZoUQ79kQbA" target="_blank" rel="noopener noreferrer" class="btn-map-gold">
         📍 Chỉ đường trên Google Maps
       </a>
     </section>
@@ -321,7 +322,7 @@
           <div class="timeline-icon-row">
             <img src="assets/images/theme/camera.webp" alt="Đón khách" />
             <div>
-              <div class="timeline-time-str">10:30 — ĐÓN TIẾP KHÁCH QUÝ</div>
+              <div class="timeline-time-str" id="timeline-reception-time">10:30 — ĐÓN TIẾP KHÁCH QUÝ</div>
               <div class="timeline-desc-str">Chụp ảnh lưu niệm cùng Cô Dâu & Chú Rể tại sảnh hoa cưới</div>
             </div>
           </div>
@@ -329,7 +330,7 @@
           <div class="timeline-icon-row">
             <img src="assets/images/theme/cake.webp" alt="Lễ thành hôn" />
             <div>
-              <div class="timeline-time-str">11:00 — LỄ THÀNH HÔN & CẮT BÁNH</div>
+              <div class="timeline-time-str" id="timeline-ceremony-time">11:00 — LỄ THÀNH HÔN & CẮT BÁNH</div>
               <div class="timeline-desc-str">Nghi thức cưới trang trọng, trao nhẫn và rót rượu champagne mừng hạnh phúc</div>
             </div>
           </div>
@@ -337,7 +338,7 @@
           <div class="timeline-icon-row">
             <img src="assets/images/theme/cook.webp" alt="Khai tiệc" />
             <div>
-              <div class="timeline-time-str">11:30 — KHAI TIỆC CHIÊU ĐÃI</div>
+              <div class="timeline-time-str" id="timeline-feast-time">11:30 — KHAI TIỆC CHIÊU ĐÃI</div>
               <div class="timeline-desc-str">Thưởng thức bữa tiệc thân mật và chung vui chương trình âm nhạc cùng hai bên gia đình</div>
             </div>
           </div>
@@ -424,11 +425,11 @@
             <img id="groom-qr-img" src="https://img.vietqr.io/image/MB-0988889999-compact2.png?amount=0&addInfo=Mung%20cuoi%20Duc%20Anh%20Thuy%20Linh" alt="VietQR Chú Rể" />
           </div>
           <div class="bank-detail-text">
-            <strong>MB Bank (Ngân hàng Quân Đội)</strong><br />
+            <strong id="groom-bank-name">MB Bank (Ngân hàng Quân Đội)</strong><br />
             Số tài khoản: <strong id="groom-stk" style="font-size:16px;color:var(--primary);">0988889999</strong><br />
-            Chủ tài khoản: <strong>HO DUC ANH</strong>
+            Chủ tài khoản: <strong id="groom-holder">HO DUC ANH</strong>
           </div>
-          <button type="button" class="btn-copy-acc" onclick="copyStk('0988889999')">
+          <button type="button" class="btn-copy-acc" onclick="copyGroomStk()">
             📋 Sao chép số tài khoản
           </button>
         </div>
@@ -439,11 +440,11 @@
             <img id="bride-qr-img" src="https://img.vietqr.io/image/VCB-9988776655-compact2.png?amount=0&addInfo=Mung%20cuoi%20Thuy%20Linh%20Duc%20Anh" alt="VietQR Cô Dâu" />
           </div>
           <div class="bank-detail-text">
-            <strong>Vietcombank (Ngoại Thương)</strong><br />
+            <strong id="bride-bank-name">Vietcombank (Ngoại Thương)</strong><br />
             Số tài khoản: <strong id="bride-stk" style="font-size:16px;color:var(--primary);">9988776655</strong><br />
-            Chủ tài khoản: <strong>THAI THUY LINH</strong>
+            Chủ tài khoản: <strong id="bride-holder">THAI THUY LINH</strong>
           </div>
-          <button type="button" class="btn-copy-acc" onclick="copyStk('9988776655')">
+          <button type="button" class="btn-copy-acc" onclick="copyBrideStk()">
             📋 Sao chép số tài khoản
           </button>
         </div>
@@ -455,10 +456,10 @@
       <p class="thank-you-note" id="thankyou-quote-text">
         “Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!”
       </p>
-      <div style="font-family:var(--font-serif);font-size:24px;margin-bottom:6px;font-weight:600;">
+      <div id="footer-couple-names" style="font-family:var(--font-serif);font-size:24px;margin-bottom:6px;font-weight:600;">
         Hồ Đức Anh & Thái Thuỳ Linh
       </div>
-      <div style="color:var(--gold);font-size:13px;letter-spacing:0.12em;margin-bottom:24px;">
+      <div id="footer-wedding-date" style="color:var(--gold);font-size:13px;letter-spacing:0.12em;margin-bottom:24px;">
         29 . 11 . 2026
       </div>
 
@@ -482,7 +483,7 @@
   <div id="toast-tender" class="toast-tender"></div>
 
   <!-- Scripts -->
-  <script src="assets/js/data.js?v=5.0"></script>
-  <script src="assets/js/invite.js?v=5.0"></script>
+  <script src="assets/js/data.js?v=5.1"></script>
+  <script src="assets/js/invite.js?v=5.1"></script>
 </body>
 </html>

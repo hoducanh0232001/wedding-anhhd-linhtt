@@ -723,6 +723,18 @@ html, body {
   transform: rotate(-22deg);
 }
 
+.card-flower-float.mr {
+  top: 50%;
+  right: -10px;
+  width: 76px;
+  animation: drFloatMid 5.5s ease-in-out infinite;
+}
+
+@keyframes drFloatMid {
+  0%, 100% { transform: translateY(-50%) rotate(10deg); }
+  50% { transform: translateY(calc(-50% - 6px)) rotate(10deg); }
+}
+
 .card-flower-float img {
   width: 100%;
   display: block;

@@ -181,8 +181,8 @@
       </div>
     </section>
 
-    <!-- 5. 3D CYLINDER REVOLVER CAROUSEL (Chung Đôi Signature Album) -->
-    <section class="carousel-3d-section">
+    <!-- 5. ALBUM ẢNH CƯỚI (Chuẩn 2 Cột Chung Đôi Tender) -->
+    <section class="gallery-section-tender" id="section-gallery">
       <!-- Castle Silhouette Background -->
       <img src="assets/images/theme/castle.webp" alt="" class="castle-bg" style="top:-6%;width:150%;" />
 
@@ -190,32 +190,10 @@
         ALBUM ẢNH CƯỚI
       </h3>
       <p class="section-subtitle-tender">
-        Chạm vuốt để xoay vòng 3D • Bấm ảnh giữa để phóng to
+        Chạm vào ảnh để xem trọn bộ khoảnh khắc ngọt ngào
       </p>
 
-      <!-- 3D Carousel Stage -->
-      <div class="carousel-3d-stage" id="carousel-3d-stage">
-        <!-- Navigation Buttons -->
-        <button type="button" class="carousel-nav-btn prev" id="carousel-prev-btn" aria-label="Ảnh trước">
-          <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button type="button" class="carousel-nav-btn next" id="carousel-next-btn" aria-label="Ảnh tiếp">
-          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-
-        <!-- Carousel Cards Generated dynamically -->
-        <div id="carousel-cards-track" style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
-      </div>
-
-      <!-- Pagination Dots -->
-      <div class="carousel-dots-bar" id="carousel-dots"></div>
-
-      <!-- Toggle to Grid View -->
-      <button type="button" id="btn-toggle-grid" class="btn-toggle-grid" onclick="toggleGalleryGrid()">
-        📸 Xem tất cả 16 ảnh cưới (Dạng lưới)
-      </button>
-
-      <!-- Full Grid Gallery Container -->
+      <!-- 2-Column Grid Gallery -->
       <div id="gallery-grid-box" class="gallery-grid-container"></div>
     </section>
 
@@ -223,7 +201,7 @@
     <section class="reception-card-section">
       <!-- Pinned Flower on Corner -->
       <div class="card-flower-float tl">
-        <img src="assets/images/theme/flower2.webp" alt="" style="width:100%;transform:rotate(-25deg);filter:drop-shadow(2px 3px 3px rgba(0,0,0,0.3));" />
+        <img src="assets/images/theme/flower2.webp" alt="" />
       </div>
 
       <div class="reception-red-box">
@@ -303,6 +281,16 @@
         </div>
       </div>
 
+      <!-- Interactive Google Maps Card -->
+      <div class="map-card-tender">
+        <iframe 
+          src="https://maps.google.com/maps?q=Ho%C3%A0ng%20Gia%20Palace%20Victoria%20V%C4%83n%20Ph%C3%BA%20H%C3%A0%20%C4%90%C3%B4ng&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          title="Bản đồ Hoàng Gia Palace"
+          loading="lazy"
+          allowfullscreen>
+        </iframe>
+      </div>
+
       <a href="https://maps.app.goo.gl/ijkYsunZoUQ79kQbA" target="_blank" rel="noopener noreferrer" class="btn-map-gold">
         📍 Chỉ đường trên Google Maps
       </a>
@@ -311,7 +299,7 @@
     <!-- 8. WEDDING TIMELINE / SCHEDULE -->
     <section class="timeline-section-tender">
       <div class="card-flower-float tr">
-        <img src="assets/images/theme/flower2.webp" alt="" style="width:100%;transform:rotate(20deg);filter:drop-shadow(2px 3px 3px rgba(0,0,0,0.3));" />
+        <img src="assets/images/theme/flower2.webp" alt="" />
       </div>
 
       <div class="parchment-red-box" style="padding-top:30px;">
@@ -348,43 +336,8 @@
       </div>
     </section>
 
-    <!-- 9. DRESS CODE (Trang Phục Gợi Ý) -->
-    <section class="dresscode-section">
-      <h3 class="section-title-tender" style="font-size:18px;">
-        TRANG PHỤC GỢI Ý (DRESS CODE)
-      </h3>
-      <p class="section-subtitle-tender" style="margin-bottom:12px;font-style:normal;">
-        Để có những bức ảnh kỷ niệm tuyệt đẹp và hòa cùng không gian ấm cúng, quý khách có thể ưu tiên các tone màu sau:
-      </p>
-
-      <div class="dresscode-palette">
-        <div class="dresscode-swatch">
-          <div class="dresscode-color-circle" style="background:#511419;" title="Đỏ Rượu"></div>
-          <span class="dresscode-label">Đỏ Rượu</span>
-        </div>
-        <div class="dresscode-swatch">
-          <div class="dresscode-color-circle" style="background:#ece4d8;" title="Kem Be"></div>
-          <span class="dresscode-label">Kem Be</span>
-        </div>
-        <div class="dresscode-swatch">
-          <div class="dresscode-color-circle" style="background:#6f4e37;" title="Nâu Mocha"></div>
-          <span class="dresscode-label">Nâu Mocha</span>
-        </div>
-        <div class="dresscode-swatch">
-          <div class="dresscode-color-circle" style="background:#ffffff;border-color:#ddd;" title="Trắng Sáng"></div>
-          <span class="dresscode-label">Trắng Sáng</span>
-        </div>
-        <div class="dresscode-swatch">
-          <div class="dresscode-color-circle" style="background:#222222;" title="Đen Lịch Lãm"></div>
-          <span class="dresscode-label">Đen Lịch Lãm</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 10. GUESTBOOK & RSVP (Vintage Papernote Background) -->
+    <!-- 9. GUESTBOOK & RSVP (Vintage Papernote Background) -->
     <section class="papernote-section" id="section-rsvp">
-      <img src="assets/images/theme/papernote.webp" alt="" class="papernote-bg-img" />
-
       <div class="papernote-content">
         <h3 class="section-title-tender" style="margin-bottom:6px;">
           SỔ LƯU BÚT & XÁC NHẬN
@@ -424,7 +377,7 @@
           </button>
         </form>
 
-        <div id="wishes-display-box" style="margin-top:22px;text-align:left;max-height:260px;overflow-y:auto;padding:0 6px;"></div>
+        <div id="wishes-display-box"></div>
       </div>
     </section>
 
@@ -498,9 +451,11 @@
   </div>
 
   <!-- Lightbox Modal -->
-  <div id="lightbox-modal" class="lightbox-overlay" onclick="closeLightbox()">
-    <button class="lightbox-close">&times;</button>
+  <div id="lightbox-modal" class="lightbox-overlay" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <button class="lightbox-nav prev" id="lightbox-prev" onclick="prevLightbox(event)" aria-label="Ảnh trước">&#10094;</button>
     <img id="lightbox-img" src="" alt="Album" />
+    <button class="lightbox-nav next" id="lightbox-next" onclick="nextLightbox(event)" aria-label="Ảnh tiếp">&#10095;</button>
   </div>
 
   <!-- Toast -->

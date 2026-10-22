@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMusicPlayer(settings);
   initEnvelopeOpener();
   initCountdown(settings.wedding.date + 'T' + settings.wedding.time);
-  init3DRevolverCarousel(settings.gallery);
+  initGallery(settings.gallery);
   initRSVPForm();
   initWishesList();
 });
@@ -332,228 +332,106 @@ function initCountdown(targetDateStr) {
   setInterval(update, 1000);
 }
 
-// 7. 3D CYLINDER REVOLVER CAROUSEL ("BĂNG ĐẠN XOAY TRÒN 3D")
-function init3DRevolverCarousel(gallery) {
-  const track = document.getElementById('carousel-cards-track');
-  const dotsContainer = document.getElementById('carousel-dots');
-  const prevBtn = document.getElementById('carousel-prev-btn');
-  const nextBtn = document.getElementById('carousel-next-btn');
-  const stage = document.getElementById('carousel-3d-stage');
+// 7. GALLERY (Chuẩn Chung Đôi Tender 2 Cột)
+let currentGalleryList = [];
+let currentLightboxIdx = 0;
 
-  if (!track || !gallery || gallery.length === 0) return;
+function initGallery(gallery) {
+  const container = document.getElementById('gallery-grid-box');
+  if (!container || !gallery || !Array.isArray(gallery)) return;
 
-  // Build card elements
-  track.innerHTML = '';
-  if (dotsContainer) dotsContainer.innerHTML = '';
-
-  const cards = [];
-  const count = gallery.length;
-  let activeIndex = 0;
-  let autoTimer = null;
-  let isHovered = false;
+  currentGalleryList = gallery;
+  container.innerHTML = '';
 
   gallery.forEach((item, idx) => {
-    // Card element
-    const card = document.createElement('div');
-    card.className = 'carousel-3d-card';
-    card.innerHTML = `<img src="${item.src}" alt="${item.caption || 'Ảnh cưới'}" loading="lazy" />`;
-    
-    card.addEventListener('click', () => {
-      if (idx === activeIndex) {
-        // Open lightbox
-        openLightboxImage(item.src);
-      } else {
-        // Rotate this card to center
-        activeIndex = idx;
-        renderCarousel();
-        resetAutoTimer();
+    const itemEl = document.createElement('div');
+    itemEl.className = 'gallery-grid-item';
+    itemEl.setAttribute('tabindex', '0');
+    itemEl.setAttribute('role', 'button');
+    itemEl.setAttribute('aria-label', item.caption || `Ảnh cưới ${idx + 1}`);
+
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.caption || `Ảnh cưới ${idx + 1}`;
+    img.loading = 'lazy';
+
+    itemEl.appendChild(img);
+    itemEl.addEventListener('click', () => openLightbox(idx));
+    itemEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLightbox(idx);
       }
     });
 
-    track.appendChild(card);
-    cards.push(card);
-
-    // Dot button
-    if (dotsContainer) {
-      const dot = document.createElement('button');
-      dot.className = `carousel-dot ${idx === 0 ? 'active' : ''}`;
-      dot.setAttribute('aria-label', `Xem ảnh ${idx + 1}`);
-      dot.addEventListener('click', () => {
-        activeIndex = idx;
-        renderCarousel();
-        resetAutoTimer();
-      });
-      dotsContainer.appendChild(dot);
-    }
+    container.appendChild(itemEl);
   });
-
-  // Also populate grid album if present
-  const gridContainer = document.getElementById('gallery-grid-box');
-  if (gridContainer) {
-    gridContainer.innerHTML = '';
-    gallery.forEach((item) => {
-      const itemEl = document.createElement('div');
-      itemEl.className = 'gallery-grid-item';
-      itemEl.innerHTML = `<img src="${item.src}" alt="${item.caption || 'Ảnh cưới'}" loading="lazy" />`;
-      itemEl.addEventListener('click', () => openLightboxImage(item.src));
-      gridContainer.appendChild(itemEl);
-    });
-  }
-
-  // Calculate and apply 3D cylinder revolver positions
-  function renderCarousel() {
-    cards.forEach((card, idx) => {
-      let l = idx - activeIndex;
-      if (l > count / 2) l -= count;
-      else if (l < -count / 2) l += count;
-
-      const o = Math.abs(l);
-      const isCenter = (l === 0);
-
-      // Distant cards hide behind cylinder to maintain sleek 3D perspective
-      if (o > 2) {
-        card.style.opacity = '0';
-        card.style.visibility = 'hidden';
-        card.style.pointerEvents = 'none';
-        card.style.zIndex = '0';
-      } else {
-        card.style.visibility = 'visible';
-        card.style.pointerEvents = 'auto';
-        const scale = Math.max(0.68, 1 - 0.15 * o);
-        const opacity = Math.max(0.3, 1 - 0.32 * o);
-        const translateX = 66 * l;
-        const translateZ = -(160 * o);
-        const rotateY = 42 * l;
-        const zIndex = 100 - o;
-
-        card.style.transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = zIndex;
-      }
-
-      if (isCenter) {
-        card.classList.add('active-center');
-      } else {
-        card.classList.remove('active-center');
-      }
-    });
-
-    // Update dots
-    if (dotsContainer) {
-      const dots = dotsContainer.querySelectorAll('.carousel-dot');
-      dots.forEach((dot, idx) => {
-        if (idx === activeIndex) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
-      });
-    }
-  }
-
-  function nextSlide() {
-    activeIndex = (activeIndex + 1) % count;
-    renderCarousel();
-  }
-
-  function prevSlide() {
-    activeIndex = (activeIndex - 1 + count) % count;
-    renderCarousel();
-  }
-
-  function resetAutoTimer() {
-    if (autoTimer) clearInterval(autoTimer);
-    if (!isHovered) {
-      autoTimer = setInterval(nextSlide, 2400);
-    }
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      nextSlide();
-      resetAutoTimer();
-    });
-  }
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      prevSlide();
-      resetAutoTimer();
-    });
-  }
-
-  // Hover pause
-  if (stage) {
-    stage.addEventListener('mouseenter', () => {
-      isHovered = true;
-      if (autoTimer) clearInterval(autoTimer);
-    });
-    stage.addEventListener('mouseleave', () => {
-      isHovered = false;
-      resetAutoTimer();
-    });
-
-    // Touch Swipe Support
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    stage.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      if (autoTimer) clearInterval(autoTimer);
-    }, { passive: true });
-
-    stage.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const touchEndY = e.changedTouches[0].clientY;
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX < 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
-      }
-      resetAutoTimer();
-    }, { passive: true });
-  }
-
-  // Initial render & start auto-timer
-  renderCarousel();
-  resetAutoTimer();
 }
 
-// 8. Lightbox View
-window.openLightboxImage = function(src) {
+// 8. LIGHTBOX VIEW WITH SMOOTH CAROUSEL NAVIGATION
+window.openLightbox = function(idx) {
+  if (!currentGalleryList || currentGalleryList.length === 0) return;
+  currentLightboxIdx = (idx + currentGalleryList.length) % currentGalleryList.length;
+
   const modal = document.getElementById('lightbox-modal');
   const imgEl = document.getElementById('lightbox-img');
   if (modal && imgEl) {
-    imgEl.src = src;
+    imgEl.src = currentGalleryList[currentLightboxIdx].src;
+    imgEl.alt = currentGalleryList[currentLightboxIdx].caption || 'Ảnh cưới';
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 };
 
-window.closeLightbox = function() {
+window.openLightboxImage = function(src) {
+  const foundIdx = currentGalleryList.findIndex(item => item.src === src);
+  if (foundIdx !== -1) {
+    openLightbox(foundIdx);
+  } else {
+    const modal = document.getElementById('lightbox-modal');
+    const imgEl = document.getElementById('lightbox-img');
+    if (modal && imgEl) {
+      imgEl.src = src;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+};
+
+window.prevLightbox = function(e) {
+  if (e) e.stopPropagation();
+  openLightbox(currentLightboxIdx - 1);
+};
+
+window.nextLightbox = function(e) {
+  if (e) e.stopPropagation();
+  openLightbox(currentLightboxIdx + 1);
+};
+
+window.closeLightbox = function(e) {
+  if (e && e.target && e.target.closest('#lightbox-img, .lightbox-nav')) {
+    return;
+  }
   const modal = document.getElementById('lightbox-modal');
   if (modal) {
     modal.classList.remove('active');
+    document.body.style.overflow = '';
   }
 };
 
-window.toggleGalleryGrid = function() {
-  const grid = document.getElementById('gallery-grid-box');
-  const btn = document.getElementById('btn-toggle-grid');
-  if (!grid) return;
-  if (grid.classList.contains('show')) {
-    grid.classList.remove('show');
-    if (btn) btn.innerHTML = '📸 Xem tất cả 16 ảnh cưới (Dạng lưới)';
-  } else {
-    grid.classList.add('show');
-    if (btn) btn.innerHTML = '▲ Thu gọn lưới ảnh';
+// Keyboard listener for Lightbox navigation
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('lightbox-modal');
+  if (!modal || !modal.classList.contains('active')) return;
+
+  if (e.key === 'Escape') {
+    closeLightbox();
+  } else if (e.key === 'ArrowLeft') {
+    prevLightbox();
+  } else if (e.key === 'ArrowRight') {
+    nextLightbox();
   }
-};
+});
 
 window.fillQuickWish = function(text) {
   const wishTextarea = document.getElementById('rsvp-wish');
@@ -617,6 +495,16 @@ window.addToGoogleCalendar = function(title, date, time, location) {
 };
 
 // 11. Wishes Book Renderer
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function initWishesList() {
   const container = document.getElementById('wishes-display-box') || document.getElementById('wishes-list-container');
   if (!container) return;
@@ -626,14 +514,13 @@ function initWishesList() {
 
   wishes.forEach(w => {
     const card = document.createElement('div');
-    card.className = 'wish-note-item';
-    card.style.cssText = 'padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,0.7);border-radius:6px;border-left:3px solid var(--primary);font-size:13px;';
+    card.className = 'wish-item-card';
     card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <strong style="color:var(--primary);font-size:13px;">${w.name}</strong>
-        <span style="font-size:11px;color:rgba(81,20,25,0.6);">${w.timestamp || ''}</span>
+      <div class="wish-item-header">
+        <strong class="wish-item-name">${escapeHtml(w.name || 'Khách quý')}</strong>
+        <span class="wish-item-time">${escapeHtml(w.timestamp || '')}</span>
       </div>
-      <p style="color:#333;margin:0;line-height:1.4;">${w.message}</p>
+      <p class="wish-item-text">${escapeHtml(w.message || '')}</p>
     `;
     container.appendChild(card);
   });

@@ -916,13 +916,12 @@ function initGallery(gallery) {
     sheen.className = 'carousel-card-sheen';
     card.appendChild(sheen);
 
-    // Clean photography - zero intrusive hint text overlay!
-    card.addEventListener('click', () => {
-      if (idx === carouselActiveIdx) {
-        openLightbox(idx);
-      } else {
+    // Clicking non-top cards shuffles them into view
+    card.addEventListener('click', (e) => {
+      if (idx !== carouselActiveIdx) {
+        e.stopPropagation();
         carouselActiveIdx = idx;
-        renderEditorial3D();
+        renderCardStack();
         resetCarouselAutoTimer();
       }
     });
@@ -930,13 +929,7 @@ function initGallery(gallery) {
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        if (idx === carouselActiveIdx) {
-          openLightbox(idx);
-        } else {
-          carouselActiveIdx = idx;
-          renderEditorial3D();
-          resetCarouselAutoTimer();
-        }
+        openLightbox(carouselActiveIdx);
       }
     });
 
@@ -944,75 +937,50 @@ function initGallery(gallery) {
     cards.push(card);
   });
 
-  function renderEditorial3D() {
-    const isMobile = window.innerWidth < 640;
-    
-    // Spacing tuned for majestic large center photo & subtle side peeks
-    const transXStep = isMobile ? 120 : 185;
-    const transZStep = isMobile ? 100 : 135;
-    const rotateStep = isMobile ? 35 : 42;
+  let isShuffling = false;
 
+  function renderCardStack() {
     cards.forEach((card, idx) => {
-      let l = idx - carouselActiveIdx;
-      // Circular math
-      if (l > count / 2) l -= count;
-      else if (l < -count / 2) l += count;
+      card.classList.remove('fly-out-right', 'fly-out-left');
+      card.style.transition = 'transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease, box-shadow 0.5s ease';
 
-      const o = Math.abs(l);
+      const offset = (idx - carouselActiveIdx + count) % count;
 
-      if (o > 2) {
-        card.style.opacity = '0';
-        card.style.visibility = 'hidden';
-        card.style.pointerEvents = 'none';
-        card.style.zIndex = '0';
-      } else {
-        card.style.visibility = 'visible';
+      if (offset === 0) {
+        // TOP ACTIVE CARD
+        card.style.transform = 'translate3d(0, 0, 30px) rotate(0deg) scale(1)';
+        card.style.opacity = '1';
+        card.style.zIndex = '50';
         card.style.pointerEvents = 'auto';
-
-        let scale = 1;
-        let opacity = 1;
-        let translateX = 0;
-        let translateZ = 0;
-        let rotateY = 0;
-        let filter = 'none';
-        let zIndex = 50 - o * 10;
-
-        if (o === 0) {
-          scale = 1;
-          opacity = 1;
-          translateX = 0;
-          translateZ = 35; // pop out toward viewer
-          rotateY = 0;
-          filter = 'none';
-          card.classList.add('active-center');
-        } else {
-          card.classList.remove('active-center');
-          scale = Math.max(0.72, 1 - 0.14 * o);
-          opacity = Math.max(0.48, 1 - 0.28 * o);
-          const dir = l > 0 ? 1 : -1;
-          translateX = dir * (transXStep + (o - 1) * (isMobile ? 60 : 80));
-          translateZ = -(transZStep + (o - 1) * 70);
-          rotateY = -dir * (rotateStep + (o - 1) * 6);
-          filter = 'brightness(0.9) blur(0.4px)';
-        }
-
-        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = zIndex;
-        card.style.filter = filter;
-
-        // Dynamic soft ambient shadow/sheen
-        const sheen = card.querySelector('.carousel-card-sheen');
-        if (sheen) {
-          if (o === 0) {
-            sheen.style.opacity = '0';
-          } else {
-            sheen.style.opacity = '0.35';
-            sheen.style.background = l > 0 
-              ? 'linear-gradient(to left, rgba(81,20,25,0.4) 0%, transparent 100%)' 
-              : 'linear-gradient(to right, rgba(81,20,25,0.4) 0%, transparent 100%)';
-          }
-        }
+        card.classList.add('active-center');
+      } else if (offset === 1) {
+        // 1st card behind (peeking right)
+        card.style.transform = 'translate3d(14px, -8px, 15px) rotate(4.2deg) scale(0.96)';
+        card.style.opacity = '0.88';
+        card.style.zIndex = '40';
+        card.style.pointerEvents = 'auto';
+        card.classList.remove('active-center');
+      } else if (offset === 2) {
+        // 2nd card behind (peeking left)
+        card.style.transform = 'translate3d(-16px, -15px, 0px) rotate(-3.8deg) scale(0.92)';
+        card.style.opacity = '0.72';
+        card.style.zIndex = '30';
+        card.style.pointerEvents = 'auto';
+        card.classList.remove('active-center');
+      } else if (offset === 3) {
+        // 3rd card behind (subtle right)
+        card.style.transform = 'translate3d(8px, -22px, -15px) rotate(2.4deg) scale(0.88)';
+        card.style.opacity = '0.45';
+        card.style.zIndex = '20';
+        card.style.pointerEvents = 'none';
+        card.classList.remove('active-center');
+      } else {
+        // Hidden beneath deck
+        card.style.transform = 'translate3d(0, -26px, -30px) rotate(0deg) scale(0.84)';
+        card.style.opacity = '0';
+        card.style.zIndex = '10';
+        card.style.pointerEvents = 'none';
+        card.classList.remove('active-center');
       }
     });
 
@@ -1021,27 +989,83 @@ function initGallery(gallery) {
     }
   }
 
-  function nextSlide() {
-    carouselActiveIdx = (carouselActiveIdx + 1) % count;
-    renderEditorial3D();
+  function nextSlide(direction = 'right') {
+    if (isShuffling) return;
+    isShuffling = true;
+
+    const currentCard = cards[carouselActiveIdx];
+    const nextIdx = (carouselActiveIdx + 1) % count;
+    const nextCard = cards[nextIdx];
+
+    // 1. Top card flies out in an arc
+    if (currentCard) {
+      currentCard.classList.add(direction === 'left' ? 'fly-out-left' : 'fly-out-right');
+    }
+
+    // 2. Next card blooms up immediately to top position
+    if (nextCard) {
+      nextCard.style.transition = 'transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease';
+      nextCard.style.transform = 'translate3d(0, 0, 30px) rotate(0deg) scale(1)';
+      nextCard.style.opacity = '1';
+      nextCard.style.zIndex = '48';
+      nextCard.classList.add('active-center');
+    }
+
+    // Update counter immediately for responsive feel
+    if (counter) {
+      counter.textContent = `${nextIdx + 1} / ${count}`;
+    }
+
+    // 3. Once fly-out finishes, slip the old card into bottom of deck
+    setTimeout(() => {
+      carouselActiveIdx = nextIdx;
+      renderCardStack();
+      setTimeout(() => {
+        isShuffling = false;
+      }, 150);
+    }, 420);
   }
 
   function prevSlide() {
-    carouselActiveIdx = (carouselActiveIdx - 1 + count) % count;
-    renderEditorial3D();
+    if (isShuffling) return;
+    isShuffling = true;
+
+    const prevIdx = (carouselActiveIdx - 1 + count) % count;
+    const prevCard = cards[prevIdx];
+
+    if (prevCard) {
+      // Position off-screen to the left
+      prevCard.style.transition = 'none';
+      prevCard.style.transform = 'translate3d(-125%, -25px, 60px) rotate(-18deg) scale(0.96)';
+      prevCard.style.opacity = '0.85';
+      prevCard.style.zIndex = '60';
+
+      void prevCard.offsetWidth; // Force reflow
+
+      // Glide in smoothly onto the top of stack
+      prevCard.style.transition = 'transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease';
+      carouselActiveIdx = prevIdx;
+      renderCardStack();
+
+      setTimeout(() => {
+        isShuffling = false;
+      }, 550);
+    } else {
+      isShuffling = false;
+    }
   }
 
   function resetCarouselAutoTimer() {
     if (carouselAutoTimer) clearInterval(carouselAutoTimer);
     if (!carouselIsHovered) {
-      carouselAutoTimer = setInterval(nextSlide, 3800);
+      carouselAutoTimer = setInterval(() => nextSlide('right'), 4200);
     }
   }
 
   if (nextBtn) {
     nextBtn.onclick = (e) => {
       e.stopPropagation();
-      nextSlide();
+      nextSlide('right');
       resetCarouselAutoTimer();
     };
   }
@@ -1054,48 +1078,110 @@ function initGallery(gallery) {
     };
   }
 
-  // Hover & Touch pause
+  // Interactive Touch & Mouse Drag on Top Card
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let currentDiffX = 0;
+
+  function onDragStart(clientX, clientY) {
+    if (isShuffling) return;
+    isDragging = true;
+    dragStartX = clientX;
+    dragStartY = clientY;
+    currentDiffX = 0;
+    carouselIsHovered = true;
+    if (carouselAutoTimer) clearInterval(carouselAutoTimer);
+  }
+
+  function onDragMove(clientX, clientY) {
+    if (!isDragging || isShuffling) return;
+    currentDiffX = clientX - dragStartX;
+    const diffY = clientY - dragStartY;
+
+    // Only drag horizontally
+    const topCard = cards[carouselActiveIdx];
+    if (topCard) {
+      topCard.style.transition = 'none';
+      const tilt = currentDiffX * 0.065;
+      const lift = -Math.abs(currentDiffX) * 0.08;
+      topCard.style.transform = `translate3d(${currentDiffX}px, ${lift}px, 45px) rotate(${tilt}deg) scale(1.01)`;
+      topCard.style.boxShadow = '0 30px 70px -10px rgba(81, 20, 25, 0.45), 0 14px 28px -5px rgba(0, 0, 0, 0.2)';
+    }
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    carouselIsHovered = false;
+
+    const threshold = 55;
+    if (currentDiffX > threshold) {
+      nextSlide('right');
+    } else if (currentDiffX < -threshold) {
+      nextSlide('left');
+    } else if (Math.abs(currentDiffX) < 6) {
+      // Pure click on top card -> Open Lightbox!
+      openLightbox(carouselActiveIdx);
+    } else {
+      // Snap back smoothly
+      renderCardStack();
+    }
+
+    currentDiffX = 0;
+    resetCarouselAutoTimer();
+  }
+
+  // Touch Events on Stage
   if (stage) {
+    stage.addEventListener('touchstart', (e) => {
+      onDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    stage.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        onDragMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    stage.addEventListener('touchend', () => {
+      onDragEnd();
+    }, { passive: true });
+
+    // Mouse Drag Support
+    stage.addEventListener('mousedown', (e) => {
+      // Don't drag if clicking navigation buttons
+      if (e.target.closest('.carousel-nav-btn')) return;
+      onDragStart(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) onDragMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) onDragEnd();
+    });
+
     stage.addEventListener('mouseenter', () => {
       carouselIsHovered = true;
       if (carouselAutoTimer) clearInterval(carouselAutoTimer);
     });
+
     stage.addEventListener('mouseleave', () => {
-      carouselIsHovered = false;
-      resetCarouselAutoTimer();
-    });
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-    stage.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      if (carouselAutoTimer) clearInterval(carouselAutoTimer);
-    }, { passive: true });
-
-    stage.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const touchEndY = e.changedTouches[0].clientY;
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX < 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
+      if (!isDragging) {
+        carouselIsHovered = false;
+        resetCarouselAutoTimer();
       }
-      resetCarouselAutoTimer();
-    }, { passive: true });
+    });
   }
 
   window.addEventListener('resize', () => {
-    renderEditorial3D();
+    renderCardStack();
   });
 
   // Initial render & timer
-  renderEditorial3D();
+  renderCardStack();
   resetCarouselAutoTimer();
 }
 

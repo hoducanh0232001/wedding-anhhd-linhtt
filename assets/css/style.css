@@ -1178,15 +1178,15 @@ html, body {
 }
 
 /* ========================================================
-   VOGUE EDITORIAL 3D ART GALLERY - LUXURY EXHIBITION
+   ROYAL LUXE CARD SHUFFLE - BỘ THẺ ẢNH HOÀNG GIA ĐỘC ĐÁO
    ======================================================== */
 .carousel-3d-stage {
   position: relative;
   width: 100%;
   height: 480px;
-  margin: 20px auto 0;
-  perspective: 1400px;
-  -webkit-perspective: 1400px;
+  margin: 24px auto 8px;
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1197,16 +1197,16 @@ html, body {
 
 @media (min-width: 640px) {
   .carousel-3d-stage {
-    height: 560px;
-    perspective: 1600px;
-    -webkit-perspective: 1600px;
+    height: 550px;
+    perspective: 1400px;
+    -webkit-perspective: 1400px;
   }
 }
 
 .carousel-cards-track {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 295px;
+  height: 425px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1214,61 +1214,62 @@ html, body {
   -webkit-transform-style: preserve-3d;
 }
 
-/* Luxury Editorial Art Cards */
-.carousel-3d-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 290px;
-  height: 420px;
-  margin-left: -145px;
-  margin-top: -210px;
-  border-radius: 18px;
-  overflow: hidden;
-  background: #ffffff;
-  cursor: pointer;
-  /* Dual Luxury Border: White Frame + Subtle Gold Accent Hairline */
-  border: 4px solid #ffffff;
-  box-shadow: 
-    0 0 0 1px rgba(201, 162, 74, 0.35),
-    0 18px 45px -8px rgba(81, 20, 25, 0.28),
-    0 8px 18px -4px rgba(0, 0, 0, 0.16);
-  transform-origin: center center;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  will-change: transform, opacity, filter, box-shadow;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
-              opacity 0.6s ease, 
-              filter 0.6s ease, 
-              box-shadow 0.6s ease;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
 @media (min-width: 640px) {
-  .carousel-3d-card {
-    width: 360px;
-    height: 510px;
-    margin-left: -180px;
-    margin-top: -255px;
-    border-radius: 20px;
-    border: 5px solid #ffffff;
-    box-shadow: 
-      0 0 0 1.5px rgba(201, 162, 74, 0.4),
-      0 26px 65px -10px rgba(81, 20, 25, 0.32),
-      0 12px 26px -6px rgba(0, 0, 0, 0.18);
+  .carousel-cards-track {
+    width: 350px;
+    height: 500px;
   }
 }
 
 @media (max-width: 360px) {
-  .carousel-3d-card {
+  .carousel-cards-track {
     width: 265px;
     height: 385px;
-    margin-left: -132.5px;
-    margin-top: -192.5px;
   }
   .carousel-3d-stage {
     height: 440px;
+  }
+}
+
+/* Royal Luxury Card */
+.carousel-3d-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #ffffff;
+  cursor: grab;
+  /* Dual Haute-Couture Frame: White Margin + Inner Gold Foil Hairline */
+  border: 5px solid #ffffff;
+  box-shadow: 
+    0 0 0 1px rgba(201, 162, 74, 0.4),
+    0 22px 55px -8px rgba(81, 20, 25, 0.32),
+    0 10px 22px -5px rgba(0, 0, 0, 0.16);
+  transform-origin: 50% 85%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  will-change: transform, opacity, box-shadow;
+  transition: transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1), 
+              opacity 0.5s ease, 
+              box-shadow 0.5s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.carousel-3d-card:active {
+  cursor: grabbing;
+}
+
+@media (min-width: 640px) {
+  .carousel-3d-card {
+    border: 6px solid #ffffff;
+    box-shadow: 
+      0 0 0 1.5px rgba(201, 162, 74, 0.45),
+      0 28px 70px -10px rgba(81, 20, 25, 0.38),
+      0 14px 28px -6px rgba(0, 0, 0, 0.18);
   }
 }
 
@@ -1278,73 +1279,81 @@ html, body {
   object-fit: cover;
   display: block;
   pointer-events: none;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 14px;
 }
 
-/* Active Center Card Glow */
-.carousel-3d-card.active-center {
-  box-shadow: 
-    0 0 0 1.5px rgba(201, 162, 74, 0.6),
-    0 30px 75px -10px rgba(81, 20, 25, 0.42),
-    0 14px 28px -6px rgba(0, 0, 0, 0.22);
+/* Flying Out State when being shuffled */
+.carousel-3d-card.fly-out-right {
+  transform: translateX(125%) translateY(-25px) rotate(18deg) scale(0.96) !important;
+  opacity: 0.8 !important;
+  z-index: 60 !important;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease !important;
 }
 
-.carousel-3d-card.active-center:hover img {
-  transform: scale(1.03);
+.carousel-3d-card.fly-out-left {
+  transform: translateX(-125%) translateY(-25px) rotate(-18deg) scale(0.96) !important;
+  opacity: 0.8 !important;
+  z-index: 60 !important;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease !important;
 }
 
-/* Elegant editorial sheen & side card atmospheric haze */
+/* Subtle gold glint sheen across cards */
 .carousel-card-sheen {
   position: absolute;
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  transition: opacity 0.6s ease, background 0.6s ease;
+  transition: opacity 0.5s ease;
   opacity: 0;
   z-index: 3;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(201,162,74,0.15) 100%);
 }
 
-/* Minimalist Luxury Floating Nav Buttons */
+.carousel-3d-card.active-center .carousel-card-sheen {
+  opacity: 0.6;
+}
+
+/* Luxury Circular Floating Action Buttons */
 .carousel-nav-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(201, 162, 74, 0.45);
+  border: 1.5px solid rgba(201, 162, 74, 0.5);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 60;
-  box-shadow: 0 8px 24px rgba(81, 20, 25, 0.2);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 65;
+  box-shadow: 0 8px 24px rgba(81, 20, 25, 0.25);
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
 .carousel-nav-btn:hover {
   background: #ffffff;
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 12px 30px rgba(81, 20, 25, 0.32);
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 12px 32px rgba(81, 20, 25, 0.35);
   color: var(--primary-dark);
   border-color: var(--gold-primary);
 }
 
 .carousel-nav-btn.prev {
-  left: 8px;
+  left: 6px;
 }
 
 .carousel-nav-btn.next {
-  right: 8px;
+  right: 6px;
 }
 
 @media (min-width: 640px) {
-  .carousel-nav-btn.prev { left: 24px; }
-  .carousel-nav-btn.next { right: 24px; }
+  .carousel-nav-btn.prev { left: 20px; }
+  .carousel-nav-btn.next { right: 20px; }
 }
 
 .carousel-nav-btn svg {
@@ -1353,15 +1362,15 @@ html, body {
   stroke: currentColor;
 }
 
-/* Editorial Minimalist Page Counter */
+/* Minimalist Editorial Page Indicator */
 .carousel-page-counter {
   font-family: var(--font-sub);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--primary);
-  letter-spacing: 0.18em;
-  margin-top: 18px;
-  opacity: 0.75;
+  letter-spacing: 0.2em;
+  margin-top: 20px;
+  opacity: 0.8;
 }
 
 /* ==========================================================================

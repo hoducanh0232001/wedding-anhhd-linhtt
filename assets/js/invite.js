@@ -897,6 +897,19 @@ function initGallery(gallery) {
   const count = gallery.length;
   carouselActiveIdx = 0;
 
+  // 1. Build Photobook Structure (Hardcover Base + Stacked Page Edge + Gold Spine)
+  const bookBase = document.createElement('div');
+  bookBase.className = 'photobook-book-base';
+  track.appendChild(bookBase);
+
+  const pageStack = document.createElement('div');
+  pageStack.className = 'photobook-page-stack';
+  track.appendChild(pageStack);
+
+  const spine = document.createElement('div');
+  spine.className = 'photobook-spine';
+  track.appendChild(spine);
+
   const cards = [];
 
   gallery.forEach((item, idx) => {
@@ -906,29 +919,55 @@ function initGallery(gallery) {
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', item.caption || `Ảnh cưới ${idx + 1}`);
 
+    // Front: High-res Wedding Photo
     const img = document.createElement('img');
     img.src = item.src;
     img.alt = item.caption || `Ảnh cưới ${idx + 1}`;
-    img.loading = 'lazy';
+    img.loading = idx < 3 ? 'eager' : 'lazy';
     card.appendChild(img);
 
+    // Back: Elegant Photobook Page Backing (visible when flipped over)
+    const back = document.createElement('div');
+    back.className = 'photobook-page-back';
+    const seal = document.createElement('div');
+    seal.className = 'photobook-back-seal';
+    seal.textContent = 'A & L';
+    const text = document.createElement('div');
+    text.className = 'photobook-back-text';
+    text.textContent = 'Wedding Album';
+    back.appendChild(seal);
+    back.appendChild(text);
+    card.appendChild(back);
+
+    // 3D Lighting Sheen & Page Turn Shadow
     const sheen = document.createElement('div');
     sheen.className = 'carousel-card-sheen';
     card.appendChild(sheen);
 
-    const hint = document.createElement('div');
-    hint.className = 'carousel-card-hint';
-    hint.textContent = '🔍 Phóng to ảnh';
-    card.appendChild(hint);
+    // NO "phóng to ảnh" text hint here! Pristine and clean wedding photography.
 
-    card.addEventListener('click', () => {
+    // Click handler:
+    // Left 28%: flip prev
+    // Right 28%: flip next
+    // Center: open high-res lightbox
+    card.addEventListener('click', (e) => {
+      const rect = card.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = clickX / rect.width;
+
       if (idx === carouselActiveIdx) {
-        // Bấm ảnh giữa để phóng to xem Lightbox
-        openLightbox(idx);
-      } else {
-        // Bấm ảnh hai bên để xoay đến vị trí giữa
+        if (ratio > 0.72) {
+          nextSlide();
+        } else if (ratio < 0.28 && idx > 0) {
+          prevSlide();
+        } else {
+          openLightbox(idx);
+        }
+        resetCarouselAutoTimer();
+      } else if (idx < carouselActiveIdx) {
+        // Click on left-flipped page flips it back
         carouselActiveIdx = idx;
-        render3DCarousel();
+        renderPhotobook();
         resetCarouselAutoTimer();
       }
     });
@@ -936,13 +975,7 @@ function initGallery(gallery) {
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        if (idx === carouselActiveIdx) {
-          openLightbox(idx);
-        } else {
-          carouselActiveIdx = idx;
-          render3DCarousel();
-          resetCarouselAutoTimer();
-        }
+        openLightbox(carouselActiveIdx);
       }
     });
 
@@ -950,76 +983,57 @@ function initGallery(gallery) {
     cards.push(card);
   });
 
-  function render3DCarousel() {
-    const isMobile = window.innerWidth < 640;
-    
-    // Spacing constants tuned for larger cards and dramatic 3D album page flip
-    const transXStep = isMobile ? 100 : 150;
-    const transZStep = isMobile ? 85 : 110;
-    const rotateStep = 56; // 56-degree flip angle creates the authentic album page flip
+  let isFlipping = false;
 
+  function renderPhotobook() {
     cards.forEach((card, idx) => {
-      let l = idx - carouselActiveIdx;
-      // Wrap-around circular math
-      if (l > count / 2) l -= count;
-      else if (l < -count / 2) l += count;
+      const sheen = card.querySelector('.carousel-card-sheen');
 
-      const o = Math.abs(l);
-
-      if (o > 3) {
+      if (idx < carouselActiveIdx) {
+        // Page is flipped over to the left stack
+        card.style.transition = 'transform 0.75s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+        card.style.transform = 'rotateY(-180deg)';
+        card.style.zIndex = `${10 + idx}`;
+        card.style.opacity = idx === carouselActiveIdx - 1 ? '1' : '0.4';
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = idx === carouselActiveIdx - 1 ? 'auto' : 'none';
+        if (sheen) sheen.style.opacity = '0';
+      } else if (idx === carouselActiveIdx) {
+        // Current Active Page lying flat on the right
+        card.style.transition = 'transform 0.75s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+        card.style.transform = 'rotateY(0deg)';
+        card.style.zIndex = '35';
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'auto';
+        if (sheen) sheen.style.opacity = '0';
+      } else if (idx === carouselActiveIdx + 1) {
+        // Next page waiting immediately beneath active
+        card.style.transition = 'none';
+        card.style.transform = 'rotateY(0deg)';
+        card.style.zIndex = '25';
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'none';
+        if (sheen) sheen.style.opacity = '0';
+      } else if (idx === carouselActiveIdx + 2) {
+        // Second page beneath
+        card.style.transition = 'none';
+        card.style.transform = 'rotateY(0deg)';
+        card.style.zIndex = '20';
+        card.style.opacity = '0.9';
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'none';
+        if (sheen) sheen.style.opacity = '0';
+      } else {
+        // Far upcoming pages hidden
+        card.style.transition = 'none';
+        card.style.transform = 'rotateY(0deg)';
+        card.style.zIndex = '5';
         card.style.opacity = '0';
         card.style.visibility = 'hidden';
         card.style.pointerEvents = 'none';
-        card.style.zIndex = '0';
-      } else {
-        card.style.visibility = 'visible';
-        card.style.pointerEvents = 'auto';
-
-        let scale = 1;
-        let opacity = 1;
-        let translateX = 0;
-        let translateZ = 0;
-        let rotateY = 0;
-        let rotateZ = 0;
-        let zIndex = 50 - o * 10;
-
-        if (o === 0) {
-          scale = 1;
-          opacity = 1;
-          translateX = 0;
-          translateZ = 20;
-          rotateY = 0;
-          rotateZ = 0;
-          card.classList.add('active-center');
-        } else {
-          card.classList.remove('active-center');
-          scale = Math.max(0.68, 1 - 0.11 * o);
-          opacity = Math.max(0.38, 1 - 0.18 * o);
-          const dir = l > 0 ? 1 : -1;
-          translateX = dir * (transXStep + (o - 1) * (isMobile ? 75 : 95));
-          translateZ = -(transZStep + (o - 1) * (isMobile ? 80 : 100));
-          // Realistic 3D album page flip angle:
-          rotateY = -dir * (rotateStep + (o - 1) * 8);
-          // Subtle natural page lift tilt
-          rotateZ = dir * (2.2 + (o - 1) * 1.2);
-        }
-
-        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = zIndex;
-
-        // Dynamic 3D lighting sheen on cards as they flip
-        const sheen = card.querySelector('.carousel-card-sheen');
-        if (sheen) {
-          if (o === 0) {
-            sheen.style.opacity = '0';
-          } else {
-            sheen.style.opacity = Math.min(0.55, 0.22 * o);
-            sheen.style.background = l > 0 
-              ? 'linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 100%)' 
-              : 'linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 100%)';
-          }
-        }
+        if (sheen) sheen.style.opacity = '0';
       }
     });
 
@@ -1029,19 +1043,102 @@ function initGallery(gallery) {
   }
 
   function nextSlide() {
-    carouselActiveIdx = (carouselActiveIdx + 1) % count;
-    render3DCarousel();
+    if (isFlipping) return;
+    if (carouselActiveIdx >= count - 1) {
+      // Reached end of photobook: flip all pages back smoothly to page 1
+      isFlipping = true;
+      carouselActiveIdx = 0;
+      cards.forEach((c, i) => {
+        c.style.transition = `transform ${0.4 + i * 0.04}s cubic-bezier(0.25, 1, 0.5, 1)`;
+        c.style.transform = 'rotateY(0deg)';
+        c.style.zIndex = `${35 - i}`;
+      });
+      setTimeout(() => {
+        renderPhotobook();
+        isFlipping = false;
+      }, 550);
+      return;
+    }
+
+    isFlipping = true;
+    const currentCard = cards[carouselActiveIdx];
+    const currentSheen = currentCard ? currentCard.querySelector('.carousel-card-sheen') : null;
+
+    if (currentCard) {
+      currentCard.style.zIndex = '40';
+      currentCard.style.transition = 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+      currentCard.style.transform = 'rotateY(-180deg)';
+
+      if (currentSheen) {
+        currentSheen.style.opacity = '0.75';
+        setTimeout(() => {
+          currentSheen.style.opacity = '0';
+        }, 400);
+      }
+    }
+
+    carouselActiveIdx++;
+    
+    // Prepare next card underneath
+    if (cards[carouselActiveIdx]) {
+      cards[carouselActiveIdx].style.zIndex = '30';
+      cards[carouselActiveIdx].style.opacity = '1';
+      cards[carouselActiveIdx].style.visibility = 'visible';
+    }
+
+    if (counter) {
+      counter.textContent = `${carouselActiveIdx + 1} / ${count}`;
+    }
+
+    setTimeout(() => {
+      renderPhotobook();
+      isFlipping = false;
+    }, 800);
   }
 
   function prevSlide() {
-    carouselActiveIdx = (carouselActiveIdx - 1 + count) % count;
-    render3DCarousel();
+    if (isFlipping) return;
+    if (carouselActiveIdx <= 0) {
+      // At beginning: go to last page
+      carouselActiveIdx = count - 1;
+      renderPhotobook();
+      return;
+    }
+
+    isFlipping = true;
+    carouselActiveIdx--;
+    const targetCard = cards[carouselActiveIdx];
+    const targetSheen = targetCard ? targetCard.querySelector('.carousel-card-sheen') : null;
+
+    if (targetCard) {
+      targetCard.style.zIndex = '45';
+      targetCard.style.opacity = '1';
+      targetCard.style.visibility = 'visible';
+      targetCard.style.transition = 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+      targetCard.style.transform = 'rotateY(0deg)';
+
+      if (targetSheen) {
+        targetSheen.style.opacity = '0.75';
+        setTimeout(() => {
+          targetSheen.style.opacity = '0';
+        }, 400);
+      }
+    }
+
+    if (counter) {
+      counter.textContent = `${carouselActiveIdx + 1} / ${count}`;
+    }
+
+    setTimeout(() => {
+      renderPhotobook();
+      isFlipping = false;
+    }, 800);
   }
 
   function resetCarouselAutoTimer() {
     if (carouselAutoTimer) clearInterval(carouselAutoTimer);
     if (!carouselIsHovered) {
-      carouselAutoTimer = setInterval(nextSlide, 3500);
+      carouselAutoTimer = setInterval(nextSlide, 4000);
     }
   }
 
@@ -1099,11 +1196,11 @@ function initGallery(gallery) {
   }
 
   window.addEventListener('resize', () => {
-    render3DCarousel();
+    renderPhotobook();
   });
 
   // Initial render & timer
-  render3DCarousel();
+  renderPhotobook();
   resetCarouselAutoTimer();
 }
 

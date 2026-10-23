@@ -1178,34 +1178,35 @@ html, body {
 }
 
 /* ========================================================
-   LUXURY WEDDING PHOTOBOOK - 3D PAGE TURN ANIMATION
+   VOGUE EDITORIAL 3D ART GALLERY - LUXURY EXHIBITION
    ======================================================== */
 .carousel-3d-stage {
   position: relative;
   width: 100%;
   height: 480px;
-  margin: 18px auto 0;
-  perspective: 1800px;
-  -webkit-perspective: 1800px;
+  margin: 20px auto 0;
+  perspective: 1400px;
+  -webkit-perspective: 1400px;
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   touch-action: pan-y pinch-zoom;
+  overflow: visible;
 }
 
 @media (min-width: 640px) {
   .carousel-3d-stage {
-    height: 580px;
-    perspective: 2000px;
-    -webkit-perspective: 2000px;
+    height: 560px;
+    perspective: 1600px;
+    -webkit-perspective: 1600px;
   }
 }
 
 .carousel-cards-track {
   position: relative;
-  width: 310px;
-  height: 435px;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1213,94 +1214,61 @@ html, body {
   -webkit-transform-style: preserve-3d;
 }
 
-@media (min-width: 640px) {
-  .carousel-cards-track {
-    width: 380px;
-    height: 530px;
-  }
-}
-
-@media (max-width: 360px) {
-  .carousel-cards-track {
-    width: 280px;
-    height: 395px;
-  }
-  .carousel-3d-stage {
-    height: 440px;
-  }
-}
-
-/* Photobook Hardcover Backing Base */
-.photobook-book-base {
-  position: absolute;
-  inset: -6px -8px -8px -12px;
-  background: linear-gradient(135deg, #441014 0%, #2a070a 100%);
-  border-radius: 14px 18px 18px 14px;
-  box-shadow: 
-    0 24px 55px rgba(0, 0, 0, 0.42),
-    0 6px 16px rgba(81, 20, 25, 0.35);
-  border: 1px solid rgba(201, 162, 74, 0.35);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Gold Embossed Spine on the Left */
-.photobook-spine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 14px;
-  background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(201,162,74,0.4) 35%, rgba(0,0,0,0.3) 100%);
-  border-right: 1px solid rgba(201, 162, 74, 0.4);
-  border-radius: 14px 0 0 14px;
-  z-index: 15;
-  pointer-events: none;
-}
-
-/* Stacked Pages Thickness Edge (Paper deckle on bottom & right) */
-.photobook-page-stack {
-  position: absolute;
-  inset: 0;
-  border-radius: 4px 12px 12px 4px;
-  background: #fbf8f3;
-  box-shadow: 
-    1px 1px 0 #ede4d6,
-    2px 2px 0 #ffffff,
-    3px 3px 0 #e4d8c5,
-    4px 4px 0 #ffffff,
-    5px 5px 0 #dacbb3,
-    6px 6px 0 #ffffff,
-    7px 7px 0 #cfbf9e;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Individual Photobook Page Card */
+/* Luxury Editorial Art Cards */
 .carousel-3d-card {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 4px 12px 12px 4px;
+  top: 50%;
+  left: 50%;
+  width: 290px;
+  height: 420px;
+  margin-left: -145px;
+  margin-top: -210px;
+  border-radius: 18px;
   overflow: hidden;
-  background: #fefcf9;
+  background: #ffffff;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  /* Dual Luxury Border: White Frame + Subtle Gold Accent Hairline */
   border: 4px solid #ffffff;
-  border-left: 6px solid #ede4d6;
-  transform-origin: left center;
+  box-shadow: 
+    0 0 0 1px rgba(201, 162, 74, 0.35),
+    0 18px 45px -8px rgba(81, 20, 25, 0.28),
+    0 8px 18px -4px rgba(0, 0, 0, 0.16);
+  transform-origin: center center;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  will-change: transform, opacity;
-  transition: transform 0.75s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+  will-change: transform, opacity, filter, box-shadow;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.6s ease, 
+              filter 0.6s ease, 
+              box-shadow 0.6s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 @media (min-width: 640px) {
   .carousel-3d-card {
-    border: 6px solid #ffffff;
-    border-left: 8px solid #ede4d6;
+    width: 360px;
+    height: 510px;
+    margin-left: -180px;
+    margin-top: -255px;
+    border-radius: 20px;
+    border: 5px solid #ffffff;
+    box-shadow: 
+      0 0 0 1.5px rgba(201, 162, 74, 0.4),
+      0 26px 65px -10px rgba(81, 20, 25, 0.32),
+      0 12px 26px -6px rgba(0, 0, 0, 0.18);
+  }
+}
+
+@media (max-width: 360px) {
+  .carousel-3d-card {
+    width: 265px;
+    height: 385px;
+    margin-left: -132.5px;
+    margin-top: -192.5px;
+  }
+  .carousel-3d-stage {
+    height: 440px;
   }
 }
 
@@ -1310,80 +1278,33 @@ html, body {
   object-fit: cover;
   display: block;
   pointer-events: none;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Gáy sách đổ bóng sâu bên trong mép gập */
-.carousel-3d-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 28px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.08) 50%, transparent 100%);
-  pointer-events: none;
-  z-index: 5;
+/* Active Center Card Glow */
+.carousel-3d-card.active-center {
+  box-shadow: 
+    0 0 0 1.5px rgba(201, 162, 74, 0.6),
+    0 30px 75px -10px rgba(81, 20, 25, 0.42),
+    0 14px 28px -6px rgba(0, 0, 0, 0.22);
 }
 
-/* Mặt lưng trang sách khi lật sang trái (Back of page) */
-.photobook-page-back {
-  position: absolute;
-  inset: 0;
-  background: #fbf7f0 url('../images/theme/paper.webp') repeat;
-  background-size: cover;
-  transform: rotateY(180deg);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 4px solid #ffffff;
-  border-right: 6px solid #ede4d6;
-  border-radius: 12px 4px 4px 12px;
-  box-shadow: inset 0 0 30px rgba(81, 20, 25, 0.08);
-  z-index: 1;
+.carousel-3d-card.active-center:hover img {
+  transform: scale(1.03);
 }
 
-.photobook-back-seal {
-  width: 64px;
-  height: 64px;
-  border: 1.5px solid var(--gold-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-script);
-  font-size: 26px;
-  color: var(--primary);
-  opacity: 0.65;
-  background: rgba(201, 162, 74, 0.06);
-}
-
-.photobook-back-text {
-  margin-top: 10px;
-  font-family: var(--font-sub);
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--primary);
-  opacity: 0.55;
-  text-transform: uppercase;
-}
-
-/* Dynamic 3D lighting sheen & page-turn shadow */
+/* Elegant editorial sheen & side card atmospheric haze */
 .carousel-card-sheen {
   position: absolute;
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease, background 0.6s ease;
   opacity: 0;
-  z-index: 8;
-  background: linear-gradient(to right, rgba(0,0,0,0.45) 0%, transparent 35%, rgba(255,255,255,0.25) 60%, rgba(0,0,0,0.3) 100%);
+  z-index: 3;
 }
 
+/* Minimalist Luxury Floating Nav Buttons */
 .carousel-nav-btn {
   position: absolute;
   top: 50%;
@@ -1392,32 +1313,33 @@ html, body {
   height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(201, 162, 74, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 162, 74, 0.45);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 60;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
-  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(81, 20, 25, 0.2);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .carousel-nav-btn:hover {
   background: #ffffff;
-  transform: translateY(-50%) scale(1.08);
-  box-shadow: 0 8px 24px rgba(81, 20, 25, 0.3);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 12px 30px rgba(81, 20, 25, 0.32);
   color: var(--primary-dark);
+  border-color: var(--gold-primary);
 }
 
 .carousel-nav-btn.prev {
-  left: 6px;
+  left: 8px;
 }
 
 .carousel-nav-btn.next {
-  right: 6px;
+  right: 8px;
 }
 
 @media (min-width: 640px) {
@@ -1426,18 +1348,20 @@ html, body {
 }
 
 .carousel-nav-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   stroke: currentColor;
 }
 
+/* Editorial Minimalist Page Counter */
 .carousel-page-counter {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: rgba(81, 20, 25, 0.7);
-  letter-spacing: 0.1em;
-  margin-top: 18px;
+  font-family: var(--font-sub);
+  font-size: 13px;
   font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.18em;
+  margin-top: 18px;
+  opacity: 0.75;
 }
 
 /* ==========================================================================

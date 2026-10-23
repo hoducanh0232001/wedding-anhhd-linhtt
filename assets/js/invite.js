@@ -18,7 +18,7 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
 
   // 2. Known default wedding venue short link
   if (trimmed.includes('ijkYsunZoUQ79kQbA')) {
-    return 'https://maps.google.com/maps?q=20.9589449,105.7683679&z=16&output=embed';
+    return 'https://maps.google.com/maps?q=20.9589449,105.7683679+(Ho%C3%A0ng+Gia+Palace+-+Victoria+V%C4%83n+Ph%C3%BA)&z=16&output=embed';
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -186,7 +186,7 @@ function initDynamicContent(settings) {
     mapBtn.href = settings.wedding.mapUrl;
   }
 
-    const mapIframe = document.getElementById('wedding-map-iframe');
+  const mapIframe = document.getElementById('wedding-map-iframe');
   if (mapIframe) {
     const initialEmbed = parseMapUrlToEmbed(settings.wedding.mapUrl, settings.wedding.venueName, settings.wedding.venueAddress);
     if (initialEmbed) {
@@ -912,6 +912,15 @@ function initGallery(gallery) {
     img.loading = 'lazy';
     card.appendChild(img);
 
+    const sheen = document.createElement('div');
+    sheen.className = 'carousel-card-sheen';
+    card.appendChild(sheen);
+
+    const hint = document.createElement('div');
+    hint.className = 'carousel-card-hint';
+    hint.textContent = '🔍 Phóng to ảnh';
+    card.appendChild(hint);
+
     card.addEventListener('click', () => {
       if (idx === carouselActiveIdx) {
         // Bấm ảnh giữa để phóng to xem Lightbox
@@ -944,10 +953,10 @@ function initGallery(gallery) {
   function render3DCarousel() {
     const isMobile = window.innerWidth < 640;
     
-    // Spacing constants tuned to match user's screenshot
-    const transXStep = isMobile ? 85 : 110;
-    const transZStep = isMobile ? 80 : 90;
-    const rotateStep = 32;
+    // Spacing constants tuned for larger cards and dramatic 3D album page flip
+    const transXStep = isMobile ? 100 : 150;
+    const transZStep = isMobile ? 85 : 110;
+    const rotateStep = 56; // 56-degree flip angle creates the authentic album page flip
 
     cards.forEach((card, idx) => {
       let l = idx - carouselActiveIdx;
@@ -971,27 +980,46 @@ function initGallery(gallery) {
         let translateX = 0;
         let translateZ = 0;
         let rotateY = 0;
+        let rotateZ = 0;
         let zIndex = 50 - o * 10;
 
         if (o === 0) {
           scale = 1;
           opacity = 1;
           translateX = 0;
-          translateZ = 0;
+          translateZ = 20;
           rotateY = 0;
+          rotateZ = 0;
           card.classList.add('active-center');
         } else {
           card.classList.remove('active-center');
-          scale = Math.max(0.64, 1 - 0.12 * o);
-          opacity = Math.max(0.35, 1 - 0.18 * o);
-          translateX = (l > 0 ? 1 : -1) * (transXStep + (o - 1) * (isMobile ? 65 : 85));
-          translateZ = -(transZStep + (o - 1) * (isMobile ? 70 : 80));
-          rotateY = (l > 0 ? -1 : 1) * (rotateStep + (o - 1) * 10);
+          scale = Math.max(0.68, 1 - 0.11 * o);
+          opacity = Math.max(0.38, 1 - 0.18 * o);
+          const dir = l > 0 ? 1 : -1;
+          translateX = dir * (transXStep + (o - 1) * (isMobile ? 75 : 95));
+          translateZ = -(transZStep + (o - 1) * (isMobile ? 80 : 100));
+          // Realistic 3D album page flip angle:
+          rotateY = -dir * (rotateStep + (o - 1) * 8);
+          // Subtle natural page lift tilt
+          rotateZ = dir * (2.2 + (o - 1) * 1.2);
         }
 
-        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
         card.style.opacity = opacity;
         card.style.zIndex = zIndex;
+
+        // Dynamic 3D lighting sheen on cards as they flip
+        const sheen = card.querySelector('.carousel-card-sheen');
+        if (sheen) {
+          if (o === 0) {
+            sheen.style.opacity = '0';
+          } else {
+            sheen.style.opacity = Math.min(0.55, 0.22 * o);
+            sheen.style.background = l > 0 
+              ? 'linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 100%)' 
+              : 'linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 100%)';
+          }
+        }
       }
     });
 

@@ -15,20 +15,44 @@ app.use('/assets', express.static(path.join(rootDir, 'assets'), {
   etag: true
 }));
 
-// 2. Serve any root files (admin.html, index.html)
-app.use(express.static(rootDir, {
-  maxAge: '1h',
-  etag: true
-}));
-
-// 3. Admin portal route
+// 2. Admin portal route
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(rootDir, 'admin.html'));
 });
 
-// 4. Main invitation route
+// 3. Main invitation route with dynamic Open Graph injection for social crawlers (Facebook, Zalo, iMessage)
 app.get('/', (req, res) => {
-  res.sendFile(path.join(rootDir, 'index.html'));
+  const indexPath = path.join(rootDir, 'index.html');
+  const guestParam = req.query.to || req.query.guest || req.query.name;
+  const prefixParam = req.query.prefix || req.query.xungho;
+
+  if (!guestParam && !prefixParam) {
+    return res.sendFile(indexPath);
+  }
+
+  try {
+    let html = fs.readFileSync(indexPath, 'utf8');
+    const guestName = (guestParam || 'Quý Khách').replace(/\+/g, ' ').trim();
+    const guestPrefix = (prefixParam || 'Thân Mời').replace(/\+/g, ' ').trim();
+
+    const customTitle = `Thiệp Cưới Đức Anh & Thuỳ Linh — Kính Mời: ${guestPrefix} ${guestName}`;
+    const customDesc = `Trân trọng kính mời ${guestPrefix} ${guestName} đến tham dự lễ thành hôn của Đức Anh & Thuỳ Linh vào 11:00 Chủ Nhật, ngày 29/11/2026 tại Hoàng Gia Palace Hà Đông, Hà Nội.`;
+    const fullUrl = `https://wedding-anhhd-linhtt.vercel.app${req.originalUrl}`;
+
+    html = html
+      .replace(/<title>.*?<\/title>/, `<title>${customTitle}</title>`)
+      .replace(/<meta property="og:title" content=".*?" \/>/, `<meta property="og:title" content="${customTitle}" />`)
+      .replace(/<meta property="og:description" content=".*?" \/>/, `<meta property="og:description" content="${customDesc}" />`)
+      .replace(/<meta property="og:url" content=".*?" \/>/, `<meta property="og:url" content="${fullUrl}" />`)
+      .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${customDesc}" />`)
+      .replace(/<meta name="twitter:title" content=".*?" \/>/, `<meta name="twitter:title" content="${customTitle}" />`)
+      .replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${customDesc}" />`);
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(html);
+  } catch (err) {
+    return res.sendFile(indexPath);
+  }
 });
 
 // Endpoint to save settings directly into assets/js/data.js
@@ -73,7 +97,14 @@ app.get('/api/resolve-map', async (req, res) => {
   }
 });
 
-// 5. Fallback: only return index.html for page routes, NOT for broken asset files
+// 5. Serve any other root static files with index: false so routes take precedence
+app.use(express.static(rootDir, {
+  index: false,
+  maxAge: '1h',
+  etag: true
+}));
+
+// 6. Fallback: only return index.html for page routes, NOT for broken asset files
 app.get('*', (req, res) => {
   if (req.path.includes('.')) {
     return res.status(404).send('Asset not found');

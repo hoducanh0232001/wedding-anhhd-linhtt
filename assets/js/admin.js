@@ -507,8 +507,11 @@ function renderGuestsTable() {
     return;
   }
 
-  // Use current origin so links work seamlessly on preview URLs, custom domains, and local dev
-  const domainOrigin = window.location.origin;
+  // Luôn dùng tên miền chính thức khi trên Vercel để khách mời & Zalo/FB xem được công khai (không bị dính link preview tạm thời có mã bảo vệ SSO của Vercel)
+  let domainOrigin = window.location.origin;
+  if (window.location.hostname.includes('vercel.app')) {
+    domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
+  }
   const baseUrl = `${domainOrigin}/`;
 
   filtered.forEach((g, idx) => {

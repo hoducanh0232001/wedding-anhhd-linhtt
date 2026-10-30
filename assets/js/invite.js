@@ -241,11 +241,15 @@ function initDynamicContent(settings) {
         this.src = '/assets/images/hero_couple.jpg';
       } else if (step === 1) {
         this.dataset.triedFallback = '2';
-        this.src = 'assets/images/gallery/photo_01.jpg';
+        this.src = '/assets/images/gallery/photo_01.jpg';
       }
     };
-    heroPolaroid.src = (settings.wedding && settings.wedding.heroPhoto) || 
-      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : 'assets/images/hero_couple.jpg');
+    let photoSrc = (settings.wedding && settings.wedding.heroPhoto) || 
+      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : '/assets/images/hero_couple.jpg');
+    if (photoSrc && !photoSrc.startsWith('/') && !photoSrc.startsWith('http') && !photoSrc.startsWith('data:')) {
+      photoSrc = '/' + photoSrc;
+    }
+    heroPolaroid.src = photoSrc;
   }
 
   // Banking

@@ -140,6 +140,8 @@ function loadAllAdminData() {
   populateSettingsForm(settings);
   populateEventsForm(settings);
   populateBankingForm(settings);
+  const officialDisplay = document.getElementById('official-invite-url-display');
+  if (officialDisplay) officialDisplay.textContent = `${window.location.origin}/`;
   renderGuestsTable();
   renderRSVPsTable();
   renderAdminWishesList();
@@ -505,10 +507,8 @@ function renderGuestsTable() {
     return;
   }
 
-  let domainOrigin = window.location.origin;
-  if (window.location.hostname.includes('vercel.app')) {
-    domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
-  }
+  // Use current origin so links work seamlessly on preview URLs, custom domains, and local dev
+  const domainOrigin = window.location.origin;
   const baseUrl = `${domainOrigin}/`;
 
   filtered.forEach((g, idx) => {
@@ -903,7 +903,7 @@ window.switchAdminTab = function(tabName) {
 };
 
 window.copyOfficialLink = function() {
-  const url = 'https://wedding-anhhd-linhtt.vercel.app/';
+  const url = `${window.location.origin}/`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(() => {
       showAdminToast('Đã sao chép link thiệp cưới chính thức!');

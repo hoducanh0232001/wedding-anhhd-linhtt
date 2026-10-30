@@ -234,6 +234,12 @@ function initDynamicContent(settings) {
   // Polaroid hero image
   const heroPolaroid = document.getElementById('hero-polaroid-img');
   if (heroPolaroid) {
+    heroPolaroid.onerror = function() {
+      if (!this.dataset.triedFallback) {
+        this.dataset.triedFallback = '1';
+        this.src = 'assets/images/hero_couple.jpg';
+      }
+    };
     heroPolaroid.src = (settings.wedding && settings.wedding.heroPhoto) || 
       (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : 'assets/images/hero_couple.jpg');
   }

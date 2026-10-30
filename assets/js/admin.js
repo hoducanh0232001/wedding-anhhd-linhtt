@@ -1440,7 +1440,7 @@ function collectAndSaveSettings() {
   }
 
   // 6. Photo inputs
-  const heroPhotoInput = document.getElementById('hero-photo-input');
+  const heroPhotoInput = document.getElementById('admin-hero-photo-input') || document.getElementById('hero-photo-input');
   if (heroPhotoInput && heroPhotoInput.value.trim()) {
     current.wedding.heroPhoto = heroPhotoInput.value.trim();
   }

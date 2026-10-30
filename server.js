@@ -45,6 +45,8 @@ app.get('/', (req, res) => {
       .replace(/<meta property="og:description" content=".*?" \/>/, `<meta property="og:description" content="${customDesc}" />`)
       .replace(/<meta property="og:url" content=".*?" \/>/, `<meta property="og:url" content="${fullUrl}" />`)
       .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${customDesc}" />`)
+      .replace(/<meta itemprop="name" content=".*?" \/>/, `<meta itemprop="name" content="${customTitle}" />`)
+      .replace(/<meta itemprop="description" content=".*?" \/>/, `<meta itemprop="description" content="${customDesc}" />`)
       .replace(/<meta name="twitter:title" content=".*?" \/>/, `<meta name="twitter:title" content="${customTitle}" />`)
       .replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${customDesc}" />`);
 

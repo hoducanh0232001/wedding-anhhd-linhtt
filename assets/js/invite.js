@@ -235,9 +235,13 @@ function initDynamicContent(settings) {
   const heroPolaroid = document.getElementById('hero-polaroid-img');
   if (heroPolaroid) {
     heroPolaroid.onerror = function() {
-      if (!this.dataset.triedFallback) {
+      const step = parseInt(this.dataset.triedFallback || '0', 10);
+      if (step === 0) {
         this.dataset.triedFallback = '1';
-        this.src = 'assets/images/hero_couple.jpg';
+        this.src = '/assets/images/hero_couple.jpg';
+      } else if (step === 1) {
+        this.dataset.triedFallback = '2';
+        this.src = 'assets/images/gallery/photo_01.jpg';
       }
     };
     heroPolaroid.src = (settings.wedding && settings.wedding.heroPhoto) || 

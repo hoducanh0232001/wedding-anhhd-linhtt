@@ -25,8 +25,10 @@ app.get('/', (req, res) => {
   const indexPath = path.join(rootDir, 'index.html');
   const guestParam = req.query.to || req.query.guest || req.query.name;
   const prefixParam = req.query.prefix || req.query.xungho;
+  const sideParam = (req.query.side || req.query.tiec || req.query.event || '').toLowerCase().trim();
+  const isBride = ['bride', 'gai', 'nhagai', 'vuquy', 'nha-gai'].includes(sideParam);
 
-  if (!guestParam && !prefixParam) {
+  if (!guestParam && !prefixParam && !isBride) {
     return res.sendFile(indexPath);
   }
 
@@ -35,8 +37,14 @@ app.get('/', (req, res) => {
     const guestName = (guestParam || 'Quý Khách').replace(/\+/g, ' ').trim();
     const guestPrefix = (prefixParam || 'Thân Mời').replace(/\+/g, ' ').trim();
 
-    const customTitle = `Thiệp Cưới Đức Anh & Thuỳ Linh — Kính Mời: ${guestPrefix} ${guestName}`;
-    const customDesc = `Trân trọng kính mời ${guestPrefix} ${guestName} đến tham dự lễ thành hôn của Đức Anh & Thuỳ Linh vào 11:00 Chủ Nhật, ngày 29/11/2026 tại Hoàng Gia Palace Hà Đông, Hà Nội.`;
+    const customTitle = isBride
+      ? (guestParam ? `Thiệp Cưới (Lễ Vu Quy) Thuỳ Linh & Đức Anh — Kính Mời: ${guestPrefix} ${guestName}` : `Lễ Vu Quy | Thuỳ Linh & Đức Anh — Thiệp Cưới Online`)
+      : (guestParam ? `Thiệp Cưới Đức Anh & Thuỳ Linh — Kính Mời: ${guestPrefix} ${guestName}` : `Hồ Đức Anh & Thái Thuỳ Linh | Thiệp Cưới Online`);
+
+    const customDesc = isBride
+      ? `Trân trọng kính mời ${guestPrefix} ${guestName} đến tham dự Lễ Vu Quy của Thuỳ Linh & Đức Anh vào 17:30 Thứ Bảy, ngày 28/11/2026 tại Tư Gia Nhà Gái (Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội).`
+      : `Trân trọng kính mời ${guestPrefix} ${guestName} đến tham dự lễ thành hôn của Đức Anh & Thuỳ Linh vào 11:00 Chủ Nhật, ngày 29/11/2026 tại Hoàng Gia Palace Hà Đông, Hà Nội.`;
+
     const fullUrl = `https://wedding-anhhd-linhtt.vercel.app${req.originalUrl}`;
 
     html = html

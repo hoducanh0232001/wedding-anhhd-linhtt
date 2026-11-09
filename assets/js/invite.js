@@ -1,6 +1,9 @@
 
 // Helper: Convert any Google Maps URL to an exact Embed iframe URL
 function parseMapUrlToEmbed(url, venueName, venueAddress) {
+  const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy'))) ||
+                       (venueAddress && venueAddress.includes('Phú Xuyên'));
+
   if (!url) {
     const cleanQ = ((venueName || '') + ' ' + (venueAddress || ''))
       .replace(/\(Cơ sở \d+\)/g, '')
@@ -16,9 +19,15 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
     return trimmed;
   }
 
-  // 2. Known default wedding venue short link
-  if (trimmed.includes('ijkYsunZoUQ79kQbA')) {
+  // 2. Known default wedding venue short link (ONLY FOR GROOM)
+  if (!isBrideVenue && trimmed.includes('ijkYsunZoUQ79kQbA')) {
     return 'https://maps.google.com/maps?q=20.9589449,105.7683679+(Ho%C3%A0ng+Gia+Palace+-+Victoria+V%C4%83n+Ph%C3%BA)&z=16&output=embed';
+  }
+
+  // If bride venue had groom's link by mistake, use bride's clean address
+  if (isBrideVenue && trimmed.includes('ijkYsunZoUQ79kQbA')) {
+    const cleanQ = ((venueName || '') + ' ' + (venueAddress || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội')).trim();
+    return 'https://maps.google.com/maps?q=' + encodeURIComponent(cleanQ) + '&z=16&output=embed';
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -258,7 +267,12 @@ function initDynamicContent(settings, activeSide) {
     lunarDateStr = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
-    mapUrlStr = brideEvent.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(venueAddressStr));
+    
+    let bMap = (brideEvent.mapUrl || '').trim();
+    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA')) {
+      bMap = 'https://maps.google.com/?q=' + encodeURIComponent(venueAddressStr);
+    }
+    mapUrlStr = bMap;
     ceremonyTitleStr = brideEvent.title || 'LỄ VU QUY & TIỆC CƯỚI';
     announcementStr = brideEvent.announcementText || 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
     receptionCardTitleStr = 'TIỆC CƯỚI NHÀ GÁI';

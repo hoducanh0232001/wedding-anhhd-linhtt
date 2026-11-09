@@ -291,7 +291,13 @@ function populateSettingsForm(settings) {
   if (brideAddress) brideAddress.value = brideEvent.address || settings.couple.bride.address || '';
 
   const brideMap = document.getElementById('bride-event-map');
-  if (brideMap) brideMap.value = brideEvent.mapUrl || '';
+  if (brideMap) {
+    let bMap = brideEvent.mapUrl || '';
+    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA')) {
+      bMap = 'https://maps.google.com/?q=' + encodeURIComponent(brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội');
+    }
+    brideMap.value = bMap;
+  }
 
   const brideQuote = document.getElementById('bride-hero-quote-input');
   if (brideQuote) brideQuote.value = brideEvent.heroQuote || '';

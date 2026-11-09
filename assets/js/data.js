@@ -340,7 +340,12 @@ function deepMergeSettings(target, source) {
   if (Array.isArray(target.events) && Array.isArray(result.events)) {
     result.events = target.events.map(defEv => {
       const srcEv = result.events.find(e => e.id === defEv.id || e.type === defEv.type);
-      return srcEv ? { ...defEv, ...srcEv } : { ...defEv };
+      const merged = srcEv ? { ...defEv, ...srcEv } : { ...defEv };
+      // Sanitize: If bride event accidentally inherited groom's Hoàng Gia Palace mapUrl, reset to bride's map
+      if ((merged.type === 'bride' || merged.id === 'event-bride') && (merged.mapUrl && merged.mapUrl.includes('ijkYsunZoUQ79kQbA'))) {
+        merged.mapUrl = defEv.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(merged.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội'));
+      }
+      return merged;
     });
   }
 

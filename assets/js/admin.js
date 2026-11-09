@@ -279,7 +279,11 @@ function populateSettingsForm(settings) {
   if (brideFeast) brideFeast.value = brideEvent.feastTime || '18:00';
 
   const brideDateText = document.getElementById('bride-event-datetext');
-  if (brideDateText) brideDateText.value = brideEvent.dateText || 'Thứ Bảy, 28/11/2026';
+  if (brideDateText) {
+    let bDt = brideEvent.dateText || 'Thứ Bảy, 28 Tháng 11, 2026';
+    if (bDt.includes('/')) bDt = 'Thứ Bảy, 28 Tháng 11, 2026';
+    brideDateText.value = bDt;
+  }
 
   const brideLunar = document.getElementById('bride-event-lunar');
   if (brideLunar) brideLunar.value = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
@@ -1003,7 +1007,7 @@ function populateEventsForm(settings) {
         </div>
         <div class="admin-form-group">
           <label class="admin-form-label">Dòng Ngày Hiển Thị</label>
-          <input type="text" class="admin-form-input event-field-datetext" data-idx="${idx}" value="${ev.dateText || ''}" placeholder="Thứ Bảy, 28/11/2026" />
+          <input type="text" class="admin-form-input event-field-datetext" data-idx="${idx}" value="${ev.dateText || ''}" placeholder="Thứ Bảy, 28 Tháng 11, 2026" />
         </div>
       </div>
       <div class="form-grid-3">

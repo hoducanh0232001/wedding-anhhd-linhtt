@@ -124,7 +124,7 @@ const DEFAULT_SETTINGS = {
       "receptionTime": "10:30",
       "feastTime": "11:30",
       "date": "2026-11-29",
-      "dateText": "Chủ Nhật, 29/11/2026",
+      "dateText": "Chủ Nhật, 29 Tháng 11, 2026",
       "lunarDateText": "Tức Ngày 21 Tháng 10 Năm Bính Ngọ",
       "venue": "Trung tâm tiệc cưới Hoàng Gia Palace",
       "address": "Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội",
@@ -145,7 +145,7 @@ const DEFAULT_SETTINGS = {
       "receptionTime": "16:30",
       "feastTime": "18:00",
       "date": "2026-11-28",
-      "dateText": "Thứ Bảy, 28/11/2026",
+      "dateText": "Thứ Bảy, 28 Tháng 11, 2026",
       "lunarDateText": "Tức Ngày 20 Tháng 10 Năm Bính Ngọ",
       "venue": "Tư Gia Nhà Gái",
       "address": "Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội",
@@ -345,8 +345,25 @@ function deepMergeSettings(target, source) {
       if ((merged.type === 'bride' || merged.id === 'event-bride') && (merged.mapUrl && merged.mapUrl.includes('ijkYsunZoUQ79kQbA'))) {
         merged.mapUrl = defEv.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(merged.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội'));
       }
+      // Sanitize: Ensure dateText uses standard concept
+      if (merged.type === 'bride' || merged.id === 'event-bride') {
+        if (!merged.dateText || merged.dateText.includes('/')) {
+          merged.dateText = 'Thứ Bảy, 28 Tháng 11, 2026';
+        }
+      }
+      if (merged.type === 'main' || merged.type === 'groom') {
+        if (!merged.dateText || merged.dateText.includes('/')) {
+          merged.dateText = 'Chủ Nhật, 29 Tháng 11, 2026';
+        }
+      }
       return merged;
     });
+  }
+
+  if (result.wedding) {
+    if (!result.wedding.dateText || result.wedding.dateText.includes('/')) {
+      result.wedding.dateText = 'Chủ Nhật, 29 Tháng 11, 2026';
+    }
   }
 
   return result;

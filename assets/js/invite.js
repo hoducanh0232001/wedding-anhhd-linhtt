@@ -69,26 +69,49 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
  * Includes 3D Cylindrical Revolver Carousel ("Băng đạn xoay xoay"), Countdown, Audio, etc.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+function startApp() {
   // 0. Apply Selected Theme
-  const activeThemeId = WeddingDB.getThemeId();
-  document.body.setAttribute('data-theme', activeThemeId);
+  try {
+    const activeThemeId = WeddingDB.getThemeId();
+    document.body.setAttribute('data-theme', activeThemeId);
+  } catch (e) {
+    console.warn('Theme init error:', e);
+  }
 
-  // 1. Load Wedding Data from DB
-  const settings = WeddingDB.getSettings();
-  initDynamicContent(settings);
-  initPersonalizedGuest(settings);
-  initAmbientPetals();
-  initMusicPlayer(settings);
-  initEnvelopeOpener();
-  initCountdown(settings.wedding.date + 'T' + settings.wedding.time);
-  initGallery(settings.gallery);
-  initRSVPForm();
-  initWishesList();
-  initScrollReveal();
-  initAutoScrollControls();
-  initSecretAdminTap();
-});
+  // 1. Envelope Opener MUST be initialized immediately so clicking Mở thiệp ALWAYS works without reload
+  try {
+    initEnvelopeOpener();
+  } catch (e) {
+    console.error('Envelope opener init error:', e);
+  }
+
+  // 2. Load Wedding Data from DB
+  let settings;
+  try {
+    settings = WeddingDB.getSettings();
+  } catch (e) {
+    console.warn('Settings load error:', e);
+    settings = (typeof DEFAULT_SETTINGS !== 'undefined') ? DEFAULT_SETTINGS : {};
+  }
+
+  try { initDynamicContent(settings); } catch (e) { console.warn('DynamicContent error:', e); }
+  try { initPersonalizedGuest(settings); } catch (e) { console.warn('PersonalizedGuest error:', e); }
+  try { initAmbientPetals(); } catch (e) { console.warn('AmbientPetals error:', e); }
+  try { initMusicPlayer(settings); } catch (e) { console.warn('MusicPlayer error:', e); }
+  try { initCountdown((settings.wedding?.date || '2026-11-29') + 'T' + (settings.wedding?.time || '11:00')); } catch (e) { console.warn('Countdown error:', e); }
+  try { initGallery(settings.gallery); } catch (e) { console.warn('Gallery error:', e); }
+  try { initRSVPForm(); } catch (e) { console.warn('RSVPForm error:', e); }
+  try { initWishesList(); } catch (e) { console.warn('WishesList error:', e); }
+  try { initScrollReveal(); } catch (e) { console.warn('ScrollReveal error:', e); }
+  try { initAutoScrollControls(); } catch (e) { console.warn('AutoScrollControls error:', e); }
+  try { initSecretAdminTap(); } catch (e) { console.warn('SecretAdminTap error:', e); }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
+}
 
 // Helper: Toast notification
 function showToast(message) {
@@ -263,7 +286,11 @@ function initDynamicContent(settings, activeSide) {
     weddingTimeStr = brideEvent.time || '17:30';
     receptionTimeStr = brideEvent.receptionTime || '16:30';
     feastTimeStr = brideEvent.feastTime || '18:00';
-    dateTextStr = brideEvent.dateText || 'Thứ Bảy, 28/11/2026';
+    let bDate = (brideEvent.dateText || '').trim();
+    if (!bDate || bDate.includes('/')) {
+      bDate = 'Thứ Bảy, 28 Tháng 11, 2026';
+    }
+    dateTextStr = bDate;
     lunarDateStr = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
@@ -298,7 +325,11 @@ function initDynamicContent(settings, activeSide) {
     weddingTimeStr = settings.wedding.time || groomEvent.time || '11:00';
     receptionTimeStr = settings.wedding.receptionTime || groomEvent.receptionTime || '10:30';
     feastTimeStr = groomEvent.feastTime || settings.wedding.feastTime || '11:30';
-    dateTextStr = settings.wedding.dateText || groomEvent.dateText || 'Chủ Nhật, 29 Tháng 11, 2026';
+    let gDate = (settings.wedding.dateText || groomEvent.dateText || '').trim();
+    if (!gDate || gDate.includes('/')) {
+      gDate = 'Chủ Nhật, 29 Tháng 11, 2026';
+    }
+    dateTextStr = gDate;
     lunarDateStr = settings.wedding.lunarDateText || groomEvent.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ';
     venueTitleStr = settings.wedding.venueName || groomEvent.venue || 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)';
     venueAddressStr = settings.wedding.venueAddress || groomEvent.address || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
@@ -723,8 +754,19 @@ function initEnvelopeOpener() {
   let isOpening = false;
 
   function handleOpenEnvelope(e) {
+    if (e && typeof e.preventDefault === 'function' && e.type !== 'click') {
+      e.preventDefault();
+    }
     if (isOpening) return;
     isOpening = true;
+
+    // Safety watchdog: In case of any delay/blocking, guarantee envelope opens & resets lock
+    setTimeout(() => {
+      if (envelopeScreen && !envelopeScreen.classList.contains('opened')) {
+        envelopeScreen.classList.add('opened');
+      }
+      isOpening = false;
+    }, 1500);
 
     // 1. Play music immediately within user click gesture
     try {
@@ -740,7 +782,7 @@ function initEnvelopeOpener() {
       console.warn('Envelope flower burst:', err);
     }
 
-    // 3. Smoothly open envelope after brief bloom (420ms), transitioning to clean wedding card
+    // 3. Smoothly open envelope after brief bloom (350ms), transitioning to clean wedding card
     setTimeout(() => {
       if (envelopeScreen) envelopeScreen.classList.add('opened');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -754,11 +796,32 @@ function initEnvelopeOpener() {
       setTimeout(() => {
         startAutoScroll();
       }, 2000);
-    }, 420);
+    }, 350);
   }
 
-  if (btnOpen) btnOpen.addEventListener('click', handleOpenEnvelope);
-  if (waxSeal) waxSeal.addEventListener('click', handleOpenEnvelope);
+  // Assign global handler for inline fallbacks
+  window.handleOpenEnvelopeGlobal = handleOpenEnvelope;
+
+  if (btnOpen) {
+    btnOpen.addEventListener('click', handleOpenEnvelope);
+    btnOpen.addEventListener('touchend', handleOpenEnvelope, { passive: false });
+  }
+  if (waxSeal) {
+    waxSeal.addEventListener('click', handleOpenEnvelope);
+    waxSeal.addEventListener('touchend', handleOpenEnvelope, { passive: false });
+  }
+
+  // Also support tapping anywhere on envelope card for frictionless experience
+  const innerCard = document.querySelector('.envelope-inner-card');
+  if (innerCard) {
+    innerCard.style.cursor = 'pointer';
+    innerCard.addEventListener('click', (e) => {
+      if (e.target && (e.target.closest('#btn-open-envelope') || e.target.closest('#wax-seal-btn'))) {
+        return;
+      }
+      handleOpenEnvelope(e);
+    });
+  }
 }
 
 // 5. Audio Player (Supports both Direct MP3/Audio and YouTube Video)

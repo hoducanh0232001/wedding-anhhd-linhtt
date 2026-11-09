@@ -40,6 +40,21 @@
 
   <!-- Authentic Chung Đôi "Tender" Theme Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css?v=8.5" />
+  <script>
+    // Early Envelope Setup & Fallback Opener (instant zero-delay response)
+    (function() {
+      try {
+        var sp = new URLSearchParams(window.location.search);
+        var side = (sp.get('side') || '').toLowerCase();
+        window.__INITIAL_SIDE__ = side;
+        window.handleOpenEnvelopeGlobal = function(e) {
+          if (e && e.preventDefault && e.type !== 'click') e.preventDefault();
+          var scr = document.getElementById('envelope-screen');
+          if (scr) scr.classList.add('opened');
+        };
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body data-theme="tender">
 
@@ -57,7 +72,7 @@
         <img src="assets/images/theme/flower2.webp" alt="" class="flower-corner-br" />
 
         <!-- Monogram 3D Wax Seal with Heart SVG -->
-        <div id="wax-seal-btn" class="wax-seal-center" title="Nhấn để mở thiệp">
+        <div id="wax-seal-btn" class="wax-seal-center" title="Nhấn để mở thiệp" onclick="if(window.handleOpenEnvelopeGlobal)window.handleOpenEnvelopeGlobal(event)">
           <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
 
@@ -73,7 +88,20 @@
           <div class="line right"></div>
         </div>
 
-        <div class="env-date-text bind-date-text">29 tháng 11, 2026</div>
+        <div class="env-date-text bind-date-text" id="env-date-text">Chủ Nhật, 29 Tháng 11, 2026</div>
+
+        <script>
+          (function() {
+            try {
+              if (window.__INITIAL_SIDE__ === 'bride') {
+                var dt = document.getElementById('env-date-text');
+                if (dt) dt.textContent = 'Thứ Bảy, 28 Tháng 11, 2026';
+                var hd = document.getElementById('env-names-heading');
+                if (hd) hd.innerHTML = '<span class="bind-bride-short">Thuỳ Linh</span> <span class="amp">&</span> <span class="bind-groom-short">Đức Anh</span>';
+              }
+            } catch(e) {}
+          })();
+        </script>
 
         <!-- Personalized Guest Name Box -->
         <div class="env-guest-box">
@@ -81,7 +109,7 @@
           <div id="envelope-guest-name" class="env-guest-name">Quý Khách</div>
         </div>
 
-        <button id="btn-open-envelope" class="btn-open-wax">
+        <button id="btn-open-envelope" class="btn-open-wax" onclick="if(window.handleOpenEnvelopeGlobal)window.handleOpenEnvelopeGlobal(event)">
           <span>Mở thiệp</span>
           <div class="shine-line"></div>
         </button>
@@ -510,7 +538,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="assets/js/firebase-config.js?v=1.0"></script>
   <!-- Scripts -->
-  <script src="assets/js/data.js?v=6.7"></script>
-  <script src="assets/js/invite.js?v=8.8"></script>
+  <script src="assets/js/data.js?v=6.8"></script>
+  <script src="assets/js/invite.js?v=8.9"></script>
 </body>
 </html>

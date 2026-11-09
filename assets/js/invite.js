@@ -18,7 +18,7 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
 
   // 2. Known default wedding venue short link
   if (trimmed.includes('ijkYsunZoUQ79kQbA')) {
-    return 'https://maps.google.com/maps?q=20.9589449,105.7683679&z=16&output=embed';
+    return 'https://maps.google.com/maps?q=20.9589449,105.7683679+(Ho%C3%A0ng+Gia+Palace+-+Victoria+V%C4%83n+Ph%C3%BA)&z=16&output=embed';
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -373,8 +373,22 @@ function initDynamicContent(settings, activeSide) {
   // Polaroid hero image
   const heroPolaroid = document.getElementById('hero-polaroid-img');
   if (heroPolaroid) {
-    heroPolaroid.src = (settings.wedding && settings.wedding.heroPhoto) || 
-      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : 'assets/images/hero_couple.jpg');
+    heroPolaroid.onerror = function() {
+      const step = parseInt(this.dataset.triedFallback || '0', 10);
+      if (step === 0) {
+        this.dataset.triedFallback = '1';
+        this.src = '/assets/images/hero_couple.jpg';
+      } else if (step === 1) {
+        this.dataset.triedFallback = '2';
+        this.src = '/assets/images/gallery/photo_01.jpg';
+      }
+    };
+    let photoSrc = (settings.wedding && settings.wedding.heroPhoto) || 
+      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : '/assets/images/hero_couple.jpg');
+    if (photoSrc && !photoSrc.startsWith('/') && !photoSrc.startsWith('http') && !photoSrc.startsWith('data:')) {
+      photoSrc = '/' + photoSrc;
+    }
+    heroPolaroid.src = photoSrc;
   }
 
   // Banking
@@ -1066,17 +1080,19 @@ function initGallery(gallery) {
     const img = document.createElement('img');
     img.src = item.src;
     img.alt = item.caption || `Ảnh cưới ${idx + 1}`;
-    img.loading = 'lazy';
+    img.loading = idx < 4 ? 'eager' : 'lazy';
     card.appendChild(img);
 
-    card.addEventListener('click', () => {
-      if (idx === carouselActiveIdx) {
-        // Bấm ảnh giữa để phóng to xem Lightbox
-        openLightbox(idx);
-      } else {
-        // Bấm ảnh hai bên để xoay đến vị trí giữa
+    const sheen = document.createElement('div');
+    sheen.className = 'carousel-card-sheen';
+    card.appendChild(sheen);
+
+    // Clicking non-top cards shuffles them into view
+    card.addEventListener('click', (e) => {
+      if (idx !== carouselActiveIdx) {
+        e.stopPropagation();
         carouselActiveIdx = idx;
-        render3DCarousel();
+        renderCardStack();
         resetCarouselAutoTimer();
       }
     });
@@ -1084,13 +1100,7 @@ function initGallery(gallery) {
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        if (idx === carouselActiveIdx) {
-          openLightbox(idx);
-        } else {
-          carouselActiveIdx = idx;
-          render3DCarousel();
-          resetCarouselAutoTimer();
-        }
+        openLightbox(carouselActiveIdx);
       }
     });
 
@@ -1098,59 +1108,52 @@ function initGallery(gallery) {
     cards.push(card);
   });
 
-  function render3DCarousel() {
-    const width = window.innerWidth;
-    const isMobile = width < 640;
-    const isLarge = width >= 1024;
-    
-    // Spacing constants tuned for enlarged cards
-    const transXStep = isMobile ? 95 : (isLarge ? 135 : 120);
-    const transZStep = isMobile ? 80 : (isLarge ? 95 : 90);
-    const rotateStep = 30;
+  let isShuffling = false;
 
+  function renderCardStack() {
     cards.forEach((card, idx) => {
-      let l = idx - carouselActiveIdx;
-      // Wrap-around circular math
-      if (l > count / 2) l -= count;
-      else if (l < -count / 2) l += count;
+      card.classList.remove('fly-out-right', 'fly-out-left');
+      card.style.transition = 'transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease, box-shadow 0.5s ease';
 
-      const o = Math.abs(l);
+      const offset = (idx - carouselActiveIdx + count) % count;
 
-      if (o > 3) {
-        card.style.opacity = '0';
-        card.style.visibility = 'hidden';
-        card.style.pointerEvents = 'none';
-        card.style.zIndex = '0';
-      } else {
-        card.style.visibility = 'visible';
+      if (offset === 0) {
+        // TOP ACTIVE CARD
+        card.style.transform = 'translate3d(0, 0, 30px) rotate(0deg) scale(1)';
+        card.style.opacity = '1';
+        card.style.zIndex = '50';
         card.style.pointerEvents = 'auto';
-
-        let scale = 1;
-        let opacity = 1;
-        let translateX = 0;
-        let translateZ = 0;
-        let rotateY = 0;
-        let zIndex = 50 - o * 10;
-
-        if (o === 0) {
-          scale = 1;
-          opacity = 1;
-          translateX = 0;
-          translateZ = 0;
-          rotateY = 0;
-          card.classList.add('active-center');
-        } else {
-          card.classList.remove('active-center');
-          scale = Math.max(0.64, 1 - 0.12 * o);
-          opacity = Math.max(0.35, 1 - 0.18 * o);
-          translateX = (l > 0 ? 1 : -1) * (transXStep + (o - 1) * (isMobile ? 65 : (isLarge ? 90 : 80)));
-          translateZ = -(transZStep + (o - 1) * (isMobile ? 70 : 80));
-          rotateY = (l > 0 ? -1 : 1) * (rotateStep + (o - 1) * 10);
-        }
-
-        card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = zIndex;
+        card.classList.add('active-center');
+      } else if (offset === 1) {
+        // 1st card behind (peeking right)
+        card.style.transform = 'translate3d(14px, -8px, 15px) rotate(4.2deg) scale(0.96)';
+        card.style.opacity = '0.88';
+        card.style.zIndex = '40';
+        card.style.pointerEvents = 'auto';
+        card.classList.remove('active-center');
+      } else if (offset === 2) {
+        // 2nd card behind (peeking left)
+        card.style.transform = 'translate3d(-16px, -15px, 0px) rotate(-3.8deg) scale(0.92)';
+        card.style.opacity = '0.72';
+        card.style.zIndex = '30';
+        card.style.pointerEvents = 'auto';
+        card.classList.remove('active-center');
+      } else if (offset === 3) {
+        // 3rd card behind (subtle right)
+        card.style.transform = 'translate3d(8px, -22px, -15px) rotate(2.4deg) scale(0.88)';
+        card.style.opacity = '0.45';
+        card.style.zIndex = '20';
+        card.style.pointerEvents = 'none';
+        card.classList.remove('active-center');
+      } else {
+        // Hidden beneath deck
+        card.style.transform = 'translate3d(0, -26px, -30px) rotate(0deg) scale(0.84)';
+        card.style.opacity = '0';
+        card.style.zIndex = '10';
+        card.style.pointerEvents = 'none';
+        card.classList.remove('active-center');
+      }
+    });
       }
     });
 
@@ -1159,27 +1162,83 @@ function initGallery(gallery) {
     }
   }
 
-  function nextSlide() {
-    carouselActiveIdx = (carouselActiveIdx + 1) % count;
-    render3DCarousel();
+  function nextSlide(direction = 'right') {
+    if (isShuffling) return;
+    isShuffling = true;
+
+    const currentCard = cards[carouselActiveIdx];
+    const nextIdx = (carouselActiveIdx + 1) % count;
+    const nextCard = cards[nextIdx];
+
+    // 1. Top card flies out in an arc
+    if (currentCard) {
+      currentCard.classList.add(direction === 'left' ? 'fly-out-left' : 'fly-out-right');
+    }
+
+    // 2. Next card blooms up immediately to top position
+    if (nextCard) {
+      nextCard.style.transition = 'transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease';
+      nextCard.style.transform = 'translate3d(0, 0, 30px) rotate(0deg) scale(1)';
+      nextCard.style.opacity = '1';
+      nextCard.style.zIndex = '48';
+      nextCard.classList.add('active-center');
+    }
+
+    // Update counter immediately for responsive feel
+    if (counter) {
+      counter.textContent = `${nextIdx + 1} / ${count}`;
+    }
+
+    // 3. Once fly-out finishes, slip the old card into bottom of deck
+    setTimeout(() => {
+      carouselActiveIdx = nextIdx;
+      renderCardStack();
+      setTimeout(() => {
+        isShuffling = false;
+      }, 150);
+    }, 420);
   }
 
   function prevSlide() {
-    carouselActiveIdx = (carouselActiveIdx - 1 + count) % count;
-    render3DCarousel();
+    if (isShuffling) return;
+    isShuffling = true;
+
+    const prevIdx = (carouselActiveIdx - 1 + count) % count;
+    const prevCard = cards[prevIdx];
+
+    if (prevCard) {
+      // Position off-screen to the left
+      prevCard.style.transition = 'none';
+      prevCard.style.transform = 'translate3d(-125%, -25px, 60px) rotate(-18deg) scale(0.96)';
+      prevCard.style.opacity = '0.85';
+      prevCard.style.zIndex = '60';
+
+      void prevCard.offsetWidth; // Force reflow
+
+      // Glide in smoothly onto the top of stack
+      prevCard.style.transition = 'transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease';
+      carouselActiveIdx = prevIdx;
+      renderCardStack();
+
+      setTimeout(() => {
+        isShuffling = false;
+      }, 550);
+    } else {
+      isShuffling = false;
+    }
   }
 
   function resetCarouselAutoTimer() {
     if (carouselAutoTimer) clearInterval(carouselAutoTimer);
     if (!carouselIsHovered) {
-      carouselAutoTimer = setInterval(nextSlide, 3500);
+      carouselAutoTimer = setInterval(() => nextSlide('right'), 4200);
     }
   }
 
   if (nextBtn) {
     nextBtn.onclick = (e) => {
       e.stopPropagation();
-      nextSlide();
+      nextSlide('right');
       resetCarouselAutoTimer();
     };
   }
@@ -1192,49 +1251,110 @@ function initGallery(gallery) {
     };
   }
 
-  // Hover pause
+  // Interactive Touch & Mouse Drag on Top Card
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let currentDiffX = 0;
+
+  function onDragStart(clientX, clientY) {
+    if (isShuffling) return;
+    isDragging = true;
+    dragStartX = clientX;
+    dragStartY = clientY;
+    currentDiffX = 0;
+    carouselIsHovered = true;
+    if (carouselAutoTimer) clearInterval(carouselAutoTimer);
+  }
+
+  function onDragMove(clientX, clientY) {
+    if (!isDragging || isShuffling) return;
+    currentDiffX = clientX - dragStartX;
+    const diffY = clientY - dragStartY;
+
+    // Only drag horizontally
+    const topCard = cards[carouselActiveIdx];
+    if (topCard) {
+      topCard.style.transition = 'none';
+      const tilt = currentDiffX * 0.065;
+      const lift = -Math.abs(currentDiffX) * 0.08;
+      topCard.style.transform = `translate3d(${currentDiffX}px, ${lift}px, 45px) rotate(${tilt}deg) scale(1.01)`;
+      topCard.style.boxShadow = '0 30px 70px -10px rgba(81, 20, 25, 0.45), 0 14px 28px -5px rgba(0, 0, 0, 0.2)';
+    }
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    carouselIsHovered = false;
+
+    const threshold = 55;
+    if (currentDiffX > threshold) {
+      nextSlide('right');
+    } else if (currentDiffX < -threshold) {
+      nextSlide('left');
+    } else if (Math.abs(currentDiffX) < 6) {
+      // Pure click on top card -> Open Lightbox!
+      openLightbox(carouselActiveIdx);
+    } else {
+      // Snap back smoothly
+      renderCardStack();
+    }
+
+    currentDiffX = 0;
+    resetCarouselAutoTimer();
+  }
+
+  // Touch Events on Stage
   if (stage) {
+    stage.addEventListener('touchstart', (e) => {
+      onDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    stage.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        onDragMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    stage.addEventListener('touchend', () => {
+      onDragEnd();
+    }, { passive: true });
+
+    // Mouse Drag Support
+    stage.addEventListener('mousedown', (e) => {
+      // Don't drag if clicking navigation buttons
+      if (e.target.closest('.carousel-nav-btn')) return;
+      onDragStart(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) onDragMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) onDragEnd();
+    });
+
     stage.addEventListener('mouseenter', () => {
       carouselIsHovered = true;
       if (carouselAutoTimer) clearInterval(carouselAutoTimer);
     });
+
     stage.addEventListener('mouseleave', () => {
-      carouselIsHovered = false;
-      resetCarouselAutoTimer();
-    });
-
-    // Touch Swipe Support
-    let touchStartX = 0;
-    let touchStartY = 0;
-    stage.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      if (carouselAutoTimer) clearInterval(carouselAutoTimer);
-    }, { passive: true });
-
-    stage.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const touchEndY = e.changedTouches[0].clientY;
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX < 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
+      if (!isDragging) {
+        carouselIsHovered = false;
+        resetCarouselAutoTimer();
       }
-      resetCarouselAutoTimer();
-    }, { passive: true });
+    });
   }
 
   window.addEventListener('resize', () => {
-    render3DCarousel();
+    renderCardStack();
   });
 
   // Initial render & timer
-  render3DCarousel();
+  renderCardStack();
   resetCarouselAutoTimer();
 }
 

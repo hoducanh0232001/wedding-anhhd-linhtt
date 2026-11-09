@@ -140,6 +140,8 @@ function loadAllAdminData() {
   populateSettingsForm(settings);
   populateEventsForm(settings);
   populateBankingForm(settings);
+  const officialDisplay = document.getElementById('official-invite-url-display');
+  if (officialDisplay) officialDisplay.textContent = `${window.location.origin}/`;
   renderGuestsTable();
   renderRSVPsTable();
   renderAdminWishesList();
@@ -551,6 +553,7 @@ function renderGuestsTable() {
     return;
   }
 
+  // Luôn dùng tên miền chính thức khi trên Vercel để khách mời & Zalo/FB xem được công khai (không bị dính link preview tạm thời có mã bảo vệ SSO của Vercel)
   let domainOrigin = window.location.origin;
   if (window.location.hostname.includes('vercel.app')) {
     domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
@@ -615,11 +618,14 @@ function renderGuestsTable() {
       </td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <a href="${personalizedUrl}" target="_blank" class="admin-btn admin-btn-gold" style="padding:5px 10px;font-size:0.75rem;">
+          <a href="${personalizedUrl}" target="_blank" class="admin-btn admin-btn-gold" style="padding:5px 9px;font-size:0.75rem;">
             👁 Xem thử
           </a>
-          <button class="admin-btn admin-btn-primary" style="padding:5px 10px;font-size:0.75rem;" onclick="copyInviteMessage('${encodeURIComponent(inviteMessage)}')">
-            💬 Tin nhắn Zalo
+          <button class="admin-btn admin-btn-secondary" style="padding:5px 9px;font-size:0.75rem;background:#1877f2;color:#fff;border-color:#1877f2;" onclick="copyGuestLink('${encodeURIComponent(personalizedUrl)}')">
+            🔗 Link FB
+          </button>
+          <button class="admin-btn admin-btn-primary" style="padding:5px 9px;font-size:0.75rem;" onclick="copyInviteMessage('${encodeURIComponent(inviteMessage)}')">
+            💬 Tin Zalo
           </button>
           <button class="admin-btn admin-btn-danger" style="padding:5px 8px;font-size:0.75rem;" onclick="deleteGuestConfirm('${g.id}', '${encodeURIComponent(g.name)}')">
             🗑
@@ -633,14 +639,15 @@ function renderGuestsTable() {
 
 // Global guest action helpers
 window.copyGuestLink = function(url) {
-  navigator.clipboard.writeText(decodeURIComponent(url)).then(() => {
-    showAdminToast('Đã sao chép link thiệp mời cá nhân hoá!');
+  const fullUrl = decodeURIComponent(url);
+  navigator.clipboard.writeText(fullUrl).then(() => {
+    showAdminToast('Đã copy Link thiệp! (Mẹo: Dán vào ô chat Messenger và chờ 1-2s để Facebook load ảnh thiệp rồi mới bấm Gửi).');
   });
 };
 
 window.copyInviteMessage = function(msg) {
   navigator.clipboard.writeText(decodeURIComponent(msg)).then(() => {
-    showAdminToast('Đã sao chép nội dung tin nhắn mời cưới! Hãy dán vào Zalo/Messenger/SMS.');
+    showAdminToast('Đã copy tin nhắn kèm link mời cưới (tối ưu gửi Zalo/SMS)!');
   });
 };
 
@@ -992,7 +999,7 @@ window.switchAdminTab = function(tabName) {
 };
 
 window.copyOfficialLink = function() {
-  const url = 'https://wedding-anhhd-linhtt.vercel.app/';
+  const url = `${window.location.origin}/`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(() => {
       showAdminToast('Đã sao chép link thiệp cưới chính thức!');
@@ -1569,7 +1576,7 @@ function collectAndSaveSettings() {
   }
 
   // 6. Photo inputs
-  const heroPhotoInput = document.getElementById('hero-photo-input');
+  const heroPhotoInput = document.getElementById('admin-hero-photo-input') || document.getElementById('hero-photo-input');
   if (heroPhotoInput && heroPhotoInput.value.trim()) {
     current.wedding.heroPhoto = heroPhotoInput.value.trim();
   }

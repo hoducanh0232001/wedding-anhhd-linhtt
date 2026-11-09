@@ -344,7 +344,13 @@ function deepMergeSettings(target, source) {
       // Sanitize: If bride event mapUrl is empty or points to groom's Hoàng Gia Palace, or old unpinned road address, pin Nhà văn hoá thôn Phú Nhiêu
       if (merged.type === 'bride' || merged.id === 'event-bride') {
         const brideMapPin = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
-        if (!merged.mapUrl || merged.mapUrl.includes('ijkYsunZoUQ79kQbA') || merged.mapUrl.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || merged.mapUrl.includes('Thống Nhất')) {
+        let isLegacy = false;
+        try {
+          const dec = decodeURIComponent(merged.mapUrl || '');
+          if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
+        } catch(e) {}
+        if ((merged.mapUrl || '').includes('Th%E1%BB%91ng') || (merged.mapUrl || '').includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
+        if (!merged.mapUrl || isLegacy) {
           merged.mapUrl = brideMapPin;
         }
       }

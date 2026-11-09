@@ -30,8 +30,14 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   }
 
   // If bride venue had groom's link by mistake, or generic road text, pin Nhà Văn hóa thôn Phú Nhiêu
-  if (isBrideVenue && (trimmed.includes('ijkYsunZoUQ79kQbA') || trimmed.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || trimmed.includes('Thống Nhất'))) {
-    return brideEmbedFallback;
+  if (isBrideVenue) {
+    let isLegacy = false;
+    try {
+      const dec = decodeURIComponent(trimmed);
+      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
+    } catch(e) {}
+    if (trimmed.includes('Th%E1%BB%91ng') || trimmed.includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
+    if (isLegacy) return brideEmbedFallback;
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -316,7 +322,13 @@ function initDynamicContent(settings, activeSide) {
     
     const brideMapFallback = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
     let bMap = (brideEvent.mapUrl || '').trim();
-    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA') || bMap.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || bMap.includes('Thống Nhất')) {
+    let isLegacyBride = false;
+    try {
+      const dec = decodeURIComponent(bMap);
+      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+    } catch(e) {}
+    if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+    if (!bMap || isLegacyBride) {
       bMap = brideMapFallback;
     }
     mapUrlStr = bMap;

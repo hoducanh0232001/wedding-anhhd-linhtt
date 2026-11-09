@@ -111,7 +111,8 @@ const DEFAULT_SETTINGS = {
     "brideAccountHolder": "THAI THUY LINH",
     "musicUrl": "https://youtu.be/dElRVQFqj-k?si=nmDMWT9fAJ3GGVpz",
     "musicTitle": "Marry You - Bruno Mars",
-    "adminPasscode": "123456"
+    "adminPasscode": "123456",
+    "feastTime": "11:30"
   },
   "events": [
     {
@@ -121,12 +122,18 @@ const DEFAULT_SETTINGS = {
       "title": "Lễ Thành Hôn & Tiệc Chiêu Đãi",
       "time": "11:00",
       "receptionTime": "10:30",
+      "feastTime": "11:30",
       "date": "2026-11-29",
       "dateText": "Chủ Nhật, 29/11/2026",
       "lunarDateText": "Tức Ngày 21 Tháng 10 Năm Bính Ngọ",
       "venue": "Trung tâm tiệc cưới Hoàng Gia Palace",
       "address": "Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội",
       "mapUrl": "https://maps.app.goo.gl/ijkYsunZoUQ79kQbA",
+      "announcementText": "TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI",
+      "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
+      "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!",
+      "heroPhoto": "",
+      "musicUrl": "",
       "isPrimary": true
     },
     {
@@ -136,12 +143,18 @@ const DEFAULT_SETTINGS = {
       "title": "Tiệc Cưới Nhà Gái (Lễ Vu Quy)",
       "time": "17:30",
       "receptionTime": "16:30",
+      "feastTime": "18:00",
       "date": "2026-11-28",
       "dateText": "Thứ Bảy, 28/11/2026",
       "lunarDateText": "Tức Ngày 20 Tháng 10 Năm Bính Ngọ",
       "venue": "Tư Gia Nhà Gái",
       "address": "Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội",
       "mapUrl": "https://maps.google.com/?q=S%E1%BB%91+2+ng%C3%B5+4+%C4%90%C6%B0%E1%BB%9Dng+Th%E1%BB%91ng+Nh%E1%BA%A5t,+Ph%C3%BA+Nhi%C3%AAu,+Ph%C3%BA+Xuy%C3%AAn,+H%C3%A0+N%E1%BB%99i",
+      "announcementText": "TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI",
+      "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
+      "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho gia đình chúng mình!",
+      "heroPhoto": "",
+      "musicUrl": "",
       "isPrimary": false
     },
     {
@@ -151,12 +164,18 @@ const DEFAULT_SETTINGS = {
       "title": "Tiệc Cưới Nhà Trai (Lễ Tân Hôn)",
       "time": "09:00",
       "receptionTime": "08:30",
+      "feastTime": "11:30",
       "date": "2026-11-29",
       "dateText": "Chủ Nhật, 29/11/2026",
       "lunarDateText": "Tức Ngày 21 Tháng 10 Năm Bính Ngọ",
       "venue": "Tư Gia Nhà Trai",
       "address": "18LK 15 Khu đô thị Phú Lương, Văn Phú, Quận Hà Đông, Hà Nội",
       "mapUrl": "https://maps.google.com/?q=18LK+15+Khu+%C4%91%C3%B4+th%E1%BB%8B+Ph%C3%BA+L%C6%B0%C6%A1ng,+V%C4%83n+Ph%C3%BA,+H%C3%A0+%C4%90%C3%B4ng",
+      "announcementText": "TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI",
+      "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
+      "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!",
+      "heroPhoto": "",
+      "musicUrl": "",
       "isPrimary": false
     }
   ],
@@ -316,6 +335,15 @@ function deepMergeSettings(target, source) {
       result[key] = source[key];
     }
   }
+
+  // Ensure events array elements are deeply merged by matching id/type
+  if (Array.isArray(target.events) && Array.isArray(result.events)) {
+    result.events = target.events.map(defEv => {
+      const srcEv = result.events.find(e => e.id === defEv.id || e.type === defEv.type);
+      return srcEv ? { ...defEv, ...srcEv } : { ...defEv };
+    });
+  }
+
   return result;
 }
 

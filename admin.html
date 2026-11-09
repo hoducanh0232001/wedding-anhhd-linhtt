@@ -1669,69 +1669,214 @@ body.admin-body {
               </div>
             </div>
 
-            <!-- Date, Venue & Quotes -->
-            <div class="admin-card">
-              <div class="admin-card-header">
-                <h3>🗓 Ngày Cưới & Địa Điểm Chính</h3>
+            <!-- ==========================================
+                 CARD 3: TIỆC CƯỚI NHÀ TRAI (LỄ THÀNH HÔN)
+                 ========================================== -->
+            <div class="admin-card" style="border-left: 4px solid var(--admin-primary); margin-bottom: 20px;">
+              <div class="admin-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <h3 style="margin:0;">🏰 Thông Tin Tiệc Cưới Nhà Trai (Lễ Thành Hôn)</h3>
+                <span style="font-size:12px;background:#eedfcc;color:#511419;padding:4px 10px;border-radius:12px;font-weight:600;">Link: ?side=groom</span>
               </div>
               <div class="admin-card-body">
                 <div class="form-grid-2">
                   <div class="admin-form-group">
-                    <label class="admin-form-label">Ngày tổ chức (YYYY-MM-DD)</label>
+                    <label class="admin-form-label">Tên Sự Kiện / Tiêu đề thiệp Nhà Trai</label>
+                    <input type="text" id="groom-event-title" class="admin-form-input" placeholder="Lễ Thành Hôn & Tiệc Cưới" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Lời Báo Tin Hôn Lễ (Dưới danh sách phụ huynh)</label>
+                    <input type="text" id="groom-event-announce" class="admin-form-input" placeholder="TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI" />
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày tổ chức (YYYY-MM-DD) *</label>
                     <input type="date" id="wedding-date-input" class="admin-form-input" required />
                   </div>
                   <div class="admin-form-group">
-                    <label class="admin-form-label">Giờ bắt đầu (HH:MM)</label>
+                    <label class="admin-form-label">Giờ đón khách (HH:MM)</label>
+                    <input type="time" id="groom-reception-input" class="admin-form-input" value="10:30" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ làm lễ thành hôn (HH:MM) *</label>
                     <input type="time" id="wedding-time-input" class="admin-form-input" required />
                   </div>
                 </div>
 
-                <div class="form-grid-2">
+                <div class="form-grid-3">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ khai tiệc chiêu đãi (HH:MM)</label>
+                    <input type="time" id="groom-feast-input" class="admin-form-input" value="11:30" />
+                  </div>
                   <div class="admin-form-group">
                     <label class="admin-form-label">Ngày Dương lịch hiển thị</label>
-                    <input type="text" id="wedding-dateText-input" class="admin-form-input" />
+                    <input type="text" id="wedding-dateText-input" class="admin-form-input" placeholder="Chủ Nhật, 29 Tháng 11, 2026" />
                   </div>
                   <div class="admin-form-group">
                     <label class="admin-form-label">Ngày Âm lịch hiển thị</label>
-                    <input type="text" id="wedding-lunar-input" class="admin-form-input" />
+                    <input type="text" id="wedding-lunar-input" class="admin-form-input" placeholder="Tức Ngày 21 Tháng 10 Năm Bính Ngọ" />
                   </div>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="admin-form-group">
                     <label class="admin-form-label">Tên Nhà Hàng / Trung Tâm Tiệc Cưới</label>
-                    <input type="text" id="wedding-venue-input" class="admin-form-input" />
+                    <input type="text" id="wedding-venue-input" class="admin-form-input" placeholder="Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)" />
                   </div>
                   <div class="admin-form-group">
-                    <label class="admin-form-label">Địa chỉ chi tiết</label>
-                    <input type="text" id="wedding-address-input" class="admin-form-input" />
+                    <label class="admin-form-label">Địa chỉ chi tiết Nhà Trai</label>
+                    <input type="text" id="wedding-address-input" class="admin-form-input" placeholder="Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội" />
                   </div>
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-form-label">Link bản đồ Google Maps</label>
+                  <label class="admin-form-label">Link bản đồ Google Maps (Nhà Trai)</label>
                   <input type="text" id="wedding-mapUrl-input" class="admin-form-input" placeholder="Dán link Google Maps (vd: https://maps.app.goo.gl/...)" />
-                  <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Bản đồ trên thiệp sẽ tự động đồng bộ và ghim đúng vị trí tọa độ của link này</small>
+                  <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Bản đồ trên thiệp Nhà Trai sẽ tự động ghim vị trí link này</small>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Châm ngôn đầu thiệp Nhà Trai (Để trống nếu dùng mặc định)</label>
+                    <textarea id="groom-hero-quote-input" class="admin-form-textarea" rows="2" placeholder="Để trống để dùng châm ngôn chung"></textarea>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Lời cảm ơn chân thiệp Nhà Trai (Để trống nếu dùng mặc định)</label>
+                    <textarea id="groom-thankyou-quote-input" class="admin-form-textarea" rows="2" placeholder="Để trống để dùng lời cảm ơn chung"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Link ảnh Polaroid bìa thiệp Nhà Trai (Tuỳ chọn)</label>
+                    <input type="text" id="groom-hero-photo-input" class="admin-form-input" placeholder="assets/images/hero_couple.jpg" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Link nhạc nền riêng Nhà Trai (Tuỳ chọn)</label>
+                    <input type="text" id="groom-music-url-input" class="admin-form-input" placeholder="Để trống nếu dùng nhạc chung" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==========================================
+                 CARD 4: TIỆC CƯỚI NHÀ GÁI (LỄ VU QUY)
+                 ========================================== -->
+            <div class="admin-card" style="border-left: 4px solid #d946ef; margin-bottom: 20px;">
+              <div class="admin-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <h3 style="margin:0;color:#a21caf;">🌸 Thông Tin Tiệc Cưới Nhà Gái (Lễ Vu Quy)</h3>
+                <span style="font-size:12px;background:#fce7ec;color:#9b1c31;padding:4px 10px;border-radius:12px;font-weight:600;">Link: ?side=bride</span>
+              </div>
+              <div class="admin-card-body">
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Sự Kiện / Tiêu đề thiệp Nhà Gái</label>
+                    <input type="text" id="bride-event-title" class="admin-form-input" placeholder="Tiệc Cưới Nhà Gái (Lễ Vu Quy)" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Lời Báo Tin Vu Quy (Dưới danh sách phụ huynh)</label>
+                    <input type="text" id="bride-event-announce" class="admin-form-input" placeholder="TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI" />
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày tổ chức (YYYY-MM-DD) *</label>
+                    <input type="date" id="bride-event-date" class="admin-form-input" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ đón khách (HH:MM)</label>
+                    <input type="time" id="bride-event-reception" class="admin-form-input" value="16:30" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ làm lễ vu quy (HH:MM) *</label>
+                    <input type="time" id="bride-event-time" class="admin-form-input" required />
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Giờ khai tiệc chiêu đãi (HH:MM)</label>
+                    <input type="time" id="bride-event-feast" class="admin-form-input" value="18:00" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày Dương lịch hiển thị</label>
+                    <input type="text" id="bride-event-datetext" class="admin-form-input" placeholder="Thứ Bảy, 28/11/2026" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Ngày Âm lịch hiển thị</label>
+                    <input type="text" id="bride-event-lunar" class="admin-form-input" placeholder="Tức Ngày 20 Tháng 10 Năm Bính Ngọ" />
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tên Tư Gia / Rạp Cưới / Nhà Hàng Nhà Gái</label>
+                    <input type="text" id="bride-event-venue" class="admin-form-input" placeholder="Tư Gia Nhà Gái" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Địa chỉ chi tiết Nhà Gái</label>
+                    <input type="text" id="bride-event-address" class="admin-form-input" placeholder="Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội" />
+                  </div>
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-form-label">Châm ngôn tình yêu (Đầu thiệp)</label>
+                  <label class="admin-form-label">Link bản đồ Google Maps (Nhà Gái)</label>
+                  <input type="text" id="bride-event-map" class="admin-form-input" placeholder="Dán link Google Maps vị trí Nhà Gái" />
+                  <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Bản đồ trên thiệp Nhà Gái sẽ tự động ghim vị trí link này</small>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Châm ngôn đầu thiệp Nhà Gái (Để trống nếu dùng mặc định)</label>
+                    <textarea id="bride-hero-quote-input" class="admin-form-textarea" rows="2" placeholder="Để trống để dùng châm ngôn chung"></textarea>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Lời cảm ơn chân thiệp Nhà Gái (Để trống nếu dùng mặc định)</label>
+                    <textarea id="bride-thankyou-quote-input" class="admin-form-textarea" rows="2" placeholder="Để trống để dùng lời cảm ơn chung"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Link ảnh Polaroid bìa thiệp Nhà Gái (Tuỳ chọn)</label>
+                    <input type="text" id="bride-hero-photo-input" class="admin-form-input" placeholder="assets/images/gallery/photo_01.jpg" />
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Link nhạc nền riêng Nhà Gái (Tuỳ chọn)</label>
+                    <input type="text" id="bride-music-url-input" class="admin-form-input" placeholder="Để trống nếu dùng nhạc chung" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==========================================
+                 CARD 5: CÀI ĐẶT CHUNG & BẢO MẬT
+                 ========================================== -->
+            <div class="admin-card" style="margin-bottom: 24px;">
+              <div class="admin-card-header">
+                <h3>⚙️ Cài Đặt Chung &amp; Bảo Mật</h3>
+              </div>
+              <div class="admin-card-body">
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Châm ngôn tình yêu mặc định (Hiển thị đầu thiệp)</label>
                   <textarea id="hero-quote-input" class="admin-form-textarea" rows="2"></textarea>
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-form-label">Lời cảm ơn (Chân thiệp)</label>
+                  <label class="admin-form-label">Lời cảm ơn mặc định (Hiển thị chân thiệp)</label>
                   <textarea id="thankyou-quote-input" class="admin-form-textarea" rows="2"></textarea>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="admin-form-group">
-                    <label class="admin-form-label">Link nhạc nền (MP3 hoặc YouTube)</label>
+                    <label class="admin-form-label">Link nhạc nền chung (MP3 hoặc YouTube)</label>
                     <div style="display:flex;gap:8px;">
                       <input type="text" id="music-url-input" class="admin-form-input" style="flex:1;" placeholder="Dán link YouTube (vd: https://youtu.be/...) hoặc file .mp3" />
                       <button type="button" id="btn-test-admin-music" class="admin-btn admin-btn-outline" style="white-space:nowrap;padding:8px 14px;font-size:13px;">▶️ Nghe thử</button>
                     </div>
-                    <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Hỗ trợ dán trực tiếp link video YouTube hoặc link file .mp3</small>
+                    <small style="display:block;margin-top:4px;color:#6b7280;font-size:12px;">Nhạc nền chung phát khi mở thiệp (nếu Nhà Trai/Nhà Gái không đặt nhạc riêng)</small>
                   </div>
                   <div class="admin-form-group">
                     <label class="admin-form-label">Mật khẩu bảo vệ trang quản lý</label>
@@ -1739,7 +1884,7 @@ body.admin-body {
                   </div>
                 </div>
 
-                <button type="submit" class="admin-btn admin-btn-primary" style="padding:12px 28px;">
+                <button type="submit" class="admin-btn admin-btn-primary" style="padding:12px 28px;font-size:15px;margin-top:10px;">
                   💾 Lưu Toàn Bộ Cài Đặt
                 </button>
               </div>
@@ -1999,7 +2144,7 @@ body.admin-body {
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="assets/js/firebase-config.js?v=1.0"></script>
   <!-- Scripts -->
-  <script src="assets/js/data.js?v=5.5"></script>
-  <script src="assets/js/admin.js?v=5.5"></script>
+  <script src="assets/js/data.js?v=6.6"></script>
+  <script src="assets/js/admin.js?v=6.6"></script>
 </body>
 </html>

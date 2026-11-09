@@ -135,6 +135,7 @@ window.switchInviteSide = function(side) {
   const settings = WeddingDB.getSettings();
   initDynamicContent(settings, currentActiveSide);
   initPersonalizedGuest(settings);
+  initMusicPlayer(settings);
 
   // Switch bank tab to match side
   if (currentActiveSide === 'bride') {
@@ -184,6 +185,47 @@ function initDynamicContent(settings, activeSide) {
   const brideNameEls = document.querySelectorAll('.bind-bride-name');
   brideNameEls.forEach(el => el.textContent = brideFull);
 
+  // Order of Couple Names based on Side
+  const envHeading = document.getElementById('env-names-heading');
+  if (envHeading) {
+    if (currentSide === 'bride') {
+      envHeading.innerHTML = `<span class="bind-bride-short">${brideShort}</span> <span class="amp">&</span> <span class="bind-groom-short">${groomShort}</span>`;
+    } else {
+      envHeading.innerHTML = `<span class="bind-groom-short">${groomShort}</span> <span class="amp">&</span> <span class="bind-bride-short">${brideShort}</span>`;
+    }
+  }
+
+  const heroCoupleBlock = document.getElementById('hero-couple-names-block');
+  if (heroCoupleBlock) {
+    if (currentSide === 'bride') {
+      heroCoupleBlock.innerHTML = `
+        <div class="couple-single-name bind-bride-name">${brideFull}</div>
+        <div class="couple-names-amp">&</div>
+        <div class="couple-single-name bind-groom-name">${groomFull}</div>
+      `;
+    } else {
+      heroCoupleBlock.innerHTML = `
+        <div class="couple-single-name bind-groom-name">${groomFull}</div>
+        <div class="couple-names-amp">&</div>
+        <div class="couple-single-name bind-bride-name">${brideFull}</div>
+      `;
+    }
+  }
+
+  const guestbookSub = document.getElementById('guestbook-subtitle');
+  if (guestbookSub) {
+    guestbookSub.textContent = currentSide === 'bride'
+      ? `Gửi lời chúc phúc yêu thương đến ${brideShort} & ${groomShort}`
+      : `Gửi lời chúc phúc yêu thương đến ${groomShort} & ${brideShort}`;
+  }
+
+  const giftSub = document.getElementById('gift-section-subtitle');
+  if (giftSub) {
+    giftSub.textContent = currentSide === 'bride'
+      ? `Món quà tinh thần chúc phúc cho khởi đầu mới của ${brideShort} & ${groomShort}`
+      : `Món quà tinh thần chúc phúc cho khởi đầu mới của ${groomShort} & ${brideShort}`;
+  }
+
   // Parents
   const groomFather = document.getElementById('groom-father-display');
   if (groomFather) groomFather.textContent = settings.couple.groom.father || 'Hồ Xuân Tươi';
@@ -202,7 +244,7 @@ function initDynamicContent(settings, activeSide) {
   if (brideAddress) brideAddress.textContent = settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
 
   // Event information according to Side:
-  let weddingDateStr, weddingTimeStr, receptionTimeStr, venueTitleStr, venueAddressStr, mapUrlStr, dateTextStr, lunarDateStr, ceremonyTitleStr, announcementStr, receptionCardTitleStr;
+  let weddingDateStr, weddingTimeStr, receptionTimeStr, feastTimeStr, venueTitleStr, venueAddressStr, mapUrlStr, dateTextStr, lunarDateStr, ceremonyTitleStr, announcementStr, receptionCardTitleStr, heroQuoteStr, thankQuoteStr, heroPhotoStr, musicUrlStr;
 
   const brideEvent = (settings.events && settings.events.find(e => e.type === 'bride' || e.id === 'event-bride')) || {};
   const groomEvent = (settings.events && settings.events.find(e => e.type === 'groom' || e.type === 'main')) || {};
@@ -211,14 +253,19 @@ function initDynamicContent(settings, activeSide) {
     weddingDateStr = brideEvent.date || '2026-11-28';
     weddingTimeStr = brideEvent.time || '17:30';
     receptionTimeStr = brideEvent.receptionTime || '16:30';
+    feastTimeStr = brideEvent.feastTime || '18:00';
     dateTextStr = brideEvent.dateText || 'Thứ Bảy, 28/11/2026';
     lunarDateStr = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
     mapUrlStr = brideEvent.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(venueAddressStr));
-    ceremonyTitleStr = 'LỄ VU QUY & TIỆC CƯỚI';
-    announcementStr = 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
+    ceremonyTitleStr = brideEvent.title || 'LỄ VU QUY & TIỆC CƯỚI';
+    announcementStr = brideEvent.announcementText || 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
     receptionCardTitleStr = 'TIỆC CƯỚI NHÀ GÁI';
+    heroQuoteStr = brideEvent.heroQuote || settings.wedding.heroQuote || 'TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN';
+    thankQuoteStr = brideEvent.thankYouQuote || settings.wedding.thankYouQuote || 'Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho gia đình chúng mình!';
+    heroPhotoStr = brideEvent.heroPhoto || settings.wedding.heroPhoto || '/assets/images/hero_couple.jpg';
+    musicUrlStr = brideEvent.musicUrl || settings.wedding.musicUrl;
 
     // Couple announcement in Ceremony Card: Bride first
     const role1El = document.getElementById('ceremony-role-1');
@@ -236,14 +283,19 @@ function initDynamicContent(settings, activeSide) {
     weddingDateStr = settings.wedding.date || groomEvent.date || '2026-11-29';
     weddingTimeStr = settings.wedding.time || groomEvent.time || '11:00';
     receptionTimeStr = settings.wedding.receptionTime || groomEvent.receptionTime || '10:30';
+    feastTimeStr = groomEvent.feastTime || settings.wedding.feastTime || '11:30';
     dateTextStr = settings.wedding.dateText || groomEvent.dateText || 'Chủ Nhật, 29 Tháng 11, 2026';
     lunarDateStr = settings.wedding.lunarDateText || groomEvent.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ';
     venueTitleStr = settings.wedding.venueName || groomEvent.venue || 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)';
     venueAddressStr = settings.wedding.venueAddress || groomEvent.address || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
     mapUrlStr = settings.wedding.mapUrl || groomEvent.mapUrl || 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA';
-    ceremonyTitleStr = 'LỄ THÀNH HÔN & TIỆC CƯỚI';
-    announcementStr = settings.wedding.announcementText ? settings.wedding.announcementText.replace(/\n/g, ' ') : 'TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI';
-    receptionCardTitleStr = 'TIỆC CƯỚI';
+    ceremonyTitleStr = groomEvent.title || 'LỄ THÀNH HÔN & TIỆC CƯỚI';
+    announcementStr = groomEvent.announcementText || (settings.wedding.announcementText ? settings.wedding.announcementText.replace(/\n/g, ' ') : 'TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI');
+    receptionCardTitleStr = 'TIỆC CƯỚI NHÀ TRAI';
+    heroQuoteStr = groomEvent.heroQuote || settings.wedding.heroQuote || 'TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN';
+    thankQuoteStr = groomEvent.thankYouQuote || settings.wedding.thankYouQuote || 'Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho chúng mình!';
+    heroPhotoStr = groomEvent.heroPhoto || settings.wedding.heroPhoto || '/assets/images/hero_couple.jpg';
+    musicUrlStr = groomEvent.musicUrl || settings.wedding.musicUrl;
 
     // Couple announcement in Ceremony Card: Groom first
     const role1El = document.getElementById('ceremony-role-1');
@@ -356,21 +408,21 @@ function initDynamicContent(settings, activeSide) {
 
   const timelineFeast = document.getElementById('timeline-feast-time');
   if (timelineFeast) {
-    timelineFeast.textContent = currentSide === 'bride' ? `18:00 — KHAI TIỆC CHIÊU ĐÃI` : `11:30 — KHAI TIỆC CHIÊU ĐÃI`;
+    timelineFeast.textContent = `${feastTimeStr} — KHAI TIỆC CHIÊU ĐÃI`;
   }
 
-  // Quotes
+  // Quotes (Customized for each family side)
   const heroQuote = document.getElementById('hero-quote-text');
-  if (heroQuote && settings.wedding.heroQuote) {
-    heroQuote.textContent = settings.wedding.heroQuote;
+  if (heroQuote && heroQuoteStr) {
+    heroQuote.textContent = heroQuoteStr;
   }
 
   const thankQuote = document.getElementById('thankyou-quote-text');
-  if (thankQuote && settings.wedding.thankYouQuote) {
-    thankQuote.textContent = `“${settings.wedding.thankYouQuote}”`;
+  if (thankQuote && thankQuoteStr) {
+    thankQuote.textContent = `“${thankQuoteStr}”`;
   }
 
-  // Polaroid hero image
+  // Polaroid hero image (Customized for each family side)
   const heroPolaroid = document.getElementById('hero-polaroid-img');
   if (heroPolaroid) {
     heroPolaroid.onerror = function() {
@@ -383,8 +435,7 @@ function initDynamicContent(settings, activeSide) {
         this.src = '/assets/images/gallery/photo_01.jpg';
       }
     };
-    let photoSrc = (settings.wedding && settings.wedding.heroPhoto) || 
-      (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : '/assets/images/hero_couple.jpg');
+    let photoSrc = heroPhotoStr || (settings.gallery && settings.gallery[0] ? settings.gallery[0].src : '/assets/images/hero_couple.jpg');
     if (photoSrc && !photoSrc.startsWith('/') && !photoSrc.startsWith('http') && !photoSrc.startsWith('data:')) {
       photoSrc = '/' + photoSrc;
     }
@@ -420,7 +471,9 @@ function initDynamicContent(settings, activeSide) {
   // Footer
   const footerCoupleNames = document.getElementById('footer-couple-names');
   if (footerCoupleNames) {
-    footerCoupleNames.textContent = `${settings.couple.groom.fullName} & ${settings.couple.bride.fullName}`;
+    footerCoupleNames.textContent = currentSide === 'bride'
+      ? `${brideFull} & ${groomFull}`
+      : `${groomFull} & ${brideFull}`;
   }
 
   const footerWeddingDate = document.getElementById('footer-wedding-date');
@@ -714,11 +767,26 @@ function extractYouTubeId(url) {
   return match ? match[1] : null;
 }
 
-function initMusicPlayer(settings) {
+function initMusicPlayer(settings, overrideUrl) {
   const toggleBtn = document.getElementById('music-toggle-btn');
   if (!toggleBtn) return;
 
-  const musicUrl = settings && settings.wedding && settings.wedding.musicUrl ? settings.wedding.musicUrl.trim() : '';
+  const currentSide = currentActiveSide || 'groom';
+  const brideEvent = (settings && settings.events && settings.events.find(e => e.type === 'bride' || e.id === 'event-bride')) || {};
+  const groomEvent = (settings && settings.events && settings.events.find(e => e.type === 'groom' || e.type === 'main')) || {};
+
+  let musicUrl = overrideUrl;
+  if (!musicUrl) {
+    if (currentSide === 'bride' && brideEvent.musicUrl) {
+      musicUrl = brideEvent.musicUrl.trim();
+    } else if (currentSide === 'groom' && groomEvent.musicUrl) {
+      musicUrl = groomEvent.musicUrl.trim();
+    } else if (settings && settings.wedding && settings.wedding.musicUrl) {
+      musicUrl = settings.wedding.musicUrl.trim();
+    } else {
+      musicUrl = '';
+    }
+  }
 
   // If already configured for this exact URL, do not re-create player
   if (currentMusicUrl !== null && currentMusicUrl === musicUrl) {
@@ -1535,10 +1603,22 @@ window.addToGoogleCalendar = function(title, date, time, location) {
 
 window.addActiveWeddingToCalendar = function() {
   const settings = WeddingDB.getSettings();
-  const title = `Lễ Thành Hôn ${settings.couple.groom.fullName || 'Hồ Đức Anh'} & ${settings.couple.bride.fullName || 'Thái Thuỳ Linh'}`;
-  const date = settings.wedding.date || '2026-11-29';
-  const time = settings.wedding.time || '11:00';
-  const location = `${settings.wedding.venueName || ''} - ${settings.wedding.venueAddress || ''}`.trim();
+  const brideEvent = (settings.events && settings.events.find(e => e.type === 'bride' || e.id === 'event-bride')) || {};
+  const groomEvent = (settings.events && settings.events.find(e => e.type === 'groom' || e.type === 'main')) || {};
+
+  let title, date, time, location;
+  if (currentActiveSide === 'bride') {
+    title = `Lễ Vu Quy: ${settings.couple.bride.fullName || 'Thái Thuỳ Linh'} & ${settings.couple.groom.fullName || 'Hồ Đức Anh'}`;
+    date = brideEvent.date || '2026-11-28';
+    time = brideEvent.time || '17:30';
+    location = `${brideEvent.venue || 'Tư Gia Nhà Gái'} - ${brideEvent.address || settings.couple.bride.address || ''}`.trim();
+  } else {
+    title = `Lễ Thành Hôn: ${settings.couple.groom.fullName || 'Hồ Đức Anh'} & ${settings.couple.bride.fullName || 'Thái Thuỳ Linh'}`;
+    date = settings.wedding.date || groomEvent.date || '2026-11-29';
+    time = settings.wedding.time || groomEvent.time || '11:00';
+    location = `${settings.wedding.venueName || groomEvent.venue || ''} - ${settings.wedding.venueAddress || groomEvent.address || ''}`.trim();
+  }
+
   window.addToGoogleCalendar(title, date, time, location);
 };
 

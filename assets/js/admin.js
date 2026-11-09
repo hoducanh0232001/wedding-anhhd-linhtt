@@ -203,37 +203,112 @@ function updateDashboardStats() {
 // 5. Populate Couple & Wedding Settings Form
 function populateSettingsForm(settings) {
   // Couple
-  document.getElementById('groom-fullName').value = settings.couple.groom.fullName;
-  document.getElementById('groom-shortName').value = settings.couple.groom.shortName;
-  document.getElementById('groom-bio-input').value = settings.couple.groom.bio;
-  document.getElementById('groom-photo-input').value = settings.couple.groom.photo;
-  document.getElementById('groom-father-input').value = settings.couple.groom.father;
-  document.getElementById('groom-mother-input').value = settings.couple.groom.mother;
+  document.getElementById('groom-fullName').value = settings.couple.groom.fullName || '';
+  document.getElementById('groom-shortName').value = settings.couple.groom.shortName || '';
+  document.getElementById('groom-bio-input').value = settings.couple.groom.bio || '';
+  document.getElementById('groom-photo-input').value = settings.couple.groom.photo || '';
+  document.getElementById('groom-father-input').value = settings.couple.groom.father || '';
+  document.getElementById('groom-mother-input').value = settings.couple.groom.mother || '';
   const groomAddrInput = document.getElementById('groom-address-input');
   if (groomAddrInput) groomAddrInput.value = settings.couple.groom.address || '';
 
-  document.getElementById('bride-fullName').value = settings.couple.bride.fullName;
-  document.getElementById('bride-shortName').value = settings.couple.bride.shortName;
-  document.getElementById('bride-bio-input').value = settings.couple.bride.bio;
-  document.getElementById('bride-photo-input').value = settings.couple.bride.photo;
-  document.getElementById('bride-father-input').value = settings.couple.bride.father;
-  document.getElementById('bride-mother-input').value = settings.couple.bride.mother;
+  document.getElementById('bride-fullName').value = settings.couple.bride.fullName || '';
+  document.getElementById('bride-shortName').value = settings.couple.bride.shortName || '';
+  document.getElementById('bride-bio-input').value = settings.couple.bride.bio || '';
+  document.getElementById('bride-photo-input').value = settings.couple.bride.photo || '';
+  document.getElementById('bride-father-input').value = settings.couple.bride.father || '';
+  document.getElementById('bride-mother-input').value = settings.couple.bride.mother || '';
   const brideAddrInput = document.getElementById('bride-address-input');
   if (brideAddrInput) brideAddrInput.value = settings.couple.bride.address || '';
 
-  // Wedding Date & Venue
-  document.getElementById('wedding-date-input').value = settings.wedding.date;
-  document.getElementById('wedding-time-input').value = settings.wedding.time;
-  document.getElementById('wedding-dateText-input').value = settings.wedding.dateText;
-  document.getElementById('wedding-lunar-input').value = settings.wedding.lunarDateText;
-  document.getElementById('wedding-venue-input').value = settings.wedding.venueName;
-  document.getElementById('wedding-address-input').value = settings.wedding.venueAddress;
-  document.getElementById('wedding-mapUrl-input').value = settings.wedding.mapUrl;
+  const brideEvent = (settings.events && settings.events.find(e => e.type === 'bride' || e.id === 'event-bride')) || {};
+  const groomEvent = (settings.events && settings.events.find(e => e.type === 'groom' || e.type === 'main')) || {};
 
-  // Quotes & Music & Passcode
-  document.getElementById('hero-quote-input').value = settings.wedding.heroQuote;
-  document.getElementById('thankyou-quote-input').value = settings.wedding.thankYouQuote;
-  document.getElementById('music-url-input').value = settings.wedding.musicUrl;
+  // Groom Event (Nhà Trai)
+  const groomTitle = document.getElementById('groom-event-title');
+  if (groomTitle) groomTitle.value = groomEvent.title || 'Lễ Thành Hôn & Tiệc Cưới';
+
+  const groomAnnounce = document.getElementById('groom-event-announce');
+  if (groomAnnounce) groomAnnounce.value = groomEvent.announcementText || settings.wedding.announcementText || 'TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI';
+
+  document.getElementById('wedding-date-input').value = settings.wedding.date || groomEvent.date || '';
+  
+  const groomReception = document.getElementById('groom-reception-input');
+  if (groomReception) groomReception.value = settings.wedding.receptionTime || groomEvent.receptionTime || '10:30';
+
+  document.getElementById('wedding-time-input').value = settings.wedding.time || groomEvent.time || '';
+
+  const groomFeast = document.getElementById('groom-feast-input');
+  if (groomFeast) groomFeast.value = groomEvent.feastTime || settings.wedding.feastTime || '11:30';
+
+  document.getElementById('wedding-dateText-input').value = settings.wedding.dateText || groomEvent.dateText || '';
+  document.getElementById('wedding-lunar-input').value = settings.wedding.lunarDateText || groomEvent.lunarDateText || '';
+  document.getElementById('wedding-venue-input').value = settings.wedding.venueName || groomEvent.venue || '';
+  document.getElementById('wedding-address-input').value = settings.wedding.venueAddress || groomEvent.address || '';
+  document.getElementById('wedding-mapUrl-input').value = settings.wedding.mapUrl || groomEvent.mapUrl || '';
+
+  const groomQuote = document.getElementById('groom-hero-quote-input');
+  if (groomQuote) groomQuote.value = groomEvent.heroQuote || '';
+
+  const groomThank = document.getElementById('groom-thankyou-quote-input');
+  if (groomThank) groomThank.value = groomEvent.thankYouQuote || '';
+
+  const groomPhoto = document.getElementById('groom-hero-photo-input');
+  if (groomPhoto) groomPhoto.value = groomEvent.heroPhoto || '';
+
+  const groomMusic = document.getElementById('groom-music-url-input');
+  if (groomMusic) groomMusic.value = groomEvent.musicUrl || '';
+
+  // Bride Event (Nhà Gái)
+  const brideTitle = document.getElementById('bride-event-title');
+  if (brideTitle) brideTitle.value = brideEvent.title || 'Tiệc Cưới Nhà Gái (Lễ Vu Quy)';
+
+  const brideAnnounce = document.getElementById('bride-event-announce');
+  if (brideAnnounce) brideAnnounce.value = brideEvent.announcementText || 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
+
+  const brideDate = document.getElementById('bride-event-date');
+  if (brideDate) brideDate.value = brideEvent.date || '2026-11-28';
+
+  const brideReception = document.getElementById('bride-event-reception');
+  if (brideReception) brideReception.value = brideEvent.receptionTime || '16:30';
+
+  const brideTime = document.getElementById('bride-event-time');
+  if (brideTime) brideTime.value = brideEvent.time || '17:30';
+
+  const brideFeast = document.getElementById('bride-event-feast');
+  if (brideFeast) brideFeast.value = brideEvent.feastTime || '18:00';
+
+  const brideDateText = document.getElementById('bride-event-datetext');
+  if (brideDateText) brideDateText.value = brideEvent.dateText || 'Thứ Bảy, 28/11/2026';
+
+  const brideLunar = document.getElementById('bride-event-lunar');
+  if (brideLunar) brideLunar.value = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
+
+  const brideVenue = document.getElementById('bride-event-venue');
+  if (brideVenue) brideVenue.value = brideEvent.venue || 'Tư Gia Nhà Gái';
+
+  const brideAddress = document.getElementById('bride-event-address');
+  if (brideAddress) brideAddress.value = brideEvent.address || settings.couple.bride.address || '';
+
+  const brideMap = document.getElementById('bride-event-map');
+  if (brideMap) brideMap.value = brideEvent.mapUrl || '';
+
+  const brideQuote = document.getElementById('bride-hero-quote-input');
+  if (brideQuote) brideQuote.value = brideEvent.heroQuote || '';
+
+  const brideThank = document.getElementById('bride-thankyou-quote-input');
+  if (brideThank) brideThank.value = brideEvent.thankYouQuote || '';
+
+  const bridePhoto = document.getElementById('bride-hero-photo-input');
+  if (bridePhoto) bridePhoto.value = brideEvent.heroPhoto || '';
+
+  const brideMusic = document.getElementById('bride-music-url-input');
+  if (brideMusic) brideMusic.value = brideEvent.musicUrl || '';
+
+  // Common Quotes & Music & Passcode
+  document.getElementById('hero-quote-input').value = settings.wedding.heroQuote || '';
+  document.getElementById('thankyou-quote-input').value = settings.wedding.thankYouQuote || '';
+  document.getElementById('music-url-input').value = settings.wedding.musicUrl || '';
   document.getElementById('admin-passcode-input').value = settings.wedding.adminPasscode || '123456';
 }
 
@@ -247,6 +322,7 @@ function setupEventListeners() {
 
   setupGalleryEventListeners();
 
+  // Auto calculate groom date text
   const dateInput = document.getElementById('wedding-date-input');
   const dateTextInput = document.getElementById('wedding-dateText-input');
   if (dateInput && dateTextInput) {
@@ -256,6 +332,21 @@ function setupEventListeners() {
         if (!isNaN(d)) {
           const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
           dateTextInput.value = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
+        }
+      }
+    });
+  }
+
+  // Auto calculate bride date text
+  const brideDateInput = document.getElementById('bride-event-date');
+  const brideDateTextInput = document.getElementById('bride-event-datetext');
+  if (brideDateInput && brideDateTextInput) {
+    brideDateInput.addEventListener('change', () => {
+      if (brideDateInput.value) {
+        const d = new Date(brideDateInput.value);
+        if (!isNaN(d)) {
+          const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+          brideDateTextInput.value = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
         }
       }
     });
@@ -299,30 +390,126 @@ function setupEventListeners() {
       const bAddr = document.getElementById('bride-address-input');
       if (bAddr) current.couple.bride.address = bAddr.value.trim();
 
-      current.wedding.date = document.getElementById('wedding-date-input').value;
-      current.wedding.time = document.getElementById('wedding-time-input').value;
-      
-      let dateTextVal = document.getElementById('wedding-dateText-input').value.trim();
-      if (!dateTextVal && current.wedding.date) {
-        const d = new Date(current.wedding.date);
+      // 1. Groom Event Data
+      const groomTitleVal = (document.getElementById('groom-event-title')?.value || '').trim() || 'Lễ Thành Hôn & Tiệc Cưới';
+      const groomAnnounceVal = (document.getElementById('groom-event-announce')?.value || '').trim() || 'TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI';
+      const groomDateVal = document.getElementById('wedding-date-input').value;
+      const groomTimeVal = document.getElementById('wedding-time-input').value;
+      const groomReceptionVal = (document.getElementById('groom-reception-input')?.value || '').trim() || '10:30';
+      const groomFeastVal = (document.getElementById('groom-feast-input')?.value || '').trim() || '11:30';
+
+      let groomDateTextVal = document.getElementById('wedding-dateText-input').value.trim();
+      if (!groomDateTextVal && groomDateVal) {
+        const d = new Date(groomDateVal);
         if (!isNaN(d)) {
           const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-          dateTextVal = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
+          groomDateTextVal = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
         }
       }
-      current.wedding.dateText = dateTextVal;
-      current.wedding.lunarDateText = document.getElementById('wedding-lunar-input').value.trim();
-      current.wedding.venueName = document.getElementById('wedding-venue-input').value.trim();
-      current.wedding.venueAddress = document.getElementById('wedding-address-input').value.trim();
-      current.wedding.mapUrl = document.getElementById('wedding-mapUrl-input').value.trim();
 
+      const groomLunarVal = document.getElementById('wedding-lunar-input').value.trim();
+      const groomVenueVal = document.getElementById('wedding-venue-input').value.trim();
+      const groomAddressVal = document.getElementById('wedding-address-input').value.trim();
+      const groomMapVal = document.getElementById('wedding-mapUrl-input').value.trim();
+      const groomQuoteVal = (document.getElementById('groom-hero-quote-input')?.value || '').trim();
+      const groomThankVal = (document.getElementById('groom-thankyou-quote-input')?.value || '').trim();
+      const groomPhotoVal = (document.getElementById('groom-hero-photo-input')?.value || '').trim();
+      const groomMusicVal = (document.getElementById('groom-music-url-input')?.value || '').trim();
+
+      // Save into wedding (primary/groom)
+      current.wedding.date = groomDateVal;
+      current.wedding.time = groomTimeVal;
+      current.wedding.receptionTime = groomReceptionVal;
+      current.wedding.feastTime = groomFeastVal;
+      current.wedding.dateText = groomDateTextVal;
+      current.wedding.lunarDateText = groomLunarVal;
+      current.wedding.venueName = groomVenueVal;
+      current.wedding.venueAddress = groomAddressVal;
+      current.wedding.mapUrl = groomMapVal;
+      current.wedding.announcementText = groomAnnounceVal;
+
+      // 2. Bride Event Data
+      const brideTitleVal = (document.getElementById('bride-event-title')?.value || '').trim() || 'Tiệc Cưới Nhà Gái (Lễ Vu Quy)';
+      const brideAnnounceVal = (document.getElementById('bride-event-announce')?.value || '').trim() || 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
+      const brideDateVal = (document.getElementById('bride-event-date')?.value || '').trim() || '2026-11-28';
+      const brideTimeVal = (document.getElementById('bride-event-time')?.value || '').trim() || '17:30';
+      const brideReceptionVal = (document.getElementById('bride-event-reception')?.value || '').trim() || '16:30';
+      const brideFeastVal = (document.getElementById('bride-event-feast')?.value || '').trim() || '18:00';
+
+      let brideDateTextVal = (document.getElementById('bride-event-datetext')?.value || '').trim();
+      if (!brideDateTextVal && brideDateVal) {
+        const d = new Date(brideDateVal);
+        if (!isNaN(d)) {
+          const daysOfWeekVi = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+          brideDateTextVal = `${daysOfWeekVi[d.getDay()]}, ${d.getDate()} Tháng ${d.getMonth() + 1}, ${d.getFullYear()}`;
+        }
+      }
+
+      const brideLunarVal = (document.getElementById('bride-event-lunar')?.value || '').trim() || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
+      const brideVenueVal = (document.getElementById('bride-event-venue')?.value || '').trim() || 'Tư Gia Nhà Gái';
+      const brideAddressVal = (document.getElementById('bride-event-address')?.value || '').trim() || current.couple.bride.address || '';
+      const brideMapVal = (document.getElementById('bride-event-map')?.value || '').trim();
+      const brideQuoteVal = (document.getElementById('bride-hero-quote-input')?.value || '').trim();
+      const brideThankVal = (document.getElementById('bride-thankyou-quote-input')?.value || '').trim();
+      const bridePhotoVal = (document.getElementById('bride-hero-photo-input')?.value || '').trim();
+      const brideMusicVal = (document.getElementById('bride-music-url-input')?.value || '').trim();
+
+      // Sync into events array
+      if (!current.events) current.events = [];
+
+      // Bride event
+      let bEv = current.events.find(e => e.type === 'bride' || e.id === 'event-bride');
+      if (!bEv) {
+        bEv = { id: 'event-bride', type: 'bride', badge: 'NHÀ GÁI' };
+        current.events.push(bEv);
+      }
+      bEv.title = brideTitleVal;
+      bEv.announcementText = brideAnnounceVal;
+      bEv.date = brideDateVal;
+      bEv.time = brideTimeVal;
+      bEv.receptionTime = brideReceptionVal;
+      bEv.feastTime = brideFeastVal;
+      bEv.dateText = brideDateTextVal;
+      bEv.lunarDateText = brideLunarVal;
+      bEv.venue = brideVenueVal;
+      bEv.address = brideAddressVal;
+      bEv.mapUrl = brideMapVal || ('https://maps.google.com/?q=' + encodeURIComponent(brideAddressVal));
+      bEv.heroQuote = brideQuoteVal;
+      bEv.thankYouQuote = brideThankVal;
+      bEv.heroPhoto = bridePhotoVal;
+      bEv.musicUrl = brideMusicVal;
+
+      // Groom events (event-main and event-groom)
+      let gEv = current.events.find(e => e.type === 'main' || e.id === 'event-main');
+      if (!gEv) {
+        gEv = { id: 'event-main', type: 'main', badge: 'TIỆC CƯỚI CHÍNH', isPrimary: true };
+        current.events.push(gEv);
+      }
+      gEv.title = groomTitleVal;
+      gEv.announcementText = groomAnnounceVal;
+      gEv.date = groomDateVal;
+      gEv.time = groomTimeVal;
+      gEv.receptionTime = groomReceptionVal;
+      gEv.feastTime = groomFeastVal;
+      gEv.dateText = groomDateTextVal;
+      gEv.lunarDateText = groomLunarVal;
+      gEv.venue = groomVenueVal;
+      gEv.address = groomAddressVal;
+      gEv.mapUrl = groomMapVal;
+      gEv.heroQuote = groomQuoteVal;
+      gEv.thankYouQuote = groomThankVal;
+      gEv.heroPhoto = groomPhotoVal;
+      gEv.musicUrl = groomMusicVal;
+
+      // 3. Common Settings
       current.wedding.heroQuote = document.getElementById('hero-quote-input').value.trim();
       current.wedding.thankYouQuote = document.getElementById('thankyou-quote-input').value.trim();
       current.wedding.musicUrl = document.getElementById('music-url-input').value.trim();
       current.wedding.adminPasscode = document.getElementById('admin-passcode-input').value.trim();
 
       WeddingDB.saveSettings(current);
-      showAdminToast('Đã lưu thông tin thiệp cưới thành công!');
+      populateEventsForm(current);
+      showAdminToast('Đã lưu toàn bộ thông tin thiệp cưới (Nhà Trai & Nhà Gái) thành công!');
     });
   }
 
@@ -791,15 +978,19 @@ function populateEventsForm(settings) {
           <input type="text" class="admin-form-input event-field-title" data-idx="${idx}" value="${ev.title || ''}" />
         </div>
         <div class="admin-form-group">
-          <label class="admin-form-label">Giờ Khai Tiệc (HH:MM)</label>
-          <input type="text" class="admin-form-input event-field-time" data-idx="${idx}" value="${ev.time || ''}" placeholder="17:30" />
-        </div>
-        <div class="admin-form-group">
           <label class="admin-form-label">Giờ Đón Khách (HH:MM)</label>
           <input type="text" class="admin-form-input event-field-reception" data-idx="${idx}" value="${ev.receptionTime || ''}" placeholder="16:30" />
         </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Giờ Làm Lễ (HH:MM)</label>
+          <input type="text" class="admin-form-input event-field-time" data-idx="${idx}" value="${ev.time || ''}" placeholder="17:30" />
+        </div>
       </div>
       <div class="form-grid-3">
+        <div class="admin-form-group">
+          <label class="admin-form-label">Giờ Khai Tiệc (HH:MM)</label>
+          <input type="text" class="admin-form-input event-field-feast" data-idx="${idx}" value="${ev.feastTime || ''}" placeholder="18:00" />
+        </div>
         <div class="admin-form-group">
           <label class="admin-form-label">Ngày Tổ Chức (YYYY-MM-DD)</label>
           <input type="date" class="admin-form-input event-field-date" data-idx="${idx}" value="${ev.date || ''}" />
@@ -808,12 +999,12 @@ function populateEventsForm(settings) {
           <label class="admin-form-label">Dòng Ngày Hiển Thị</label>
           <input type="text" class="admin-form-input event-field-datetext" data-idx="${idx}" value="${ev.dateText || ''}" placeholder="Thứ Bảy, 28/11/2026" />
         </div>
+      </div>
+      <div class="form-grid-3">
         <div class="admin-form-group">
           <label class="admin-form-label">Ngày Âm Lịch Hiển Thị</label>
           <input type="text" class="admin-form-input event-field-lunar" data-idx="${idx}" value="${ev.lunarDateText || ''}" placeholder="Tức Ngày 20 Tháng 10 Năm Bính Ngọ" />
         </div>
-      </div>
-      <div class="form-grid-2">
         <div class="admin-form-group">
           <label class="admin-form-label">Địa Điểm / Nhà Hàng</label>
           <input type="text" class="admin-form-input event-field-venue" data-idx="${idx}" value="${ev.venue || ''}" />
@@ -838,6 +1029,7 @@ window.saveEventsFromAdmin = function() {
   const titles = document.querySelectorAll('.event-field-title');
   const times = document.querySelectorAll('.event-field-time');
   const receptions = document.querySelectorAll('.event-field-reception');
+  const feasts = document.querySelectorAll('.event-field-feast');
   const dates = document.querySelectorAll('.event-field-date');
   const dateTexts = document.querySelectorAll('.event-field-datetext');
   const lunars = document.querySelectorAll('.event-field-lunar');
@@ -850,6 +1042,7 @@ window.saveEventsFromAdmin = function() {
       current.events[idx].title = el.value.trim();
       if (times[idx]) current.events[idx].time = times[idx].value.trim();
       if (receptions[idx]) current.events[idx].receptionTime = receptions[idx].value.trim();
+      if (feasts[idx]) current.events[idx].feastTime = feasts[idx].value.trim();
       if (dates[idx] && dates[idx].value) current.events[idx].date = dates[idx].value.trim();
       if (dateTexts[idx]) current.events[idx].dateText = dateTexts[idx].value.trim();
       if (lunars[idx]) current.events[idx].lunarDateText = lunars[idx].value.trim();
@@ -860,6 +1053,7 @@ window.saveEventsFromAdmin = function() {
   });
 
   WeddingDB.saveSettings(current);
+  populateSettingsForm(current);
   showAdminToast('Đã lưu thông tin các sự kiện cưới (Nhà Trai & Nhà Gái)!');
 };
 

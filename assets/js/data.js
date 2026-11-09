@@ -149,7 +149,7 @@ const DEFAULT_SETTINGS = {
       "lunarDateText": "Tức Ngày 20 Tháng 10 Năm Bính Ngọ",
       "venue": "Tư Gia Nhà Gái",
       "address": "Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội",
-      "mapUrl": "https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z",
+      "mapUrl": "https://www.google.com/maps?q=20.762152677441485,105.88646044972819",
       "announcementText": "TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI",
       "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
       "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho gia đình chúng mình!",
@@ -341,9 +341,9 @@ function deepMergeSettings(target, source) {
     result.events = target.events.map(defEv => {
       const srcEv = result.events.find(e => e.id === defEv.id || e.type === defEv.type);
       const merged = srcEv ? { ...defEv, ...srcEv } : { ...defEv };
-      // Sanitize: If bride event mapUrl is empty or points to groom's Hoàng Gia Palace, or old unpinned road address, pin Nhà văn hoá thôn Phú Nhiêu
+      // Sanitize: If bride event mapUrl is empty or points to groom's Hoàng Gia Palace, or old unpinned road address, pin to exact coordinates 20.762152677441485, 105.88646044972819
       if (merged.type === 'bride' || merged.id === 'event-bride') {
-        const brideMapPin = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+        const brideMapPin = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
         let isLegacy = false;
         try {
           const dec = decodeURIComponent(merged.mapUrl || '');

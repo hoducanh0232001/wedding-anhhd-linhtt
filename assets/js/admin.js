@@ -304,7 +304,7 @@ function populateSettingsForm(settings) {
     } catch(e) {}
     if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
     if (!bMap || isLegacyBride) {
-      bMap = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+      bMap = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
     }
     brideMap.value = bMap;
   }
@@ -489,7 +489,7 @@ function setupEventListeners() {
       bEv.lunarDateText = brideLunarVal;
       bEv.venue = brideVenueVal;
       bEv.address = brideAddressVal;
-      const brideDefaultMap = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+      const brideDefaultMap = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
       bEv.mapUrl = (brideMapVal && !brideMapVal.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') && !brideMapVal.includes('Thống Nhất')) ? brideMapVal : brideDefaultMap;
       bEv.heroQuote = brideQuoteVal;
       bEv.thankYouQuote = brideThankVal;

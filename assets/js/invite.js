@@ -4,7 +4,7 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy') || venueName.includes('Phú Nhiêu'))) ||
                        (venueAddress && venueAddress.includes('Phú Xuyên'));
 
-  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.7621251,105.8864202+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=16&output=embed';
+  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.762152677441485,105.88646044972819+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=17&output=embed';
 
   if (!url) {
     if (isBrideVenue) {
@@ -318,7 +318,7 @@ function initDynamicContent(settings, activeSide) {
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
     
-    const brideMapFallback = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+    const brideMapFallback = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
     let bMap = (brideEvent.mapUrl || '').trim();
     let isLegacyBride = false;
     try {

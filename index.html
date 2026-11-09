@@ -39,7 +39,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Ms+Madi&family=The+Nautigal:wght@400;700&family=Viaoda+Libre&display=swap" rel="stylesheet" />
 
   <!-- Authentic Chung Đôi "Tender" Theme Stylesheet -->
-  <link rel="stylesheet" href="assets/css/style.css?v=8.7" />
+  <link rel="stylesheet" href="assets/css/style.css?v=8.8" />
   <script>
     // Early Envelope & Side Setup (instant zero-delay response)
     (function() {
@@ -189,30 +189,6 @@
       <div class="parchment-red-box">
         <div class="parchment-bg-red"></div>
         <img src="assets/images/theme/paper.webp" alt="" class="parchment-texture-img" />
-
-        <!-- Side Switcher (Nhà Trai / Nhà Gái) - Chỉ hiển thị tiệc tương ứng với link mời -->
-        <div class="side-switcher-container" id="side-switcher-container">
-          <button type="button" class="side-switch-btn active" id="btn-side-groom" style="display:none;">
-            <span>🏰</span> Tiệc Nhà Trai
-          </button>
-          <button type="button" class="side-switch-btn active" id="btn-side-bride" style="display:none;">
-            <span>🌸</span> Tiệc Nhà Gái
-          </button>
-        </div>
-        <script>
-          (function() {
-            try {
-              var s = (window.__INITIAL_SIDE__ || new URLSearchParams(window.location.search).get('side') || '').toLowerCase();
-              if (s === 'bride' || s === 'nhagai' || s === 'gai' || s === 'vuquy') {
-                var b = document.getElementById('btn-side-bride');
-                if (b) b.style.display = 'inline-flex';
-              } else {
-                var g = document.getElementById('btn-side-groom');
-                if (g) g.style.display = 'inline-flex';
-              }
-            } catch(e) {}
-          })();
-        </script>
 
         <h2 class="card-title-gold" id="ceremony-main-title">LỄ THÀNH HÔN & TIỆC CƯỚI</h2>
 
@@ -577,6 +553,6 @@
   <script src="assets/js/firebase-config.js?v=1.0"></script>
   <!-- Scripts -->
   <script src="assets/js/data.js?v=7.0"></script>
-  <script src="assets/js/invite.js?v=9.3"></script>
+  <script src="assets/js/invite.js?v=9.4"></script>
 </body>
 </html>

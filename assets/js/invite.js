@@ -201,22 +201,9 @@ function initDynamicContent(settings, activeSide) {
   const currentSide = activeSide || currentActiveSide || getInitialWeddingSide(settings);
   currentActiveSide = currentSide;
 
-  // Party Badge: Only show the side belonging to current invitation (Nhà nào hiện nhà đó)
-  const btnGroom = document.getElementById('btn-side-groom');
-  const btnBride = document.getElementById('btn-side-bride');
-  if (currentSide === 'bride') {
-    if (btnGroom) btnGroom.style.display = 'none';
-    if (btnBride) {
-      btnBride.style.display = 'inline-flex';
-      btnBride.classList.add('active');
-    }
-  } else {
-    if (btnBride) btnBride.style.display = 'none';
-    if (btnGroom) {
-      btnGroom.style.display = 'inline-flex';
-      btnGroom.classList.add('active');
-    }
-  }
+  // Side switcher container is completely removed per design: cards have dedicated titles
+  const switcher = document.getElementById('side-switcher-container');
+  if (switcher) switcher.style.display = 'none';
 
   document.body.setAttribute('data-side', currentSide);
   document.documentElement.setAttribute('data-side', currentSide);

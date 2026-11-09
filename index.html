@@ -39,14 +39,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Ms+Madi&family=The+Nautigal:wght@400;700&family=Viaoda+Libre&display=swap" rel="stylesheet" />
 
   <!-- Authentic Chung Đôi "Tender" Theme Stylesheet -->
-  <link rel="stylesheet" href="assets/css/style.css?v=8.6" />
+  <link rel="stylesheet" href="assets/css/style.css?v=8.7" />
   <script>
-    // Early Envelope Setup & Fallback Opener (instant zero-delay response)
+    // Early Envelope & Side Setup (instant zero-delay response)
     (function() {
       try {
         var sp = new URLSearchParams(window.location.search);
-        var side = (sp.get('side') || '').toLowerCase();
+        var s = (sp.get('side') || sp.get('tiec') || sp.get('event') || '').toLowerCase().trim();
+        var isBride = (s === 'bride' || s === 'nhagai' || s === 'gai' || s === 'vuquy');
+        var side = isBride ? 'bride' : 'groom';
         window.__INITIAL_SIDE__ = side;
+        document.documentElement.setAttribute('data-side', side);
         window.handleOpenEnvelopeGlobal = function(e) {
           if (e && e.preventDefault && e.type !== 'click') e.preventDefault();
           var scr = document.getElementById('envelope-screen');
@@ -56,7 +59,10 @@
     })();
   </script>
 </head>
-<body data-theme="tender">
+<body data-theme="tender" data-side="groom">
+  <script>
+    if (window.__INITIAL_SIDE__) document.body.setAttribute('data-side', window.__INITIAL_SIDE__);
+  </script>
 
   <!-- ==========================================
        1. LUXURY ENVELOPE OPENING OVERLAY (Chung Đôi)
@@ -210,7 +216,7 @@
 
         <h2 class="card-title-gold" id="ceremony-main-title">LỄ THÀNH HÔN & TIỆC CƯỚI</h2>
 
-        <!-- Two Family Sides (Nhà Trai & Nhà Gái) -->
+        <!-- Family Information (Link nào hiện đúng nhà đó) -->
         <div class="family-grid" id="family-grid-container">
           <div class="family-col" id="family-col-groom">
             <div class="family-title">Nhà Trai</div>
@@ -219,15 +225,33 @@
             <div class="family-address" id="groom-address-display">18LK 15 Khu đô thị Phú Lương - Văn Phú - Hà Đông</div>
           </div>
 
-          <div class="family-divider-vertical"></div>
+          <div class="family-divider-vertical" style="display:none;"></div>
 
-          <div class="family-col" id="family-col-bride">
+          <div class="family-col" id="family-col-bride" style="display:none;">
             <div class="family-title">Nhà Gái</div>
             <div class="family-parent-name" id="bride-father-display">Thái Đức Tuyển</div>
             <div class="family-parent-name" id="bride-mother-display">Nguyễn Thị Tố Hoài</div>
             <div class="family-address" id="bride-address-display">Số 2 ngõ 4 Đường Thống Nhất - Phú Nhiêu - Phú Xuyên - Hà Nội</div>
           </div>
         </div>
+        <script>
+          (function() {
+            try {
+              var s = window.__INITIAL_SIDE__ || (new URLSearchParams(window.location.search).get('side') || '').toLowerCase();
+              if (s === 'bride' || s === 'nhagai' || s === 'gai' || s === 'vuquy') {
+                var g = document.getElementById('family-col-groom');
+                var b = document.getElementById('family-col-bride');
+                if (g) g.style.display = 'none';
+                if (b) b.style.display = 'flex';
+              } else {
+                var g = document.getElementById('family-col-groom');
+                var b = document.getElementById('family-col-bride');
+                if (g) g.style.display = 'flex';
+                if (b) b.style.display = 'none';
+              }
+            } catch(e) {}
+          })();
+        </script>
 
         <p class="announcement-text" id="ceremony-announcement-text">
           TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI
@@ -553,6 +577,6 @@
   <script src="assets/js/firebase-config.js?v=1.0"></script>
   <!-- Scripts -->
   <script src="assets/js/data.js?v=7.0"></script>
-  <script src="assets/js/invite.js?v=9.2"></script>
+  <script src="assets/js/invite.js?v=9.3"></script>
 </body>
 </html>

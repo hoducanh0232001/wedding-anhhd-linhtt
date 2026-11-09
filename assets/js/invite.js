@@ -218,11 +218,22 @@ function initDynamicContent(settings, activeSide) {
     }
   }
 
-  // Highlight active family side in ceremony card
+  document.body.setAttribute('data-side', currentSide);
+  document.documentElement.setAttribute('data-side', currentSide);
+
+  // Single Family Card: Link nào hiện đúng nhà đó
   const familyColGroom = document.getElementById('family-col-groom');
   const familyColBride = document.getElementById('family-col-bride');
-  if (familyColGroom) familyColGroom.classList.toggle('active-side-col', currentSide === 'groom');
-  if (familyColBride) familyColBride.classList.toggle('active-side-col', currentSide === 'bride');
+  const familyDivider = document.querySelector('.family-divider-vertical');
+  if (familyDivider) familyDivider.style.display = 'none';
+
+  if (currentSide === 'bride') {
+    if (familyColGroom) familyColGroom.style.display = 'none';
+    if (familyColBride) familyColBride.style.display = 'flex';
+  } else {
+    if (familyColBride) familyColBride.style.display = 'none';
+    if (familyColGroom) familyColGroom.style.display = 'flex';
+  }
 
   // Short names (for envelope)
   const groomShort = settings.couple.groom.shortName || 'Đức Anh';

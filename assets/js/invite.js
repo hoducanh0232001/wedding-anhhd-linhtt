@@ -4,7 +4,7 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy') || venueName.includes('Phú Nhiêu'))) ||
                        (venueAddress && venueAddress.includes('Phú Xuyên'));
 
-  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.76225,105.8866+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=18&output=embed';
+  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.76211,105.88607&ll=20.76218,105.88632&z=19&output=embed';
 
   if (!url) {
     if (isBrideVenue) {

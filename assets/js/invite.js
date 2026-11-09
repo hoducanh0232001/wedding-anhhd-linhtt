@@ -660,10 +660,18 @@ function initEnvelopeOpener() {
     isOpening = true;
 
     // 1. Play music immediately within user click gesture
-    playBackgroundMusic();
+    try {
+      playBackgroundMusic();
+    } catch (err) {
+      console.warn('Background music autoplay:', err);
+    }
 
     // 2. Burst flowers and hearts ONLY on the outside envelope screen (Zero lag GPU animation)
-    triggerEnvelopeFlowerBurst(e);
+    try {
+      triggerEnvelopeFlowerBurst(e);
+    } catch (err) {
+      console.warn('Envelope flower burst:', err);
+    }
 
     // 3. Smoothly open envelope after brief bloom (420ms), transitioning to clean wedding card
     setTimeout(() => {
@@ -1152,8 +1160,6 @@ function initGallery(gallery) {
         card.style.zIndex = '10';
         card.style.pointerEvents = 'none';
         card.classList.remove('active-center');
-      }
-    });
       }
     });
 

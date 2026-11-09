@@ -1180,7 +1180,7 @@ html, body {
 .carousel-3d-stage {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 410px;
   margin: 14px auto 0;
   perspective: 1000px;
   -webkit-perspective: 1000px;
@@ -1193,9 +1193,17 @@ html, body {
 
 @media (min-width: 640px) {
   .carousel-3d-stage {
-    height: 440px;
-    perspective: 1200px;
-    -webkit-perspective: 1200px;
+    height: 500px;
+    perspective: 1300px;
+    -webkit-perspective: 1300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel-3d-stage {
+    height: 540px;
+    perspective: 1400px;
+    -webkit-perspective: 1400px;
   }
 }
 
@@ -1214,11 +1222,11 @@ html, body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 220px;
-  height: 310px;
-  margin-left: -110px;
-  margin-top: -155px;
-  border-radius: 16px;
+  width: 240px;
+  height: 338px;
+  margin-left: -120px;
+  margin-top: -169px;
+  border-radius: 18px;
   overflow: hidden;
   background: #f7efe6;
   cursor: pointer;
@@ -1232,11 +1240,21 @@ html, body {
 
 @media (min-width: 640px) {
   .carousel-3d-card {
-    width: 260px;
-    height: 360px;
-    margin-left: -130px;
-    margin-top: -180px;
-    border-radius: 18px;
+    width: 310px;
+    height: 434px;
+    margin-left: -155px;
+    margin-top: -217px;
+    border-radius: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel-3d-card {
+    width: 335px;
+    height: 470px;
+    margin-left: -167.5px;
+    margin-top: -235px;
+    border-radius: 22px;
   }
 }
 
@@ -2323,4 +2341,84 @@ body[data-theme="midnight"] .link-admin-subtle {
   color: #ffffff;
   border-color: var(--gold);
   box-shadow: 0 4px 14px rgba(81, 20, 25, 0.35);
+}
+
+/* ==========================================================================
+   INTERACTIVE SIDE SWITCHER (NHÀ GÁI / NHÀ TRAI)
+   ========================================================================== */
+.side-switcher-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 22px;
+  position: relative;
+  z-index: 3;
+  max-width: 360px;
+  background: rgba(0, 0, 0, 0.16);
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid rgba(201, 162, 74, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.side-switch-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 24px;
+  border: none;
+  background: transparent;
+  color: var(--cream-soft, #f7efe6);
+  font-family: var(--font-sub, "Cinzel", serif);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.side-switch-btn:hover {
+  color: #ffffff;
+  background: rgba(201, 162, 74, 0.2);
+}
+
+.side-switch-btn.active {
+  background: linear-gradient(135deg, #c9a24a, #ab812f);
+  color: #380a0e;
+  font-weight: 700;
+  box-shadow: 0 3px 12px rgba(201, 162, 74, 0.4);
+}
+
+body[data-theme="editorial"] .side-switch-btn.active {
+  color: #242220;
+  background: linear-gradient(135deg, #C5A059, #a07e3a);
+}
+
+body[data-theme="botanical"] .side-switch-btn.active {
+  color: #1a2e22;
+  background: linear-gradient(135deg, #BC6C25, #9b5317);
+}
+
+body[data-theme="midnight"] .side-switch-btn.active {
+  color: #0b0f19;
+  background: linear-gradient(135deg, #F59E0B, #d97706);
+}
+
+.family-col.active-side-col {
+  position: relative;
+}
+
+.family-col.active-side-col::after {
+  content: "★";
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  color: var(--gold-champagne, #c9a24a);
+  font-size: 14px;
 }

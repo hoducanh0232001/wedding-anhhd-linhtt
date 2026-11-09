@@ -1028,20 +1028,48 @@ body.admin-body {
              TAB 1: TỔNG QUAN (DASHBOARD)
              ========================================== -->
         <div id="panel-dashboard" class="tab-panel active">
-          <!-- Official Public Invitation Link -->
-          <div style="background:linear-gradient(135deg, #fff7eb, #faeee1);border:1.5px solid rgba(201,162,74,0.45);padding:16px 20px;border-radius:12px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 4px 14px rgba(81,20,25,0.06);">
-            <div style="display:flex;align-items:center;gap:14px;">
-              <span style="font-size:26px;">💌</span>
+          <!-- Official Public Invitation Links (Nhà Trai & Nhà Gái) -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px;margin-bottom:24px;">
+            <!-- Groom Side Link Card -->
+            <div style="background:linear-gradient(135deg, #fff7eb, #faeee1);border:1.5px solid rgba(201,162,74,0.45);padding:18px 20px;border-radius:12px;box-shadow:0 4px 14px rgba(81,20,25,0.06);display:flex;flex-direction:column;justify-content:space-between;gap:12px;">
               <div>
-                <div style="font-weight:700;font-size:15px;color:var(--admin-primary);">Link Thiệp Cưới Chính Thức (Gửi Khách & Chia sẻ Zalo, Facebook)</div>
-                <div style="font-size:13px;color:#6b5355;margin-top:3px;">
-                  <code style="background:rgba(255,255,255,0.85);padding:4px 10px;border-radius:6px;border:1px solid #ebdccb;font-weight:600;color:var(--admin-primary);font-size:13px;">https://wedding-anhhd-linhtt.vercel.app/</code>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-weight:700;font-size:15px;color:var(--admin-primary);display:flex;align-items:center;gap:6px;">
+                    <span>🏰</span> Link Thiệp Nhà Trai (Lễ Thành Hôn)
+                  </span>
+                  <span style="font-size:11px;background:#511419;color:#fff;padding:2px 8px;border-radius:12px;font-weight:600;">Hà Đông • 29/11</span>
                 </div>
+                <div style="font-size:12.5px;color:#6b5355;margin-bottom:8px;">
+                  11:00 Chủ Nhật, 29/11/2026 tại Hoàng Gia Palace Hà Đông
+                </div>
+                <code id="official-groom-link" style="display:block;background:rgba(255,255,255,0.9);padding:6px 10px;border-radius:6px;border:1px solid #ebdccb;font-weight:600;color:var(--admin-primary);font-size:12px;word-break:break-all;">https://wedding-anhhd-linhtt.vercel.app/?side=groom</code>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" class="admin-btn admin-btn-primary" style="padding:6px 12px;font-size:13px;" onclick="copyOfficialSideLink('groom')">📋 Copy Link Nhà Trai</button>
+                <a href="index.html?side=groom" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;padding:6px 12px;font-size:13px;">Mở Xem ↗</a>
+                <button type="button" class="admin-btn admin-btn-gold" style="padding:6px 10px;font-size:13px;" onclick="copySideZaloMessage('groom')">💬 Tin Nhắn Zalo</button>
               </div>
             </div>
-            <div style="display:flex;gap:10px;">
-              <button type="button" class="admin-btn admin-btn-primary" onclick="copyOfficialLink()">📋 Sao Chép Link Gửi Khách</button>
-              <a href="index.html" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;">Mở Xem Thiệp ↗</a>
+
+            <!-- Bride Side Link Card -->
+            <div style="background:linear-gradient(135deg, #fff0f3, #fce7ec);border:1.5px solid rgba(225,112,143,0.45);padding:18px 20px;border-radius:12px;box-shadow:0 4px 14px rgba(180,40,70,0.06);display:flex;flex-direction:column;justify-content:space-between;gap:12px;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-weight:700;font-size:15px;color:#9b1c31;display:flex;align-items:center;gap:6px;">
+                    <span>🌸</span> Link Thiệp Nhà Gái (Lễ Vu Quy)
+                  </span>
+                  <span style="font-size:11px;background:#9b1c31;color:#fff;padding:2px 8px;border-radius:12px;font-weight:600;">Phú Xuyên • 28/11</span>
+                </div>
+                <div style="font-size:12.5px;color:#783b49;margin-bottom:8px;">
+                  17:30 Thứ Bảy, 28/11/2026 tại Tư Gia Nhà Gái, Phú Xuyên
+                </div>
+                <code id="official-bride-link" style="display:block;background:rgba(255,255,255,0.9);padding:6px 10px;border-radius:6px;border:1px solid #f2cad4;font-weight:600;color:#9b1c31;font-size:12px;word-break:break-all;">https://wedding-anhhd-linhtt.vercel.app/?side=bride</code>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" class="admin-btn admin-btn-primary" style="background:#9b1c31;border-color:#9b1c31;padding:6px 12px;font-size:13px;" onclick="copyOfficialSideLink('bride')">📋 Copy Link Nhà Gái</button>
+                <a href="index.html?side=bride" target="_blank" class="admin-btn admin-btn-secondary" style="text-decoration:none;padding:6px 12px;font-size:13px;">Mở Xem ↗</a>
+                <button type="button" class="admin-btn admin-btn-gold" style="padding:6px 10px;font-size:13px;" onclick="copySideZaloMessage('bride')">💬 Tin Nhắn Zalo</button>
+              </div>
             </div>
           </div>
 
@@ -1398,7 +1426,7 @@ body.admin-body {
                   </div>
                 </div>
 
-                <div class="form-grid-2">
+                <div class="form-grid-3">
                   <div class="admin-form-group">
                     <label class="admin-form-label">Nhóm khách mời</label>
                     <select id="guest-add-group" class="admin-form-select">
@@ -1408,6 +1436,14 @@ body.admin-body {
                       <option value="Họ hàng Nhà Trai">Họ hàng Nhà Trai</option>
                       <option value="Họ hàng Nhà Gái">Họ hàng Nhà Gái</option>
                       <option value="Khác">Khác</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Khách mời tham dự tiệc bên nào *</label>
+                    <select id="guest-add-side" class="admin-form-select" style="font-weight:600;color:var(--admin-primary);">
+                      <option value="groom">🏰 Tiệc Nhà Trai (Lễ Thành Hôn - 29/11)</option>
+                      <option value="bride">🌸 Tiệc Nhà Gái (Lễ Vu Quy - 28/11)</option>
+                      <option value="both">🥂 Cả Hai Nhà / Tiệc Chung</option>
                     </select>
                   </div>
                   <div class="admin-form-group">
@@ -1435,7 +1471,7 @@ body.admin-body {
             </div>
             <div class="admin-card-body">
               <form id="form-bulk-guests">
-                <div class="form-grid-2">
+                <div class="form-grid-3">
                   <div class="admin-form-group">
                     <label class="admin-form-label">Xưng hô mặc định</label>
                     <select id="bulk-prefix-select" class="admin-form-select">
@@ -1443,6 +1479,7 @@ body.admin-body {
                       <option value="Anh">Anh</option>
                       <option value="Chị">Chị</option>
                       <option value="Em">Em</option>
+                      <option value="Gia đình">Gia đình</option>
                     </select>
                   </div>
                   <div class="admin-form-group">
@@ -1451,6 +1488,16 @@ body.admin-body {
                       <option value="Bạn Chú Rể">Bạn Chú Rể</option>
                       <option value="Bạn Cô Dâu">Bạn Cô Dâu</option>
                       <option value="Đồng Nghiệp">Đồng Nghiệp</option>
+                      <option value="Họ hàng Nhà Trai">Họ hàng Nhà Trai</option>
+                      <option value="Họ hàng Nhà Gái">Họ hàng Nhà Gái</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-form-label">Tiệc tham dự mặc định *</label>
+                    <select id="bulk-side-select" class="admin-form-select" style="font-weight:600;color:var(--admin-primary);">
+                      <option value="groom">🏰 Tiệc Nhà Trai (29/11)</option>
+                      <option value="bride">🌸 Tiệc Nhà Gái (28/11)</option>
+                      <option value="both">🥂 Cả Hai Nhà</option>
                     </select>
                   </div>
                 </div>
@@ -1477,6 +1524,12 @@ body.admin-body {
               
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <input type="text" id="search-guest-input" class="admin-form-input" style="width:200px;padding:6px 12px;" placeholder="Tìm tên hoặc SĐT..." />
+                <select id="filter-guest-side" class="admin-form-select" style="width:160px;padding:6px 12px;font-weight:600;color:var(--admin-primary);">
+                  <option value="all">Tất cả tiệc</option>
+                  <option value="bride">🌸 Tiệc Nhà Gái</option>
+                  <option value="groom">🏰 Tiệc Nhà Trai</option>
+                  <option value="both">🥂 Cả Hai Nhà</option>
+                </select>
                 <select id="filter-guest-group" class="admin-form-select" style="width:160px;padding:6px 12px;">
                   <option value="all">Tất cả nhóm</option>
                   <option value="Bạn Chú Rể">Bạn Chú Rể</option>

@@ -149,11 +149,21 @@
         <div class="parchment-bg-red"></div>
         <img src="assets/images/theme/paper.webp" alt="" class="parchment-texture-img" />
 
-        <h2 class="card-title-gold">LỄ THÀNH HÔN & TIỆC CƯỚI</h2>
+        <!-- Side Switcher (Nhà Trai / Nhà Gái) -->
+        <div class="side-switcher-container" id="side-switcher-container">
+          <button type="button" class="side-switch-btn active" id="btn-side-groom" onclick="window.switchInviteSide('groom')">
+            <span>🏰</span> Tiệc Nhà Trai
+          </button>
+          <button type="button" class="side-switch-btn" id="btn-side-bride" onclick="window.switchInviteSide('bride')">
+            <span>🌸</span> Tiệc Nhà Gái
+          </button>
+        </div>
+
+        <h2 class="card-title-gold" id="ceremony-main-title">LỄ THÀNH HÔN & TIỆC CƯỚI</h2>
 
         <!-- Two Family Sides (Nhà Trai & Nhà Gái) -->
-        <div class="family-grid">
-          <div class="family-col">
+        <div class="family-grid" id="family-grid-container">
+          <div class="family-col" id="family-col-groom">
             <div class="family-title">Nhà Trai</div>
             <div class="family-parent-name" id="groom-father-display">Hồ Xuân Tươi</div>
             <div class="family-parent-name" id="groom-mother-display">Vũ Thị Tươi</div>
@@ -162,7 +172,7 @@
 
           <div class="family-divider-vertical"></div>
 
-          <div class="family-col">
+          <div class="family-col" id="family-col-bride">
             <div class="family-title">Nhà Gái</div>
             <div class="family-parent-name" id="bride-father-display">Thái Đức Tuyển</div>
             <div class="family-parent-name" id="bride-mother-display">Nguyễn Thị Tố Hoài</div>
@@ -170,17 +180,17 @@
           </div>
         </div>
 
-        <p class="announcement-text">
+        <p class="announcement-text" id="ceremony-announcement-text">
           TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI
         </p>
 
         <!-- Couple Announcement Names -->
-        <div class="couple-ceremony-names">
-          <div class="ceremony-role">Trưởng Nam</div>
-          <div class="ceremony-name bind-groom-name">Hồ Đức Anh</div>
+        <div class="couple-ceremony-names" id="couple-ceremony-names">
+          <div class="ceremony-role" id="ceremony-role-1">Trưởng Nam</div>
+          <div class="ceremony-name bind-groom-name" id="ceremony-name-1">Hồ Đức Anh</div>
           <div class="ceremony-amp">&</div>
-          <div class="ceremony-role">Út Nữ</div>
-          <div class="ceremony-name bind-bride-name">Thái Thuỳ Linh</div>
+          <div class="ceremony-role" id="ceremony-role-2">Út Nữ</div>
+          <div class="ceremony-name bind-bride-name" id="ceremony-name-2">Thái Thuỳ Linh</div>
         </div>
 
         <!-- Big Date Display -->
@@ -234,7 +244,7 @@
         <div class="parchment-bg-red"></div>
         <img src="assets/images/theme/paper.webp" alt="" class="parchment-texture-img" />
 
-        <h3 class="card-title-gold">TIỆC CƯỚI</h3>
+        <h3 class="card-title-gold" id="reception-card-title">TIỆC CƯỚI</h3>
 
         <div class="reception-time-str" id="reception-time-display">
           11:00 — CHỦ NHẬT, 29 THÁNG 11 NĂM 2026

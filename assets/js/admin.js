@@ -371,12 +371,28 @@ function setupEventListeners() {
 
   // Add Guest Form
   const addGuestForm = document.getElementById('form-add-guest');
+  const groupSelect = document.getElementById('guest-add-group');
+  const sideSelect = document.getElementById('guest-add-side');
+
+  // Auto select matching side when group is changed
+  if (groupSelect && sideSelect) {
+    groupSelect.addEventListener('change', () => {
+      const gVal = groupSelect.value;
+      if (gVal.includes('Nhà Gái') || gVal.includes('Cô Dâu')) {
+        sideSelect.value = 'bride';
+      } else if (gVal.includes('Nhà Trai') || gVal.includes('Chú Rể')) {
+        sideSelect.value = 'groom';
+      }
+    });
+  }
+
   if (addGuestForm) {
     addGuestForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('guest-add-name').value.trim();
       const prefix = document.getElementById('guest-add-prefix').value;
       const group = document.getElementById('guest-add-group').value;
+      const side = document.getElementById('guest-add-side')?.value || 'groom';
       const phone = document.getElementById('guest-add-phone').value.trim();
       const customMessage = document.getElementById('guest-add-message').value.trim();
 
@@ -389,6 +405,7 @@ function setupEventListeners() {
         name,
         prefix,
         group,
+        side,
         phone,
         customMessage: customMessage || 'Sự hiện diện của bạn là niềm vinh hạnh to lớn cho chúng mình!',
         status: 'pending'
@@ -397,18 +414,33 @@ function setupEventListeners() {
       addGuestForm.reset();
       renderGuestsTable();
       updateDashboardStats();
-      showAdminToast(`Đã thêm khách mời: ${prefix} ${name}`);
+      showAdminToast(`Đã thêm khách mời: ${prefix} ${name} (${side === 'bride' ? 'Nhà Gái' : 'Nhà Trai'})`);
     });
   }
 
   // Bulk Add Guests Form
   const bulkForm = document.getElementById('form-bulk-guests');
+  const bulkGroupSelect = document.getElementById('bulk-group-select');
+  const bulkSideSelect = document.getElementById('bulk-side-select');
+
+  if (bulkGroupSelect && bulkSideSelect) {
+    bulkGroupSelect.addEventListener('change', () => {
+      const gVal = bulkGroupSelect.value;
+      if (gVal.includes('Nhà Gái') || gVal.includes('Cô Dâu')) {
+        bulkSideSelect.value = 'bride';
+      } else if (gVal.includes('Nhà Trai') || gVal.includes('Chú Rể')) {
+        bulkSideSelect.value = 'groom';
+      }
+    });
+  }
+
   if (bulkForm) {
     bulkForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const rawText = document.getElementById('bulk-names-input').value.trim();
       const defaultPrefix = document.getElementById('bulk-prefix-select').value;
       const defaultGroup = document.getElementById('bulk-group-select').value;
+      const defaultSide = document.getElementById('bulk-side-select')?.value || 'groom';
 
       if (!rawText) return;
 
@@ -416,7 +448,6 @@ function setupEventListeners() {
       let count = 0;
 
       lines.forEach(line => {
-        // Line can be "Tên" or "Prefix Tên"
         let prefix = defaultPrefix;
         let name = line;
 
@@ -424,6 +455,7 @@ function setupEventListeners() {
           name,
           prefix,
           group: defaultGroup,
+          side: defaultSide,
           status: 'pending'
         });
         count++;
@@ -432,14 +464,16 @@ function setupEventListeners() {
       document.getElementById('bulk-names-input').value = '';
       renderGuestsTable();
       updateDashboardStats();
-      showAdminToast(`Đã thêm nhanh ${count} khách mời vào danh sách!`);
+      showAdminToast(`Đã thêm nhanh ${count} khách mời vào danh sách (${defaultSide === 'bride' ? 'Nhà Gái' : 'Nhà Trai'})!`);
     });
   }
 
   // Filter Guests
   const filterGroup = document.getElementById('filter-guest-group');
+  const filterSide = document.getElementById('filter-guest-side');
   const searchInput = document.getElementById('search-guest-input');
   if (filterGroup) filterGroup.addEventListener('change', renderGuestsTable);
+  if (filterSide) filterSide.addEventListener('change', renderGuestsTable);
   if (searchInput) searchInput.addEventListener('input', renderGuestsTable);
 
   // Banking Form
@@ -486,14 +520,26 @@ function renderGuestsTable() {
 
   const guests = WeddingDB.getGuests();
   const filterGroupVal = document.getElementById('filter-guest-group')?.value || 'all';
+  const filterSideVal = document.getElementById('filter-guest-side')?.value || 'all';
   const searchVal = document.getElementById('search-guest-input')?.value.toLowerCase().trim() || '';
 
   const filtered = guests.filter(g => {
     const matchesGroup = filterGroupVal === 'all' || g.group === filterGroupVal;
+
+    let gSide = g.side;
+    if (!gSide) {
+      if (g.group && (g.group.includes('Nhà Gái') || g.group.includes('Cô Dâu'))) {
+        gSide = 'bride';
+      } else {
+        gSide = 'groom';
+      }
+    }
+    const matchesSide = filterSideVal === 'all' || gSide === filterSideVal || (filterSideVal === 'both' && g.side === 'both');
+
     const matchesSearch = !searchVal || 
       g.name.toLowerCase().includes(searchVal) || 
       (g.phone && g.phone.includes(searchVal));
-    return matchesGroup && matchesSearch;
+    return matchesGroup && matchesSide && matchesSearch;
   });
 
   const countEl = document.getElementById('filtered-guest-count');
@@ -512,11 +558,35 @@ function renderGuestsTable() {
   const baseUrl = `${domainOrigin}/`;
 
   filtered.forEach((g, idx) => {
+    // Determine effective side
+    let effectiveSide = g.side;
+    if (!effectiveSide) {
+      if (g.group && (g.group.includes('Nhà Gái') || g.group.includes('Cô Dâu'))) {
+        effectiveSide = 'bride';
+      } else {
+        effectiveSide = 'groom';
+      }
+    }
+
+    const sideParam = effectiveSide && effectiveSide !== 'both' ? `&side=${effectiveSide}` : '';
     // Generate personalized URL
-    const personalizedUrl = `${baseUrl}?to=${encodeURIComponent(g.name)}&prefix=${encodeURIComponent(g.prefix || 'Thân Mời')}&id=${g.id}`;
+    const personalizedUrl = `${baseUrl}?to=${encodeURIComponent(g.name)}&prefix=${encodeURIComponent(g.prefix || 'Thân Mời')}&id=${g.id}${sideParam}`;
     
     // Generate prefilled invitation message for Zalo / SMS / Messenger
-    const inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến tham dự lễ thành hôn của Đức Anh & Thuỳ Linh vào 11:00 Chủ Nhật, ngày 29/11/2026 tại Trung tâm tiệc cưới Hoàng Gia Palace Hà Nội.\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
+    let inviteMessage = '';
+    if (effectiveSide === 'bride') {
+      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của Thuỳ Linh & Đức Anh vào lúc 17:30 Thứ Bảy, ngày 28/11/2026 tại Tư Gia Nhà Gái (Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội).\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
+    } else if (effectiveSide === 'both') {
+      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến chung vui trong ngày trọng đại của Đức Anh & Thuỳ Linh.\nXem thiệp cưới chi tiết tại: ${personalizedUrl}`;
+    } else {
+      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của Đức Anh & Thuỳ Linh vào lúc 11:00 Chủ Nhật, ngày 29/11/2026 tại Trung tâm tiệc cưới Hoàng Gia Palace (Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội).\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
+    }
+
+    const sideBadge = effectiveSide === 'bride'
+      ? `<div style="margin-top:4px;"><span style="font-size:0.75rem;background:#fce7ec;color:#9b1c31;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block;">🌸 Nhà Gái (Vu Quy)</span></div>`
+      : (effectiveSide === 'both'
+        ? `<div style="margin-top:4px;"><span style="font-size:0.75rem;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block;">🥂 Cả Hai Nhà</span></div>`
+        : `<div style="margin-top:4px;"><span style="font-size:0.75rem;background:#eef2ff;color:#2b4382;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block;">🏰 Nhà Trai (Thành Hôn)</span></div>`);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -526,7 +596,10 @@ function renderGuestsTable() {
         ${g.phone ? `<div style="font-size:0.8rem;color:#777;">📞 ${g.phone}</div>` : ''}
         <div style="font-size:0.75rem;color:#999;margin-top:2px;font-style:italic;">"${g.customMessage || ''}"</div>
       </td>
-      <td><span style="font-size:0.85rem;background:#f3e8de;color:#511419;padding:3px 8px;border-radius:4px;">${g.group || 'Khách mời'}</span></td>
+      <td>
+        <span style="font-size:0.85rem;background:#f3e8de;color:#511419;padding:3px 8px;border-radius:4px;">${g.group || 'Khách mời'}</span>
+        ${sideBadge}
+      </td>
       <td>
         <span class="badge-status ${g.status}">
           ${g.status === 'attending' ? `✓ Tham dự (${g.guestCount || 1} người)` : (g.status === 'declined' ? '✗ Bận' : 'Chờ phản hồi')}
@@ -699,32 +772,53 @@ function populateEventsForm(settings) {
     box.style.marginBottom = '16px';
     box.style.background = '#faf8f5';
     box.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h4 style="margin:0;color:var(--admin-primary);">${ev.badge}: ${ev.title}</h4>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h4 style="margin:0;color:var(--admin-primary);font-size:15px;">${ev.badge}: ${ev.title}</h4>
+        <span style="font-size:12px;background:${ev.type === 'bride' ? '#fce7ec' : '#eedfcc'};color:${ev.type === 'bride' ? '#9b1c31' : '#511419'};padding:3px 9px;border-radius:12px;font-weight:600;">
+          ${ev.type === 'bride' ? '🌸 Lễ Vu Quy (Nhà Gái)' : '🏰 Lễ Thành Hôn (Nhà Trai)'}
+        </span>
       </div>
-      <div class="form-grid-2">
+      <div class="form-grid-3">
         <div class="admin-form-group">
           <label class="admin-form-label">Tên Tiệc / Sự Kiện</label>
-          <input type="text" class="admin-form-input event-field-title" data-idx="${idx}" value="${ev.title}" />
+          <input type="text" class="admin-form-input event-field-title" data-idx="${idx}" value="${ev.title || ''}" />
         </div>
         <div class="admin-form-group">
-          <label class="admin-form-label">Thời Gian & Ngày</label>
-          <input type="text" class="admin-form-input event-field-time" data-idx="${idx}" value="${ev.time} — ${ev.dateText}" />
+          <label class="admin-form-label">Giờ Khai Tiệc (HH:MM)</label>
+          <input type="text" class="admin-form-input event-field-time" data-idx="${idx}" value="${ev.time || ''}" placeholder="17:30" />
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Giờ Đón Khách (HH:MM)</label>
+          <input type="text" class="admin-form-input event-field-reception" data-idx="${idx}" value="${ev.receptionTime || ''}" placeholder="16:30" />
+        </div>
+      </div>
+      <div class="form-grid-3">
+        <div class="admin-form-group">
+          <label class="admin-form-label">Ngày Tổ Chức (YYYY-MM-DD)</label>
+          <input type="date" class="admin-form-input event-field-date" data-idx="${idx}" value="${ev.date || ''}" />
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Dòng Ngày Hiển Thị</label>
+          <input type="text" class="admin-form-input event-field-datetext" data-idx="${idx}" value="${ev.dateText || ''}" placeholder="Thứ Bảy, 28/11/2026" />
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Ngày Âm Lịch Hiển Thị</label>
+          <input type="text" class="admin-form-input event-field-lunar" data-idx="${idx}" value="${ev.lunarDateText || ''}" placeholder="Tức Ngày 20 Tháng 10 Năm Bính Ngọ" />
         </div>
       </div>
       <div class="form-grid-2">
         <div class="admin-form-group">
           <label class="admin-form-label">Địa Điểm / Nhà Hàng</label>
-          <input type="text" class="admin-form-input event-field-venue" data-idx="${idx}" value="${ev.venue}" />
+          <input type="text" class="admin-form-input event-field-venue" data-idx="${idx}" value="${ev.venue || ''}" />
         </div>
         <div class="admin-form-group">
           <label class="admin-form-label">Địa Chỉ Chi Tiết</label>
-          <input type="text" class="admin-form-input event-field-address" data-idx="${idx}" value="${ev.address}" />
+          <input type="text" class="admin-form-input event-field-address" data-idx="${idx}" value="${ev.address || ''}" />
         </div>
       </div>
       <div class="admin-form-group">
         <label class="admin-form-label">Link Bản Đồ Google Maps</label>
-        <input type="text" class="admin-form-input event-field-map" data-idx="${idx}" value="${ev.mapUrl}" />
+        <input type="text" class="admin-form-input event-field-map" data-idx="${idx}" value="${ev.mapUrl || ''}" placeholder="https://maps.google.com/..." />
       </div>
     `;
     container.appendChild(box);
@@ -736,31 +830,30 @@ window.saveEventsFromAdmin = function() {
   const current = WeddingDB.getSettings();
   const titles = document.querySelectorAll('.event-field-title');
   const times = document.querySelectorAll('.event-field-time');
+  const receptions = document.querySelectorAll('.event-field-reception');
+  const dates = document.querySelectorAll('.event-field-date');
+  const dateTexts = document.querySelectorAll('.event-field-datetext');
+  const lunars = document.querySelectorAll('.event-field-lunar');
   const venues = document.querySelectorAll('.event-field-venue');
   const addresses = document.querySelectorAll('.event-field-address');
   const maps = document.querySelectorAll('.event-field-map');
 
   titles.forEach((el, idx) => {
-    if (current.events[idx]) {
+    if (current.events && current.events[idx]) {
       current.events[idx].title = el.value.trim();
-      current.events[idx].venue = venues[idx].value.trim();
-      current.events[idx].address = addresses[idx].value.trim();
-      current.events[idx].mapUrl = maps[idx].value.trim();
-      if (times[idx]) {
-        const val = times[idx].value.trim();
-        const parts = val.split('—');
-        if (parts.length > 1) {
-          current.events[idx].time = parts[0].trim();
-          current.events[idx].dateText = parts[1].trim();
-        } else {
-          current.events[idx].time = val;
-        }
-      }
+      if (times[idx]) current.events[idx].time = times[idx].value.trim();
+      if (receptions[idx]) current.events[idx].receptionTime = receptions[idx].value.trim();
+      if (dates[idx] && dates[idx].value) current.events[idx].date = dates[idx].value.trim();
+      if (dateTexts[idx]) current.events[idx].dateText = dateTexts[idx].value.trim();
+      if (lunars[idx]) current.events[idx].lunarDateText = lunars[idx].value.trim();
+      if (venues[idx]) current.events[idx].venue = venues[idx].value.trim();
+      if (addresses[idx]) current.events[idx].address = addresses[idx].value.trim();
+      if (maps[idx]) current.events[idx].mapUrl = maps[idx].value.trim();
     }
   });
 
   WeddingDB.saveSettings(current);
-  showAdminToast('Đã lưu thông tin các sự kiện cưới!');
+  showAdminToast('Đã lưu thông tin các sự kiện cưới (Nhà Trai & Nhà Gái)!');
 };
 
 // 12. Export & Import
@@ -908,6 +1001,46 @@ window.copyOfficialLink = function() {
     });
   } else {
     prompt('Link thiệp cưới chính thức của bạn:', url);
+  }
+};
+
+window.copyOfficialSideLink = function(side) {
+  let domainOrigin = window.location.origin;
+  if (window.location.hostname.includes('vercel.app')) {
+    domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
+  }
+  const url = `${domainOrigin}/?side=${side}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      showAdminToast(side === 'bride' ? 'Đã sao chép link thiệp Nhà Gái (Lễ Vu Quy)!' : 'Đã sao chép link thiệp Nhà Trai (Lễ Thành Hôn)!');
+    }).catch(() => {
+      prompt('Link thiệp cưới:', url);
+    });
+  } else {
+    prompt('Link thiệp cưới:', url);
+  }
+};
+
+window.copySideZaloMessage = function(side) {
+  let domainOrigin = window.location.origin;
+  if (window.location.hostname.includes('vercel.app')) {
+    domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
+  }
+  const url = `${domainOrigin}/?side=${side}`;
+  let msg = '';
+  if (side === 'bride') {
+    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của Thuỳ Linh & Đức Anh vào lúc 17:30 Thứ Bảy, ngày 28/11/2026 tại Tư Gia Nhà Gái (Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội).\nXem thiệp cưới online tại: ${url}`;
+  } else {
+    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của Đức Anh & Thuỳ Linh vào lúc 11:00 Chủ Nhật, ngày 29/11/2026 tại Trung tâm tiệc cưới Hoàng Gia Palace (Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội).\nXem thiệp cưới online tại: ${url}`;
+  }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(msg).then(() => {
+      showAdminToast('Đã sao chép mẫu tin nhắn Zalo gửi khách!');
+    }).catch(() => {
+      prompt('Nội dung tin nhắn:', msg);
+    });
+  } else {
+    prompt('Nội dung tin nhắn:', msg);
   }
 };
 

@@ -97,24 +97,92 @@ function showToast(message) {
   }, 3200);
 }
 
+// Global Wedding Side state ('groom' | 'bride')
+let currentActiveSide = null;
+
+function getInitialWeddingSide(settings) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const sideParam = (urlParams.get('side') || urlParams.get('tiec') || urlParams.get('event') || '').toLowerCase().trim();
+  const guestId = urlParams.get('id');
+
+  if (['bride', 'gai', 'nhagai', 'vuquy', 'nha-gai'].includes(sideParam)) {
+    return 'bride';
+  }
+  if (['groom', 'trai', 'nhatrai', 'tanhon', 'thanhhon', 'nha-trai'].includes(sideParam)) {
+    return 'groom';
+  }
+
+  // Check if guest record has specific side assigned in DB
+  if (guestId) {
+    try {
+      const guests = WeddingDB.getGuests();
+      const found = guests.find(g => g.id === guestId);
+      if (found) {
+        if (found.side === 'bride') return 'bride';
+        if (found.side === 'groom') return 'groom';
+        if (found.group && (found.group.includes('Nhà Gái') || found.group.includes('Cô Dâu'))) {
+          return 'bride';
+        }
+      }
+    } catch(e) {}
+  }
+
+  return 'groom';
+}
+
+window.switchInviteSide = function(side) {
+  currentActiveSide = side === 'bride' ? 'bride' : 'groom';
+  const settings = WeddingDB.getSettings();
+  initDynamicContent(settings, currentActiveSide);
+  initPersonalizedGuest(settings);
+
+  // Switch bank tab to match side
+  if (currentActiveSide === 'bride') {
+    const tabBrideBtn = document.getElementById('tab-bride-btn');
+    if (tabBrideBtn) tabBrideBtn.click();
+  } else {
+    const tabGroomBtn = document.getElementById('tab-groom-btn');
+    if (tabGroomBtn) tabGroomBtn.click();
+  }
+};
+
 // 1. Dynamic Content Binding from settings
-function initDynamicContent(settings) {
+function initDynamicContent(settings, activeSide) {
   if (!settings) settings = WeddingDB.getSettings();
   document.body.setAttribute('data-theme', WeddingDB.getThemeId());
 
+  const currentSide = activeSide || currentActiveSide || getInitialWeddingSide(settings);
+  currentActiveSide = currentSide;
+
+  // Update switcher buttons UI
+  const btnGroom = document.getElementById('btn-side-groom');
+  const btnBride = document.getElementById('btn-side-bride');
+  if (btnGroom) btnGroom.classList.toggle('active', currentSide === 'groom');
+  if (btnBride) btnBride.classList.toggle('active', currentSide === 'bride');
+
+  // Highlight active family side in ceremony card
+  const familyColGroom = document.getElementById('family-col-groom');
+  const familyColBride = document.getElementById('family-col-bride');
+  if (familyColGroom) familyColGroom.classList.toggle('active-side-col', currentSide === 'groom');
+  if (familyColBride) familyColBride.classList.toggle('active-side-col', currentSide === 'bride');
+
   // Short names (for envelope)
+  const groomShort = settings.couple.groom.shortName || 'Đức Anh';
+  const brideShort = settings.couple.bride.shortName || 'Thuỳ Linh';
   const groomShortEls = document.querySelectorAll('.bind-groom-short');
-  groomShortEls.forEach(el => el.textContent = settings.couple.groom.shortName || 'Đức Anh');
+  groomShortEls.forEach(el => el.textContent = groomShort);
 
   const brideShortEls = document.querySelectorAll('.bind-bride-short');
-  brideShortEls.forEach(el => el.textContent = settings.couple.bride.shortName || 'Thuỳ Linh');
+  brideShortEls.forEach(el => el.textContent = brideShort);
 
   // Full names (for hero & ceremony cards)
+  const groomFull = settings.couple.groom.fullName || 'Hồ Đức Anh';
+  const brideFull = settings.couple.bride.fullName || 'Thái Thuỳ Linh';
   const groomNameEls = document.querySelectorAll('.bind-groom-name');
-  groomNameEls.forEach(el => el.textContent = settings.couple.groom.fullName || 'Hồ Đức Anh');
+  groomNameEls.forEach(el => el.textContent = groomFull);
 
   const brideNameEls = document.querySelectorAll('.bind-bride-name');
-  brideNameEls.forEach(el => el.textContent = settings.couple.bride.fullName || 'Thái Thuỳ Linh');
+  brideNameEls.forEach(el => el.textContent = brideFull);
 
   // Parents
   const groomFather = document.getElementById('groom-father-display');
@@ -133,14 +201,78 @@ function initDynamicContent(settings) {
   const brideAddress = document.getElementById('bride-address-display');
   if (brideAddress) brideAddress.textContent = settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
 
-  // Dates & Venue
-  const weddingDateStr = settings.wedding.date || '2026-11-29';
-  const weddingTimeStr = settings.wedding.time || '11:00';
-  const weddingDateObj = new Date(`${weddingDateStr}T${weddingTimeStr}`);
+  // Event information according to Side:
+  let weddingDateStr, weddingTimeStr, receptionTimeStr, venueTitleStr, venueAddressStr, mapUrlStr, dateTextStr, lunarDateStr, ceremonyTitleStr, announcementStr, receptionCardTitleStr;
 
+  const brideEvent = (settings.events && settings.events.find(e => e.type === 'bride' || e.id === 'event-bride')) || {};
+  const groomEvent = (settings.events && settings.events.find(e => e.type === 'groom' || e.type === 'main')) || {};
+
+  if (currentSide === 'bride') {
+    weddingDateStr = brideEvent.date || '2026-11-28';
+    weddingTimeStr = brideEvent.time || '17:30';
+    receptionTimeStr = brideEvent.receptionTime || '16:30';
+    dateTextStr = brideEvent.dateText || 'Thứ Bảy, 28/11/2026';
+    lunarDateStr = brideEvent.lunarDateText || 'Tức Ngày 20 Tháng 10 Năm Bính Ngọ';
+    venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
+    venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
+    mapUrlStr = brideEvent.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(venueAddressStr));
+    ceremonyTitleStr = 'LỄ VU QUY & TIỆC CƯỚI';
+    announcementStr = 'TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI';
+    receptionCardTitleStr = 'TIỆC CƯỚI NHÀ GÁI';
+
+    // Couple announcement in Ceremony Card: Bride first
+    const role1El = document.getElementById('ceremony-role-1');
+    const name1El = document.getElementById('ceremony-name-1');
+    const role2El = document.getElementById('ceremony-role-2');
+    const name2El = document.getElementById('ceremony-name-2');
+    if (role1El && name1El && role2El && name2El) {
+      role1El.textContent = settings.couple.bride.role || 'Út Nữ';
+      name1El.textContent = brideFull;
+      role2El.textContent = settings.couple.groom.role || 'Trưởng Nam';
+      name2El.textContent = groomFull;
+    }
+  } else {
+    // Groom side / Main
+    weddingDateStr = settings.wedding.date || groomEvent.date || '2026-11-29';
+    weddingTimeStr = settings.wedding.time || groomEvent.time || '11:00';
+    receptionTimeStr = settings.wedding.receptionTime || groomEvent.receptionTime || '10:30';
+    dateTextStr = settings.wedding.dateText || groomEvent.dateText || 'Chủ Nhật, 29 Tháng 11, 2026';
+    lunarDateStr = settings.wedding.lunarDateText || groomEvent.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ';
+    venueTitleStr = settings.wedding.venueName || groomEvent.venue || 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)';
+    venueAddressStr = settings.wedding.venueAddress || groomEvent.address || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
+    mapUrlStr = settings.wedding.mapUrl || groomEvent.mapUrl || 'https://maps.app.goo.gl/ijkYsunZoUQ79kQbA';
+    ceremonyTitleStr = 'LỄ THÀNH HÔN & TIỆC CƯỚI';
+    announcementStr = settings.wedding.announcementText ? settings.wedding.announcementText.replace(/\n/g, ' ') : 'TRÂN TRỌNG BÁO TIN LỄ THÀNH HÔN CỦA CHÚNG TÔI';
+    receptionCardTitleStr = 'TIỆC CƯỚI';
+
+    // Couple announcement in Ceremony Card: Groom first
+    const role1El = document.getElementById('ceremony-role-1');
+    const name1El = document.getElementById('ceremony-name-1');
+    const role2El = document.getElementById('ceremony-role-2');
+    const name2El = document.getElementById('ceremony-name-2');
+    if (role1El && name1El && role2El && name2El) {
+      role1El.textContent = settings.couple.groom.role || 'Trưởng Nam';
+      name1El.textContent = groomFull;
+      role2El.textContent = settings.couple.bride.role || 'Út Nữ';
+      name2El.textContent = brideFull;
+    }
+  }
+
+  // Update Ceremony Card Title & Announcement
+  const ceremonyTitleEl = document.getElementById('ceremony-main-title');
+  if (ceremonyTitleEl) ceremonyTitleEl.textContent = ceremonyTitleStr;
+
+  const ceremonyAnnounceEl = document.getElementById('ceremony-announcement-text');
+  if (ceremonyAnnounceEl) ceremonyAnnounceEl.textContent = announcementStr;
+
+  const receptionCardTitleEl = document.getElementById('reception-card-title');
+  if (receptionCardTitleEl) receptionCardTitleEl.textContent = receptionCardTitleStr;
+
+  // Dates & Venue Calculation
+  const weddingDateObj = new Date(`${weddingDateStr}T${weddingTimeStr}`);
   const daysOfWeek = ['CHỦ NHẬT', 'THỨ HAI', 'THỨ BA', 'THỨ TƯ', 'THỨ NĂM', 'THỨ SÁU', 'THỨ BẢY'];
-  const dayOfWeek = !isNaN(weddingDateObj) ? daysOfWeek[weddingDateObj.getDay()] : 'CHỦ NHẬT';
-  const dayNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getDate()).padStart(2, '0') : '29';
+  const dayOfWeek = !isNaN(weddingDateObj) ? daysOfWeek[weddingDateObj.getDay()] : (currentSide === 'bride' ? 'THỨ BẢY' : 'CHỦ NHẬT');
+  const dayNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getDate()).padStart(2, '0') : (currentSide === 'bride' ? '28' : '29');
   const monthNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getMonth() + 1).padStart(2, '0') : '11';
   const yearNum = !isNaN(weddingDateObj) ? String(weddingDateObj.getFullYear()) : '2026';
 
@@ -162,44 +294,44 @@ function initDynamicContent(settings) {
 
   const receptionGuestTimeEl = document.getElementById('reception-guest-time-display');
   if (receptionGuestTimeEl) {
-    receptionGuestTimeEl.textContent = `(ĐÓN TIẾP KHÁCH QUÝ: ${settings.wedding.receptionTime || '10:30'})`;
+    receptionGuestTimeEl.textContent = `(ĐÓN TIẾP KHÁCH QUÝ: ${receptionTimeStr})`;
   }
 
-  // Mini Calendar Widget
+  // Mini Calendar Widget (highlights correct day 28 or 29)
   renderMiniCalendar(weddingDateStr);
 
   const dateTexts = document.querySelectorAll('.bind-date-text');
-  dateTexts.forEach(el => el.textContent = settings.wedding.dateText || `${dayOfWeek}, ${dayNum} Tháng ${monthNum}, ${yearNum}`);
+  dateTexts.forEach(el => el.textContent = dateTextStr);
 
   const lunarTexts = document.querySelectorAll('.bind-lunar-date');
-  lunarTexts.forEach(el => el.textContent = settings.wedding.lunarDateText || 'Tức Ngày 21 Tháng 10 Năm Bính Ngọ');
+  lunarTexts.forEach(el => el.textContent = lunarDateStr);
 
   const venueTitle = document.getElementById('wedding-venue-title');
-  if (venueTitle) venueTitle.textContent = settings.wedding.venueName || 'Trung tâm tiệc cưới Hoàng Gia Palace (Cơ sở 1)';
+  if (venueTitle) venueTitle.textContent = venueTitleStr;
 
   const venueDesc = document.getElementById('wedding-venue-desc');
-  if (venueDesc) venueDesc.textContent = settings.wedding.venueAddress || 'Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội';
+  if (venueDesc) venueDesc.textContent = venueAddressStr;
 
   // Google Maps button & iframe
   const mapBtn = document.getElementById('wedding-map-btn');
-  if (mapBtn && settings.wedding.mapUrl) {
-    mapBtn.href = settings.wedding.mapUrl;
+  if (mapBtn) {
+    mapBtn.href = mapUrlStr;
   }
 
-    const mapIframe = document.getElementById('wedding-map-iframe');
+  const mapIframe = document.getElementById('wedding-map-iframe');
   if (mapIframe) {
-    const initialEmbed = parseMapUrlToEmbed(settings.wedding.mapUrl, settings.wedding.venueName, settings.wedding.venueAddress);
+    const initialEmbed = parseMapUrlToEmbed(mapUrlStr, venueTitleStr, venueAddressStr);
     if (initialEmbed) {
       mapIframe.src = initialEmbed;
     }
 
     // If mapUrl is a short link from Google Maps, dynamically resolve coordinates in background
-    if (settings.wedding.mapUrl && /goo\.gl/.test(settings.wedding.mapUrl) && !settings.wedding.mapUrl.includes('ijkYsunZoUQ79kQbA')) {
-      fetch('/api/resolve-map?url=' + encodeURIComponent(settings.wedding.mapUrl))
+    if (mapUrlStr && /goo\.gl/.test(mapUrlStr) && !mapUrlStr.includes('ijkYsunZoUQ79kQbA')) {
+      fetch('/api/resolve-map?url=' + encodeURIComponent(mapUrlStr))
         .then(res => res.json())
         .then(data => {
           if (data && data.finalUrl) {
-            const resolvedEmbed = parseMapUrlToEmbed(data.finalUrl, settings.wedding.venueName, settings.wedding.venueAddress);
+            const resolvedEmbed = parseMapUrlToEmbed(data.finalUrl, venueTitleStr, venueAddressStr);
             if (resolvedEmbed && resolvedEmbed !== mapIframe.src) {
               mapIframe.src = resolvedEmbed;
             }
@@ -212,12 +344,19 @@ function initDynamicContent(settings) {
   // Timeline
   const timelineReception = document.getElementById('timeline-reception-time');
   if (timelineReception) {
-    timelineReception.textContent = `${settings.wedding.receptionTime || '10:30'} — ĐÓN TIẾP KHÁCH QUÝ`;
+    timelineReception.textContent = `${receptionTimeStr} — ĐÓN TIẾP KHÁCH QUÝ`;
   }
 
   const timelineCeremony = document.getElementById('timeline-ceremony-time');
   if (timelineCeremony) {
-    timelineCeremony.textContent = `${weddingTimeStr} — LỄ THÀNH HÔN & CẮT BÁNH`;
+    timelineCeremony.textContent = currentSide === 'bride' 
+      ? `${weddingTimeStr} — LỄ VU QUY & CHÚC RƯỢU`
+      : `${weddingTimeStr} — LỄ THÀNH HÔN & CẮT BÁNH`;
+  }
+
+  const timelineFeast = document.getElementById('timeline-feast-time');
+  if (timelineFeast) {
+    timelineFeast.textContent = currentSide === 'bride' ? `18:00 — KHAI TIỆC CHIÊU ĐÃI` : `11:30 — KHAI TIỆC CHIÊU ĐÃI`;
   }
 
   // Quotes
@@ -395,9 +534,27 @@ function initPersonalizedGuest(settings) {
   const envGuestName = document.getElementById('envelope-guest-name');
   if (envGuestName) envGuestName.textContent = guestName;
 
-  // Personalize title if guest name is provided
+  // Personalize title according to guest name and side
   if (guestName !== 'Quý Khách') {
-    document.title = `Thiệp Cưới Đức Anh & Thuỳ Linh - Thân Mời: ${guestPrefix} ${guestName}`;
+    if (currentActiveSide === 'bride') {
+      document.title = `Thiệp Cưới (Lễ Vu Quy) Thuỳ Linh & Đức Anh - Thân Mời: ${guestPrefix} ${guestName}`;
+    } else {
+      document.title = `Thiệp Cưới Đức Anh & Thuỳ Linh - Thân Mời: ${guestPrefix} ${guestName}`;
+    }
+  } else {
+    if (currentActiveSide === 'bride') {
+      document.title = `Lễ Vu Quy | Thuỳ Linh & Đức Anh - Thiệp Cưới Online`;
+    } else {
+      document.title = `Hồ Đức Anh & Thái Thuỳ Linh | Thiệp Cưới Online`;
+    }
+  }
+
+  // Auto-activate matching bank tab if bride side
+  if (currentActiveSide === 'bride') {
+    setTimeout(() => {
+      const tabBrideBtn = document.getElementById('tab-bride-btn');
+      if (tabBrideBtn) tabBrideBtn.click();
+    }, 350);
   }
 
   // Personalize closing quote if guest name is provided
@@ -942,12 +1099,14 @@ function initGallery(gallery) {
   });
 
   function render3DCarousel() {
-    const isMobile = window.innerWidth < 640;
+    const width = window.innerWidth;
+    const isMobile = width < 640;
+    const isLarge = width >= 1024;
     
-    // Spacing constants tuned to match user's screenshot
-    const transXStep = isMobile ? 85 : 110;
-    const transZStep = isMobile ? 80 : 90;
-    const rotateStep = 32;
+    // Spacing constants tuned for enlarged cards
+    const transXStep = isMobile ? 95 : (isLarge ? 135 : 120);
+    const transZStep = isMobile ? 80 : (isLarge ? 95 : 90);
+    const rotateStep = 30;
 
     cards.forEach((card, idx) => {
       let l = idx - carouselActiveIdx;
@@ -984,7 +1143,7 @@ function initGallery(gallery) {
           card.classList.remove('active-center');
           scale = Math.max(0.64, 1 - 0.12 * o);
           opacity = Math.max(0.35, 1 - 0.18 * o);
-          translateX = (l > 0 ? 1 : -1) * (transXStep + (o - 1) * (isMobile ? 65 : 85));
+          translateX = (l > 0 ? 1 : -1) * (transXStep + (o - 1) * (isMobile ? 65 : (isLarge ? 90 : 80)));
           translateZ = -(transZStep + (o - 1) * (isMobile ? 70 : 80));
           rotateY = (l > 0 ? -1 : 1) * (rotateStep + (o - 1) * 10);
         }

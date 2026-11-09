@@ -300,11 +300,11 @@ function populateSettingsForm(settings) {
     let isLegacyBride = false;
     try {
       const dec = decodeURIComponent(bMap);
-      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA') || dec.includes('20.762152677441485')) isLegacyBride = true;
     } catch(e) {}
-    if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+    if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA') || bMap.includes('20.762152677441485')) isLegacyBride = true;
     if (!bMap || isLegacyBride) {
-      bMap = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
+      bMap = 'https://maps.app.goo.gl/dpLWJTZLtWg3DpmM7';
     }
     brideMap.value = bMap;
   }
@@ -489,8 +489,8 @@ function setupEventListeners() {
       bEv.lunarDateText = brideLunarVal;
       bEv.venue = brideVenueVal;
       bEv.address = brideAddressVal;
-      const brideDefaultMap = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
-      bEv.mapUrl = (brideMapVal && !brideMapVal.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') && !brideMapVal.includes('Thống Nhất')) ? brideMapVal : brideDefaultMap;
+      const brideDefaultMap = 'https://maps.app.goo.gl/dpLWJTZLtWg3DpmM7';
+      bEv.mapUrl = (brideMapVal && !brideMapVal.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') && !brideMapVal.includes('Thống Nhất') && !brideMapVal.includes('20.762152677441485')) ? brideMapVal : brideDefaultMap;
       bEv.heroQuote = brideQuoteVal;
       bEv.thankYouQuote = brideThankVal;
       bEv.heroPhoto = bridePhotoVal;

@@ -4,7 +4,7 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy') || venueName.includes('Phú Nhiêu'))) ||
                        (venueAddress && venueAddress.includes('Phú Xuyên'));
 
-  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.762152677441485,105.88646044972819+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=17&output=embed';
+  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.76225,105.8866+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=18&output=embed';
 
   if (!url) {
     if (isBrideVenue) {
@@ -34,10 +34,12 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
     let isLegacy = false;
     try {
       const dec = decodeURIComponent(trimmed);
-      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
+      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA') || dec.includes('20.762152677441485')) isLegacy = true;
     } catch(e) {}
-    if (trimmed.includes('Th%E1%BB%91ng') || trimmed.includes('ijkYsunZoUQ79kQbA')) isLegacy = true;
-    if (isLegacy) return brideEmbedFallback;
+    if (trimmed.includes('Th%E1%BB%91ng') || trimmed.includes('ijkYsunZoUQ79kQbA') || trimmed.includes('20.762152677441485')) isLegacy = true;
+    if (isLegacy || trimmed.includes('dpLWJTZLtWg3DpmM7') || trimmed.includes('xbWWnni57B7wC65z9') || trimmed.includes('Ph%C3%BA+Nhi%C3%AAu') || trimmed.includes('Phú Nhiêu')) {
+      return brideEmbedFallback;
+    }
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -318,14 +320,14 @@ function initDynamicContent(settings, activeSide) {
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
     
-    const brideMapFallback = 'https://www.google.com/maps?q=20.762152677441485,105.88646044972819';
+    const brideMapFallback = 'https://maps.app.goo.gl/dpLWJTZLtWg3DpmM7';
     let bMap = (brideEvent.mapUrl || '').trim();
     let isLegacyBride = false;
     try {
       const dec = decodeURIComponent(bMap);
-      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+      if (dec.includes('Thống Nhất') || dec.includes('ijkYsunZoUQ79kQbA') || dec.includes('20.762152677441485')) isLegacyBride = true;
     } catch(e) {}
-    if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA')) isLegacyBride = true;
+    if (bMap.includes('Th%E1%BB%91ng') || bMap.includes('ijkYsunZoUQ79kQbA') || bMap.includes('20.762152677441485')) isLegacyBride = true;
     if (!bMap || isLegacyBride) {
       bMap = brideMapFallback;
     }

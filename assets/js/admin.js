@@ -297,8 +297,8 @@ function populateSettingsForm(settings) {
   const brideMap = document.getElementById('bride-event-map');
   if (brideMap) {
     let bMap = brideEvent.mapUrl || '';
-    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA')) {
-      bMap = 'https://maps.google.com/?q=' + encodeURIComponent(brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội');
+    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA') || bMap.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || bMap.includes('Thống Nhất')) {
+      bMap = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
     }
     brideMap.value = bMap;
   }
@@ -483,7 +483,8 @@ function setupEventListeners() {
       bEv.lunarDateText = brideLunarVal;
       bEv.venue = brideVenueVal;
       bEv.address = brideAddressVal;
-      bEv.mapUrl = brideMapVal || ('https://maps.google.com/?q=' + encodeURIComponent(brideAddressVal));
+      const brideDefaultMap = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+      bEv.mapUrl = (brideMapVal && !brideMapVal.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') && !brideMapVal.includes('Thống Nhất')) ? brideMapVal : brideDefaultMap;
       bEv.heroQuote = brideQuoteVal;
       bEv.thankYouQuote = brideThankVal;
       bEv.heroPhoto = bridePhotoVal;

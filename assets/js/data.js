@@ -149,7 +149,7 @@ const DEFAULT_SETTINGS = {
       "lunarDateText": "Tức Ngày 20 Tháng 10 Năm Bính Ngọ",
       "venue": "Tư Gia Nhà Gái",
       "address": "Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội",
-      "mapUrl": "https://maps.google.com/?q=S%E1%BB%91+2+ng%C3%B5+4+%C4%90%C6%B0%E1%BB%9Dng+Th%E1%BB%91ng+Nh%E1%BA%A5t,+Ph%C3%BA+Nhi%C3%AAu,+Ph%C3%BA+Xuy%C3%AAn,+H%C3%A0+N%E1%BB%99i",
+      "mapUrl": "https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z",
       "announcementText": "TRÂN TRỌNG BÁO TIN LỄ VU QUY CỦA CHÚNG TÔI",
       "heroQuote": "TÌNH YÊU LÀ SỰ THẤU HIỂU VÀ ĐỒNG ĐIỆU CỦA HAI TÂM HỒN",
       "thankYouQuote": "Sự hiện diện của quý khách là niềm vinh hạnh to lớn và là món quà ý nghĩa nhất dành cho gia đình chúng mình!",
@@ -341,9 +341,12 @@ function deepMergeSettings(target, source) {
     result.events = target.events.map(defEv => {
       const srcEv = result.events.find(e => e.id === defEv.id || e.type === defEv.type);
       const merged = srcEv ? { ...defEv, ...srcEv } : { ...defEv };
-      // Sanitize: If bride event accidentally inherited groom's Hoàng Gia Palace mapUrl, reset to bride's map
-      if ((merged.type === 'bride' || merged.id === 'event-bride') && (merged.mapUrl && merged.mapUrl.includes('ijkYsunZoUQ79kQbA'))) {
-        merged.mapUrl = defEv.mapUrl || ('https://maps.google.com/?q=' + encodeURIComponent(merged.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội'));
+      // Sanitize: If bride event mapUrl is empty or points to groom's Hoàng Gia Palace, or old unpinned road address, pin Nhà văn hoá thôn Phú Nhiêu
+      if (merged.type === 'bride' || merged.id === 'event-bride') {
+        const brideMapPin = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
+        if (!merged.mapUrl || merged.mapUrl.includes('ijkYsunZoUQ79kQbA') || merged.mapUrl.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || merged.mapUrl.includes('Thống Nhất')) {
+          merged.mapUrl = brideMapPin;
+        }
       }
       // Sanitize: Ensure dateText uses standard concept
       if (merged.type === 'bride' || merged.id === 'event-bride') {

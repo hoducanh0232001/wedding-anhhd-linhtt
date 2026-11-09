@@ -1,10 +1,15 @@
 
 // Helper: Convert any Google Maps URL to an exact Embed iframe URL
 function parseMapUrlToEmbed(url, venueName, venueAddress) {
-  const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy'))) ||
+  const isBrideVenue = (venueName && (venueName.includes('Nhà Gái') || venueName.includes('Vu Quy') || venueName.includes('Phú Nhiêu'))) ||
                        (venueAddress && venueAddress.includes('Phú Xuyên'));
 
+  const brideEmbedFallback = 'https://maps.google.com/maps?q=20.7621251,105.8864202+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)&z=16&output=embed';
+
   if (!url) {
+    if (isBrideVenue) {
+      return brideEmbedFallback;
+    }
     const cleanQ = ((venueName || '') + ' ' + (venueAddress || ''))
       .replace(/\(Cơ sở \d+\)/g, '')
       .replace(/Tầng \d+,/g, '')
@@ -24,10 +29,9 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
     return 'https://maps.google.com/maps?q=20.9589449,105.7683679+(Ho%C3%A0ng+Gia+Palace+-+Victoria+V%C4%83n+Ph%C3%BA)&z=16&output=embed';
   }
 
-  // If bride venue had groom's link by mistake, use bride's clean address
-  if (isBrideVenue && trimmed.includes('ijkYsunZoUQ79kQbA')) {
-    const cleanQ = ((venueName || '') + ' ' + (venueAddress || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội')).trim();
-    return 'https://maps.google.com/maps?q=' + encodeURIComponent(cleanQ) + '&z=16&output=embed';
+  // If bride venue had groom's link by mistake, or generic road text, pin Nhà Văn hóa thôn Phú Nhiêu
+  if (isBrideVenue && (trimmed.includes('ijkYsunZoUQ79kQbA') || trimmed.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || trimmed.includes('Thống Nhất'))) {
+    return brideEmbedFallback;
   }
 
   // 3. Extract coordinates (lat,lng)
@@ -39,7 +43,8 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   if (coordMatch) {
     const lat = coordMatch[1];
     const lng = coordMatch[2];
-    return 'https://maps.google.com/maps?q=' + lat + ',' + lng + '&z=16&output=embed';
+    const label = isBrideVenue ? '+(Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu)' : '';
+    return 'https://maps.google.com/maps?q=' + lat + ',' + lng + label + '&z=16&output=embed';
   }
 
   // 4. Extract place name
@@ -56,6 +61,9 @@ function parseMapUrlToEmbed(url, venueName, venueAddress) {
   }
 
   // 6. Fallback
+  if (isBrideVenue) {
+    return brideEmbedFallback;
+  }
   const cleanQ = ((venueName || '') + ' ' + (venueAddress || ''))
     .replace(/\(Cơ sở \d+\)/g, '')
     .replace(/Tầng \d+,/g, '')
@@ -306,9 +314,10 @@ function initDynamicContent(settings, activeSide) {
     venueTitleStr = brideEvent.venue || 'Tư Gia Nhà Gái';
     venueAddressStr = brideEvent.address || settings.couple.bride.address || 'Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội';
     
+    const brideMapFallback = 'https://www.google.com/maps/place/Nh%C3%A0+V%C4%83n+h%C3%B3a+th%C3%B4n+Ph%C3%BA+Nhi%C3%AAu/@20.7621251,105.8864202,17z';
     let bMap = (brideEvent.mapUrl || '').trim();
-    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA')) {
-      bMap = 'https://maps.google.com/?q=' + encodeURIComponent(venueAddressStr);
+    if (!bMap || bMap.includes('ijkYsunZoUQ79kQbA') || bMap.includes('Th%E1%BB%91ng+Nh%E1%BA%A5t') || bMap.includes('Thống Nhất')) {
+      bMap = brideMapFallback;
     }
     mapUrlStr = bMap;
     ceremonyTitleStr = brideEvent.title || 'LỄ VU QUY & TIỆC CƯỚI';

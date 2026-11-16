@@ -764,6 +764,23 @@ function renderGuestsTable() {
   }
   const baseUrl = `${domainOrigin}/`;
 
+  const curSettings = (typeof WeddingDB !== 'undefined' && WeddingDB.getSettings) ? WeddingDB.getSettings() : null;
+  const brideShort = curSettings?.couple?.bride?.shortName || 'Thuỳ Linh';
+  const groomShort = curSettings?.couple?.groom?.shortName || 'Đức Anh';
+  const brideEv = curSettings?.events?.find(e => e.type === 'bride');
+  const mainEv = curSettings?.events?.find(e => e.type === 'main' || e.isPrimary) || curSettings?.wedding;
+  const groomEv = curSettings?.events?.find(e => e.type === 'groom') || mainEv;
+
+  const brideTimeStr = brideEv?.time ? `vào lúc ${brideEv.time}` : 'vào lúc 17:30';
+  const brideDateStr = brideEv?.dateText ? brideEv.dateText : 'Thứ Bảy, ngày 28/11/2026';
+  const brideVenueStr = brideEv?.venue ? (brideEv.address ? `${brideEv.venue} (${brideEv.address})` : brideEv.venue) : 'Tư Gia Nhà Gái';
+
+  const groomTimeStr = (groomEv?.time || mainEv?.time) ? `vào lúc ${groomEv?.time || mainEv?.time}` : 'vào lúc 11:00';
+  const groomDateStr = (groomEv?.dateText || mainEv?.dateText) || 'Chủ Nhật, ngày 29/11/2026';
+  const groomVenueStr = (groomEv?.venue || mainEv?.venue)
+    ? ((groomEv?.address || mainEv?.address) ? `${groomEv?.venue || mainEv?.venue} (${groomEv?.address || mainEv?.address})` : (groomEv?.venue || mainEv?.venue))
+    : 'Trung tâm tiệc cưới Hoàng Gia Palace';
+
   filtered.forEach((g, idx) => {
     // Determine effective side
     let effectiveSide = g.side;
@@ -781,12 +798,13 @@ function renderGuestsTable() {
     
     // Generate prefilled invitation message for Zalo / SMS / Messenger
     let inviteMessage = '';
+    const guestPrefixName = `${g.prefix || ''} ${g.name}`.trim();
     if (effectiveSide === 'bride') {
-      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của Thuỳ Linh & Đức Anh vào lúc 17:30 Thứ Bảy, ngày 28/11/2026 tại Tư Gia Nhà Gái (Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội).\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
+      inviteMessage = `Trân trọng kính mời ${guestPrefixName} đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của ${brideShort} & ${groomShort} ${brideTimeStr} ${brideDateStr} tại ${brideVenueStr}.\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
     } else if (effectiveSide === 'both') {
-      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến chung vui trong ngày trọng đại của Đức Anh & Thuỳ Linh.\nXem thiệp cưới chi tiết tại: ${personalizedUrl}`;
+      inviteMessage = `Trân trọng kính mời ${guestPrefixName} đến chung vui trong ngày trọng đại của ${groomShort} & ${brideShort}.\nXem thiệp cưới chi tiết tại: ${personalizedUrl}`;
     } else {
-      inviteMessage = `Trân trọng kính mời ${g.prefix || ''} ${g.name} đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của Đức Anh & Thuỳ Linh vào lúc 11:00 Chủ Nhật, ngày 29/11/2026 tại Trung tâm tiệc cưới Hoàng Gia Palace (Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội).\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
+      inviteMessage = `Trân trọng kính mời ${guestPrefixName} đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của ${groomShort} & ${brideShort} ${groomTimeStr} ${groomDateStr} tại ${groomVenueStr}.\nXem thiệp cưới riêng tại: ${personalizedUrl}`;
     }
 
     const sideBadge = effectiveSide === 'bride'
@@ -1245,11 +1263,27 @@ window.copySideZaloMessage = function(side) {
     domainOrigin = 'https://wedding-anhhd-linhtt.vercel.app';
   }
   const url = `${domainOrigin}/?side=${side}`;
+
+  const curSettings = (typeof WeddingDB !== 'undefined' && WeddingDB.getSettings) ? WeddingDB.getSettings() : null;
+  const brideShort = curSettings?.couple?.bride?.shortName || 'Thuỳ Linh';
+  const groomShort = curSettings?.couple?.groom?.shortName || 'Đức Anh';
+  const brideEv = curSettings?.events?.find(e => e.type === 'bride');
+  const mainEv = curSettings?.events?.find(e => e.type === 'main' || e.isPrimary) || curSettings?.wedding;
+  const groomEv = curSettings?.events?.find(e => e.type === 'groom') || mainEv;
+
   let msg = '';
   if (side === 'bride') {
-    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của Thuỳ Linh & Đức Anh vào lúc 17:30 Thứ Bảy, ngày 28/11/2026 tại Tư Gia Nhà Gái (Số 2 ngõ 4 Đường Thống Nhất, Phú Nhiêu, Phú Xuyên, Hà Nội).\nXem thiệp cưới online tại: ${url}`;
+    const timeStr = brideEv?.time ? `vào lúc ${brideEv.time}` : 'vào lúc 17:30';
+    const dateStr = brideEv?.dateText ? brideEv.dateText : 'Thứ Bảy, ngày 28/11/2026';
+    const venueStr = brideEv?.venue ? (brideEv.address ? `${brideEv.venue} (${brideEv.address})` : brideEv.venue) : 'Tư Gia Nhà Gái';
+    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Vu Quy (Tiệc Cưới Nhà Gái) của ${brideShort} & ${groomShort} ${timeStr} ${dateStr} tại ${venueStr}.\nXem thiệp cưới online tại: ${url}`;
   } else {
-    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của Đức Anh & Thuỳ Linh vào lúc 11:00 Chủ Nhật, ngày 29/11/2026 tại Trung tâm tiệc cưới Hoàng Gia Palace (Tầng 2, Tòa nhà Victoria, KĐT Văn Phú, Quận Hà Đông, Hà Nội).\nXem thiệp cưới online tại: ${url}`;
+    const timeStr = (groomEv?.time || mainEv?.time) ? `vào lúc ${groomEv?.time || mainEv?.time}` : 'vào lúc 11:00';
+    const dateStr = (groomEv?.dateText || mainEv?.dateText) || 'Chủ Nhật, ngày 29/11/2026';
+    const venueStr = (groomEv?.venue || mainEv?.venue)
+      ? ((groomEv?.address || mainEv?.address) ? `${groomEv?.venue || mainEv?.venue} (${groomEv?.address || mainEv?.address})` : (groomEv?.venue || mainEv?.venue))
+      : 'Trung tâm tiệc cưới Hoàng Gia Palace';
+    msg = `Trân trọng kính mời Quý Khách đến tham dự Lễ Thành Hôn (Tiệc Cưới Nhà Trai) của ${groomShort} & ${brideShort} ${timeStr} ${dateStr} tại ${venueStr}.\nXem thiệp cưới online tại: ${url}`;
   }
   if (navigator.clipboard) {
     navigator.clipboard.writeText(msg).then(() => {

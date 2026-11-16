@@ -59,20 +59,14 @@ function getWeddingSettings() {
 // 3. Main invitation route with dynamic Open Graph injection for social crawlers (Facebook, Zalo, iMessage)
 app.get('/', (req, res) => {
   const indexPath = path.join(rootDir, 'index.html');
-  const guestParam = req.query.to || req.query.guest || req.query.name;
-  const prefixParam = req.query.prefix || req.query.xungho;
+  const guestParam = (req.query.to || req.query.guest || req.query.name || '').trim();
+  const prefixParam = (req.query.prefix || req.query.xungho || '').trim();
   const sideParam = (req.query.side || req.query.tiec || req.query.event || '').toLowerCase().trim();
   const isBride = ['bride', 'gai', 'nhagai', 'vuquy', 'nha-gai'].includes(sideParam);
   const isGroom = ['groom', 'trai', 'nhatrai', 'tanhon', 'nha-trai'].includes(sideParam);
 
-  if (!guestParam && !prefixParam && !isBride && !isGroom) {
-    return res.sendFile(indexPath);
-  }
-
   try {
     let html = fs.readFileSync(indexPath, 'utf8');
-    const guestName = (guestParam || 'Quý Khách').replace(/\+/g, ' ').trim();
-    const guestPrefix = (prefixParam || 'Thân Mời').replace(/\+/g, ' ').trim();
 
     const settings = getWeddingSettings();
     const groomName = settings?.couple?.groom?.shortName || 'Đức Anh';
@@ -109,11 +103,21 @@ app.get('/', (req, res) => {
       locationStr = `tại ${venue || address}`;
     }
 
+    // Format xưng hô khách mời tự nhiên:
+    // Nếu có tên khách: "Trân trọng kính mời Anh Minh..."
+    // Nếu không có tên khách: "Trân trọng kính mời Quý Khách..." (không bị lặp "Thân Mời Quý Khách")
+    let guestDisplay = 'Quý Khách';
+    if (guestParam) {
+      const cleanName = guestParam.replace(/\+/g, ' ').trim();
+      const cleanPrefix = prefixParam ? prefixParam.replace(/\+/g, ' ').trim() : 'Thân Mời';
+      guestDisplay = `${cleanPrefix} ${cleanName}`.trim();
+    }
+
     const customTitle = guestParam
-      ? `Thiệp Cưới (${ceremonyName}) ${coupleTitle} — Kính Mời: ${guestPrefix} ${guestName}`
+      ? `Thiệp Cưới (${ceremonyName}) ${coupleTitle} — Kính Mời: ${guestDisplay}`
       : `${ceremonyName} | ${coupleTitle} — Thiệp Cưới Online`;
 
-    const customDesc = `Trân trọng kính mời ${guestPrefix} ${guestName} đến tham dự ${ceremonyName} của ${coupleTitle}${timeAndDate ? ` ${timeAndDate}` : ''}${locationStr ? ` ${locationStr}` : ''}.`.replace(/\s+/g, ' ').trim();
+    const customDesc = `Trân trọng kính mời ${guestDisplay} đến tham dự ${ceremonyName} của ${coupleTitle}${timeAndDate ? ` ${timeAndDate}` : ''}${locationStr ? ` ${locationStr}` : ''}.`.replace(/\s+/g, ' ').trim();
 
     const fullUrl = `https://wedding-anhhd-linhtt.vercel.app${req.originalUrl}`;
 

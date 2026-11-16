@@ -26,7 +26,10 @@ let lastSettingsMtime = 0;
 
 function getWeddingSettings() {
   try {
-    const dataJsPath = path.join(rootDir, 'assets', 'js', 'data.js');
+    let dataJsPath = path.join(__dirname, 'assets', 'js', 'data.js');
+    if (!fs.existsSync(dataJsPath)) {
+      dataJsPath = path.join(rootDir, 'assets', 'js', 'data.js');
+    }
     if (!fs.existsSync(dataJsPath)) return null;
 
     const stat = fs.statSync(dataJsPath);
@@ -69,8 +72,8 @@ app.get('/', (req, res) => {
     let html = fs.readFileSync(indexPath, 'utf8');
 
     const settings = getWeddingSettings();
-    const groomName = settings?.couple?.groom?.shortName || 'Đức Anh';
-    const brideName = settings?.couple?.bride?.shortName || 'Thuỳ Linh';
+    const groomName = settings?.couple?.groom?.shortName || settings?.couple?.groom?.fullName || 'Đức Anh';
+    const brideName = settings?.couple?.bride?.shortName || settings?.couple?.bride?.fullName || 'Thuỳ Linh';
 
     let event = null;
     let ceremonyName = 'Lễ Thành Hôn';
@@ -78,24 +81,29 @@ app.get('/', (req, res) => {
 
     if (isBride) {
       event = settings?.events?.find(e => e.type === 'bride');
-      ceremonyName = 'Lễ Vu Quy';
+      ceremonyName = (event?.title && event.title.includes('Vu Quy')) ? 'Lễ Vu Quy' : (event?.title || 'Lễ Vu Quy');
       coupleTitle = `${brideName} & ${groomName}`;
     } else if (isGroom) {
       event = settings?.events?.find(e => e.type === 'groom');
-      ceremonyName = 'Lễ Tân Hôn';
+      ceremonyName = (event?.title && event.title.includes('Tân Hôn')) ? 'Lễ Tân Hôn' : (event?.title || 'Lễ Tân Hôn');
       coupleTitle = `${groomName} & ${brideName}`;
     } else {
       event = settings?.events?.find(e => e.type === 'main' || e.isPrimary) || settings?.events?.[0];
-      ceremonyName = 'Lễ Thành Hôn';
+      ceremonyName = (event?.title && event.title.includes('Thành Hôn')) ? 'Lễ Thành Hôn' : (event?.title || 'Lễ Thành Hôn');
       coupleTitle = `${groomName} & ${brideName}`;
     }
 
-    const eventTime = event?.time ? `vào ${event.time}` : '';
-    const eventDate = event?.dateText ? `${event.dateText}` : (event?.date ? `ngày ${event.date}` : '');
+    // Thời gian, ngày tháng & địa điểm lấy 100% từ config (event / wedding settings)
+    const timeVal = event?.time || settings?.wedding?.time || '';
+    const dateTextVal = event?.dateText || settings?.wedding?.dateText || '';
+    const dateVal = event?.date || settings?.wedding?.date || '';
+
+    const eventTime = timeVal ? `vào ${timeVal}` : '';
+    const eventDate = dateTextVal ? `${dateTextVal}` : (dateVal ? `ngày ${dateVal}` : '');
     const timeAndDate = [eventTime, eventDate].filter(Boolean).join(' ');
 
-    const venue = event?.venue || '';
-    const address = event?.address || '';
+    const venue = event?.venue || event?.venueName || settings?.wedding?.venueName || '';
+    const address = event?.address || event?.venueAddress || settings?.wedding?.venueAddress || '';
     let locationStr = '';
     if (venue && address) {
       locationStr = `tại ${venue} (${address})`;

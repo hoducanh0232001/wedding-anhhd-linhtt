@@ -151,17 +151,24 @@ app.get('/', async (req, res) => {
       : `Thiệp cưới online — ${coupleTitle}`;
 
     const fullUrl = `https://wedding-anhhd-linhtt.vercel.app${req.originalUrl}`;
+    const cleanImageUrl = `https://wedding-anhhd-linhtt.vercel.app/assets/images/og_preview.jpg`;
 
     html = html
       .replace(/<title>.*?<\/title>/, `<title>${customTitle}</title>`)
+      .replace(/<link rel="canonical" href=".*?" \/>/, `<link rel="canonical" href="${fullUrl}" />`)
       .replace(/<meta property="og:title" content=".*?" \/>/, `<meta property="og:title" content="${customTitle}" />`)
       .replace(/<meta property="og:description" content=".*?" \/>/, `<meta property="og:description" content="${customDesc}" />`)
       .replace(/<meta property="og:url" content=".*?" \/>/, `<meta property="og:url" content="${fullUrl}" />`)
+      .replace(/<meta property="og:image" content=".*?" \/>/, `<meta property="og:image" content="${cleanImageUrl}" />`)
+      .replace(/<meta property="og:image:secure_url" content=".*?" \/>/, `<meta property="og:image:secure_url" content="${cleanImageUrl}" />`)
+      .replace(/<link rel="image_src" href=".*?" \/>/, `<link rel="image_src" href="${cleanImageUrl}" />`)
       .replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${customDesc}" />`)
       .replace(/<meta itemprop="name" content=".*?" \/>/, `<meta itemprop="name" content="${customTitle}" />`)
       .replace(/<meta itemprop="description" content=".*?" \/>/, `<meta itemprop="description" content="${customDesc}" />`)
+      .replace(/<meta itemprop="image" content=".*?" \/>/, `<meta itemprop="image" content="${cleanImageUrl}" />`)
       .replace(/<meta name="twitter:title" content=".*?" \/>/, `<meta name="twitter:title" content="${customTitle}" />`)
-      .replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${customDesc}" />`);
+      .replace(/<meta name="twitter:description" content=".*?" \/>/, `<meta name="twitter:description" content="${customDesc}" />`)
+      .replace(/<meta name="twitter:image" content=".*?" \/>/, `<meta name="twitter:image" content="${cleanImageUrl}" />`);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     return res.send(html);

@@ -135,6 +135,7 @@ function initSidebarTabs() {
 function loadAllAdminData() {
   const settings = WeddingDB.getSettings();
   updateDashboardStats();
+  updateDashboardLinkCards(settings);
   renderThemesGrid();
   renderGalleryAdmin();
   populateSettingsForm(settings);
@@ -145,6 +146,29 @@ function loadAllAdminData() {
   renderGuestsTable();
   renderRSVPsTable();
   renderAdminWishesList();
+}
+
+function updateDashboardLinkCards(settings) {
+  if (!settings) return;
+  const brideEv = settings.events?.find(e => e.type === 'bride');
+  const mainEv = settings.events?.find(e => e.type === 'main' || e.isPrimary) || settings.wedding;
+  const groomEv = settings.events?.find(e => e.type === 'groom') || mainEv;
+
+  const brideSummary = document.getElementById('dashboard-bride-summary');
+  if (brideSummary && brideEv) {
+    const time = brideEv.time || '08:30';
+    const date = brideEv.dateText || 'Thứ Bảy, 28/11/2026';
+    const venue = brideEv.venue || 'Tư Gia Nhà Gái';
+    brideSummary.textContent = `${time} ${date} tại ${venue}`;
+  }
+
+  const groomSummary = document.getElementById('dashboard-groom-summary');
+  if (groomSummary && (groomEv || mainEv)) {
+    const time = (groomEv?.time || mainEv?.time) || '11:00';
+    const date = (groomEv?.dateText || mainEv?.dateText) || 'Chủ Nhật, 29/11/2026';
+    const venue = (groomEv?.venue || mainEv?.venue) || 'Hoàng Gia Palace Hà Đông';
+    groomSummary.textContent = `${time} ${date} tại ${venue}`;
+  }
 }
 
 // 4. Dashboard Stats
@@ -1828,6 +1852,7 @@ function collectAndSaveSettings() {
 
   // Save to LocalStorage & Auto Sync
   WeddingDB.saveSettings(current);
+  updateDashboardLinkCards(current);
 
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;

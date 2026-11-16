@@ -145,7 +145,10 @@ app.get('/', async (req, res) => {
       ? `Thiệp Cưới (${ceremonyName}) ${coupleTitle} — Kính Mời: ${guestDisplay}`
       : `${ceremonyName} | ${coupleTitle} — Thiệp Cưới Online`;
 
-    const customDesc = `Trân trọng kính mời ${guestDisplay} đến tham dự ${ceremonyName} của ${coupleTitle}${timeAndDate ? ` ${timeAndDate}` : ''}${locationStr ? ` ${locationStr}` : ''}.`.replace(/\s+/g, ' ').trim();
+    // Xoá bỏ hoàn toàn ngày, giờ, địa điểm trong description theo yêu cầu để tránh sai lệch
+    const customDesc = guestParam
+      ? `Kính mời: ${guestDisplay}`
+      : `Thiệp cưới online — ${coupleTitle}`;
 
     const fullUrl = `https://wedding-anhhd-linhtt.vercel.app${req.originalUrl}`;
 

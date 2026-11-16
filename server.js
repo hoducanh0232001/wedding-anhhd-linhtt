@@ -20,38 +20,58 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(rootDir, 'admin.html'));
 });
 
-// Cache settings to minimize disk reads
+// Realtime Firebase DB + Local Cache for dynamic OpenGraph tags
+const FIREBASE_SETTINGS_URL = 'https://wedding-anh-linh-default-rtdb.asia-southeast1.firebasedatabase.app/settings.json';
 let cachedSettings = null;
-let lastSettingsMtime = 0;
+let lastSettingsFetchTime = 0;
+const CACHE_TTL_MS = 10000; // 10 seconds cache to instantly reflect admin changes
 
-function getWeddingSettings() {
+async function getWeddingSettings() {
+  const now = Date.now();
+  if (cachedSettings && (now - lastSettingsFetchTime < CACHE_TTL_MS)) {
+    return cachedSettings;
+  }
+
+  // 1. Fetch live settings directly from Firebase Realtime Database
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const fbRes = await fetch(FIREBASE_SETTINGS_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (fbRes.ok) {
+      const fbData = await fbRes.json();
+      if (fbData && typeof fbData === 'object' && (fbData.events || fbData.wedding)) {
+        cachedSettings = fbData;
+        lastSettingsFetchTime = now;
+        return fbData;
+      }
+    }
+  } catch (err) {
+    // Firebase fetch error or timeout, gracefully fallback to local file
+  }
+
+  // 2. Fallback to local data.js
   try {
     let dataJsPath = path.join(__dirname, 'assets', 'js', 'data.js');
     if (!fs.existsSync(dataJsPath)) {
       dataJsPath = path.join(rootDir, 'assets', 'js', 'data.js');
     }
-    if (!fs.existsSync(dataJsPath)) return null;
-
-    const stat = fs.statSync(dataJsPath);
-    if (cachedSettings && stat.mtimeMs === lastSettingsMtime) {
-      return cachedSettings;
-    }
-
-    const content = fs.readFileSync(dataJsPath, 'utf8');
-    const sMarker = 'const DEFAULT_SETTINGS =';
-    const sIdx = content.indexOf(sMarker);
-    if (sIdx === -1) return null;
-
-    const jsonStart = content.indexOf('{', sIdx);
-    const eMarker = 'const DEFAULT_GUESTS';
-    const eIdx = content.indexOf(eMarker, jsonStart);
-
-    if (jsonStart !== -1 && eIdx !== -1) {
-      let jsonStr = content.substring(jsonStart, eIdx).trim();
-      if (jsonStr.endsWith(';')) jsonStr = jsonStr.slice(0, -1).trim();
-      cachedSettings = JSON.parse(jsonStr);
-      lastSettingsMtime = stat.mtimeMs;
-      return cachedSettings;
+    if (fs.existsSync(dataJsPath)) {
+      const content = fs.readFileSync(dataJsPath, 'utf8');
+      const sMarker = 'const DEFAULT_SETTINGS =';
+      const sIdx = content.indexOf(sMarker);
+      if (sIdx !== -1) {
+        const jsonStart = content.indexOf('{', sIdx);
+        const eMarker = 'const DEFAULT_GUESTS';
+        const eIdx = content.indexOf(eMarker, jsonStart);
+        if (jsonStart !== -1 && eIdx !== -1) {
+          let jsonStr = content.substring(jsonStart, eIdx).trim();
+          if (jsonStr.endsWith(';')) jsonStr = jsonStr.slice(0, -1).trim();
+          cachedSettings = JSON.parse(jsonStr);
+          lastSettingsFetchTime = now;
+          return cachedSettings;
+        }
+      }
     }
   } catch (err) {
     console.error('Error reading settings from data.js:', err.message);
@@ -60,7 +80,7 @@ function getWeddingSettings() {
 }
 
 // 3. Main invitation route with dynamic Open Graph injection for social crawlers (Facebook, Zalo, iMessage)
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   const indexPath = path.join(rootDir, 'index.html');
   const guestParam = (req.query.to || req.query.guest || req.query.name || '').trim();
   const prefixParam = (req.query.prefix || req.query.xungho || '').trim();
@@ -71,7 +91,7 @@ app.get('/', (req, res) => {
   try {
     let html = fs.readFileSync(indexPath, 'utf8');
 
-    const settings = getWeddingSettings();
+    const settings = await getWeddingSettings();
     const groomName = settings?.couple?.groom?.shortName || settings?.couple?.groom?.fullName || 'Đức Anh';
     const brideName = settings?.couple?.bride?.shortName || settings?.couple?.bride?.fullName || 'Thuỳ Linh';
 
